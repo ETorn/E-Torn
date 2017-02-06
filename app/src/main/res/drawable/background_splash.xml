@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item>
+        <shape  android:shape="oval"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto">
+            <solid android:color="#6CB2E6" />
+        </shape>
+
+
+    </item>
+
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/capraboimg"/>
+    </item>
+
+</layer-list>
