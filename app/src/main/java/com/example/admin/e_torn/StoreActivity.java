@@ -5,23 +5,21 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-
+import com.example.admin.e_torn.Adapters.StoreAdapter;
 import com.example.admin.e_torn.Adapters.SuperAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+public class StoreActivity extends AppCompatActivity {
 
-public class SuperActivity extends AppCompatActivity {
-
-    private List<Super> supers;
+    private List<Store> stores;
     private RecyclerView recyclerView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recyclerview);
+        setContentView(R.layout.activity_store);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -31,18 +29,17 @@ public class SuperActivity extends AppCompatActivity {
         initializeAdapter();
     }
 
-
     public void inicialitzeData (){
-        supers = new ArrayList<>();
-        supers.add(new Super("Caprabo1", "Caprabo1 address", "111111", "22222", R.drawable.capraboicon));
-        supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
-        supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
-        supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));
+        stores = new ArrayList<>();
+        stores.add(new Store("Carniceria01", 1, 1, R.drawable.capraboicon));
+        stores.add(new Store("Carniceria02", 1, 1, R.drawable.capraboicon));
+        stores.add(new Store("Peixateria01", 1, 1, R.drawable.capraboicon));
+        stores.add(new Store("Peixateria02", 1, 1, R.drawable.capraboicon));
         //Afegir supers a la llista retornades de la crida GET supers al servidor
     }
 
     private void initializeAdapter(){
-        SuperAdapter adapter = new SuperAdapter(supers);
+        StoreAdapter adapter = new StoreAdapter(stores);
         recyclerView.setAdapter(adapter);
     }
 }

@@ -22,6 +22,7 @@ public class Splash extends AppCompatActivity {
                 Intent mainIntent = new Intent(Splash.this,SuperActivity.class);
                 Splash.this.startActivity(mainIntent);
                 Splash.this.finish();
+                //falta  posar xml de recycler viewcorrecte
             }
         }, Constants.SPLASH_DISPLAY_LENGTH);
     }
