@@ -71,4 +71,6 @@ public class Super {
     public List<Store> getStores() {
         return stores;
     }
+
+
 }
