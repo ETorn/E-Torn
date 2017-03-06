@@ -29,6 +29,7 @@
             android:layout_toRightOf="@+id/item_photo"
             android:layout_alignParentTop="true"
             android:textSize="30sp"
+
             />
 
         <TextView
