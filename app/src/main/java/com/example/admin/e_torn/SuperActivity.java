@@ -1,14 +1,18 @@
 package com.example.admin.e_torn;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
 
 
 import com.example.admin.e_torn.Adapters.SuperAdapter;
+import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.Services.SuperService;
 
 import java.util.ArrayList;
@@ -17,22 +21,19 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
 public class SuperActivity extends AppCompatActivity {
 
     private List<Super> supers;
     private RecyclerView recyclerView;
-
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview);
-
-
-
+        this.context = getApplicationContext();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -52,14 +53,25 @@ public class SuperActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Super>> call, Response<List<Super>> response) {
                 for (Super superM: response.body()) {
-                    supers.add(new Super(superM.getName(), superM.getAddress(), superM.getPhone(), superM.getFax(), R.drawable.capraboicon));
+                    supers.add(new Super(superM.getName(), superM.getAddress(), superM.getPhone(), superM.getFax(), R.drawable.capraboicon, superM.getStores()));
                     /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
                     supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
                     supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
-                    //Afegir supers a la llista retornades de la crida GET supers al servidor
                 }
-                SuperAdapter adapter = new SuperAdapter(supers);
+                SuperAdapter adapter = new SuperAdapter(context, supers);
                 recyclerView.setAdapter(adapter);
+                recyclerView.addOnItemTouchListener(
+                        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener(){
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            List<Store> stores = supers.get(position).getStores();
+                            Intent intent = new Intent(context, StoreActivity.class);
+                            intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+                            context.startActivity(intent);
+                        }
+                    })
+                );
             }
 
             @Override
@@ -69,11 +81,5 @@ public class SuperActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void initializeAdapter(){
-        Log.d("ee", "ee");
-        SuperAdapter adapter = new SuperAdapter(supers);
-        recyclerView.setAdapter(adapter);
     }
 }

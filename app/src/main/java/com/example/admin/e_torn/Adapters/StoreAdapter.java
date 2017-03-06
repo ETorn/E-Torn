@@ -2,6 +2,7 @@ package com.example.admin.e_torn.Adapters;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         public StoreViewHolder(View itemView) {
             super(itemView);
             cardView = (CardView) itemView.findViewById(R.id.cardView);
-            storeName = (TextView) itemView.findViewById(R.id.super_name);
-            storePhoto = (ImageView) itemView.findViewById(R.id.super_photo);
+            storeName = (TextView) itemView.findViewById(R.id.item_name);
+            storePhoto = (ImageView) itemView.findViewById(R.id.item_photo);
         }
     }
 
@@ -56,6 +57,10 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         public void onBindViewHolder(StoreViewHolder storeViewHolder, int position) {
             storeViewHolder.storeName.setText(stores.get(position).getName());
             storeViewHolder.storePhoto.setImageResource(stores.get(position).getPhoto());
+            if (stores.size() == 0) {
+                Log.d("ee","ee");
+                storeViewHolder.storeName.setText("No stores");
+            }
         }
 
         @Override

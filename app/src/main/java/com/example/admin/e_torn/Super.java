@@ -16,12 +16,13 @@ public class Super {
     private int photo;
     private List<Store> stores;
 
-    Super(String name, String address, String phone, String fax, int photo) {
+    Super(String name, String address, String phone, String fax, int photo, List<Store> stores) {
         this.name = name;
         this.address =address;
         this.phone = phone;
         this.fax = fax;
         this.photo = photo;
+        this.stores = stores;
     }
 
     public void setName(String name) {
