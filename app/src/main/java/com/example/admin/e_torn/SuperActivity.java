@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.example.admin.e_torn.Adapters.SuperAdapter;
 import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.Services.RetrofitManager;
 import com.example.admin.e_torn.Services.SuperService;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 public class SuperActivity extends AppCompatActivity {
@@ -47,7 +49,7 @@ public class SuperActivity extends AppCompatActivity {
 
         supers = new ArrayList<>();
 
-        SuperService superService = SuperService.retrofit.create(SuperService.class);
+        SuperService superService = RetrofitManager.retrofit.create(SuperService.class);
         final Call<List<Super>> call = superService.getSupers();
         call.enqueue(new Callback<List<Super>>() {
             @Override

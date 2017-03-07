@@ -20,10 +20,4 @@ public interface SuperService {
 
     @GET("/supers")
     Call<List<Super>> getSupers ();
-
-    public static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Constants.serverURL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
 }
