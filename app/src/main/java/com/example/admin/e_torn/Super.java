@@ -9,6 +9,15 @@ import java.util.List;
 
 public class Super {
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id;
     private String name;
     private String address;
     private String phone;
@@ -16,7 +25,8 @@ public class Super {
     private int photo;
     private List<Store> stores;
 
-    Super(String name, String address, String phone, String fax, int photo, List<Store> stores) {
+    Super(String id, String name, String address, String phone, String fax, int photo, List<Store> stores) {
+        this.id = id;
         this.name = name;
         this.address =address;
         this.phone = phone;

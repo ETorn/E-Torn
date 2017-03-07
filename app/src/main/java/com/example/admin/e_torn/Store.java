@@ -10,22 +10,44 @@ import java.util.List;
  */
 
 public class Store implements Parcelable{
-
+    private String id;
     private String name;
     private List<User> users;
     private int storeTurn;
     private int usersTurn;
+    private int queue;
     private int photo;
 
-    public Store(String name, int usersTurn, int storeTurn, int photo) {
+    public Store(String id, String name, int usersTurn, int storeTurn, int photo) {
+        this.id = id;
         this.usersTurn = usersTurn;
         this.storeTurn = storeTurn;
         this.name = name;
         this.photo = photo;
+        this.queue = usersTurn - storeTurn;
     }
 
+    public int getQueue() {
+        return queue;
+    }
+
+    public void setQueue(int queue) {
+        this.queue = queue;
+    }
+
+    public void reloadQueue () {
+        this.queue = this.usersTurn - this.storeTurn;
+    }
     public Store (Parcel in) {
         this.name = in.readString();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public List<User> getUsers() {
