@@ -3,8 +3,6 @@ package com.example.admin.e_torn;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 /**
  * Created by ausias on 01/03/17.
  */
@@ -12,7 +10,6 @@ import java.util.List;
 public class Store implements Parcelable{
     private String id;
     private String name;
-    private List<User> users;
     private int storeTurn;
     private int usersTurn;
     private int queue;
@@ -48,14 +45,6 @@ public class Store implements Parcelable{
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     public String getName() {

@@ -1,7 +1,9 @@
 package com.example.admin.e_torn;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class StoreInfoActivity extends AppCompatActivity {
 
@@ -18,5 +20,13 @@ public class StoreInfoActivity extends AppCompatActivity {
         storeTurn = getIntent().getIntExtra("storeTurn", 1);
         usersTurn = getIntent().getIntExtra("usersTurn", 1);
 
+        FirebaseMessaging.getInstance().subscribeToTopic("stores/" + storeId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("stores/" + storeId);
     }
 }
