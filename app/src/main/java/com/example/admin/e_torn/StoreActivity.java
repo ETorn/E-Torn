@@ -55,10 +55,8 @@ public class StoreActivity extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
                         Store store = stores.get(position);
                         Intent intent = new Intent(context, StoreInfoActivity.class);
-                        // Pasem a StoreInfoActivity les dades necesaries per fer la peticio al servidor
+                        // Pasem a StoreInfoActivity la id necessaria per fer la peticio al servidor
                         intent.putExtra("id", store.getId());
-                        intent.putExtra("storeTurn", store.getStoreTurn());
-                        intent.putExtra("usersTurn", store.getUsersTurn());
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }

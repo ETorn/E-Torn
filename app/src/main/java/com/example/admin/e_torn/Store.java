@@ -12,7 +12,6 @@ import java.util.List;
 public class Store implements Parcelable{
     private String id;
     private String name;
-    private List<User> users;
     private int storeTurn;
     private int usersTurn;
     private int queue;
@@ -35,8 +34,8 @@ public class Store implements Parcelable{
         this.queue = queue;
     }
 
-    public void reloadQueue () {
-        this.queue = this.usersTurn - this.storeTurn;
+    public int getReloadedQueue () {
+       return this.queue = this.usersTurn - this.storeTurn;
     }
     public Store (Parcel in) {
         this.name = in.readString();
@@ -48,14 +47,6 @@ public class Store implements Parcelable{
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     public String getName() {
