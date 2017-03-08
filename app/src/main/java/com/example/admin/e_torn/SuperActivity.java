@@ -61,6 +61,7 @@ public class SuperActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Super>> call, Response<List<Super>> response) {
                 (findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                Log.d("Response", response.body().toString());
                 for (Super superM: response.body()) {
                     supers.add(new Super(superM.getId(), superM.getName(), superM.getAddress(), superM.getPhone(), superM.getFax(), R.drawable.capraboicon, superM.getStores()));
                 /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
@@ -87,8 +88,7 @@ public class SuperActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Super>> call, Throwable t) {
-                Log.d("call",call.toString());
-                Log.d("ee", t.toString());
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
             }
         });
 

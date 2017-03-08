@@ -5,11 +5,11 @@
       <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-2.14.1" />
+        <option name="gradleHome" value="D:\AndroidStudio\gradle\gradle-2.14.1" />
         <option name="modules">
           <set>
-            <option value="/dades/dades/Victor/Android/E-Torn" />
-            <option value="/dades/dades/Victor/Android/E-Torn/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

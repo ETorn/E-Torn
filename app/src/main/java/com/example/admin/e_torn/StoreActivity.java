@@ -2,20 +2,16 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.admin.e_torn.Adapters.StoreAdapter;
-import com.example.admin.e_torn.Adapters.SuperAdapter;
 import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StoreActivity extends AppCompatActivity {
@@ -46,7 +42,9 @@ public class StoreActivity extends AppCompatActivity {
         stores.add(new Store("Peixateria02", 1, 1, R.drawable.capraboicon));*/
         for (Store store: stores) {
             store.setPhoto(R.drawable.capraboicon);
+            Log.d("store", store.toString());
         }
+
         StoreAdapter adapter = new StoreAdapter(stores);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(

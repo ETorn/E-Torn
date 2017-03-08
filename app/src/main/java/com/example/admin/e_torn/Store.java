@@ -3,28 +3,27 @@ package com.example.admin.e_torn;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 /**
  * Created by ausias on 01/03/17.
  */
 
 public class Store implements Parcelable{
-    private String id;
+    private String _id;
     private String name;
     private int storeTurn;
     private int usersTurn;
     private int queue;
     private int photo;
 
-    public Store(String id, String name, int usersTurn, int storeTurn, int photo) {
-        this.id = id;
+    public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
+        this._id = _id;
         this.usersTurn = usersTurn;
         this.storeTurn = storeTurn;
         this.name = name;
         this.photo = photo;
         this.queue = usersTurn - storeTurn;
     }
+    public Store(){};
 
     public int getQueue() {
         return queue;
@@ -39,14 +38,18 @@ public class Store implements Parcelable{
     }
     public Store (Parcel in) {
         this.name = in.readString();
+        this._id = in.readString();
+        this.storeTurn = in.readInt();
+        this.usersTurn = in.readInt();
+        this.queue = in.readInt();
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
     public String getName() {
@@ -89,6 +92,10 @@ public class Store implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
+        dest.writeString(this._id);
+        dest.writeInt(this.storeTurn);
+        dest.writeInt(this.usersTurn);
+        dest.writeInt(this.queue);
     }
 
     public static final Creator<Store> CREATOR = new Creator<Store>() {
@@ -102,4 +109,16 @@ public class Store implements Parcelable{
             return new Store[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Store{" +
+                "id=" + _id +
+                ", name='" + name + '\'' +
+                ", storeTurn=" + storeTurn +
+                ", usersTurn=" + usersTurn +
+                ", queue=" + queue +
+                ", photo=" + photo +
+                '}';
+    }
 }
