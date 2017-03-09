@@ -3,30 +3,19 @@ package com.example.admin.e_torn;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
-import com.example.admin.e_torn.Listeners.PushUpdateListener;
-import com.google.firebase.messaging.RemoteMessage;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin.e_torn.Listeners.PushUpdateListener;
 import com.example.admin.e_torn.Response.PostUserAddResponse;
 import com.example.admin.e_torn.Services.RetrofitManager;
 import com.example.admin.e_torn.Services.StoreService;
-import com.example.admin.e_torn.Services.SuperService;
-
-    AppCompatActivity self;
-
-    String storeId;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.messaging.RemoteMessage;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,11 +23,14 @@ import retrofit2.Response;
 
 public class StoreInfoActivity extends AppCompatActivity implements View.OnClickListener{
 
+    AppCompatActivity self;
+
     private static final String TAG = "StoreInforActivity" ;
     int storeTurn;
     int usersTurn;
     int queue;
 
+    String storeId;
     String userId;
     Integer userTurn;
 
@@ -75,6 +67,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         storeId = getIntent().getStringExtra("id");
         storeTurn = getIntent().getIntExtra("storeTurn", 1);
         usersTurn = getIntent().getIntExtra("usersTurn", 1);
+
+        store.setId(storeId);
+
         actualTurnText = (TextView) findViewById(R.id.actualTurn);
         disponibleTurnText = (TextView) findViewById(R.id.disponibleTurn);
         queueText = (TextView) findViewById(R.id.queue);
@@ -103,7 +98,6 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         super.onDestroy();
 
         storeSubscription.unsubscribe();
-        store.setId(getIntent().getStringExtra("id"));
 
         StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
         final Call<Store> call = storeService.getStoreById(store.getId());

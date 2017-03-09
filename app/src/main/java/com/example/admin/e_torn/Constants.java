@@ -1,7 +1,5 @@
 package com.example.admin.e_torn;
 
-import android.content.SharedPreferences;
-
 /**
  * Created by Admin on 06/02/2017.
  */
