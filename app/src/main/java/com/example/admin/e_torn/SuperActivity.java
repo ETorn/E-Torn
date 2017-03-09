@@ -14,14 +14,17 @@ import android.widget.TextView;
 
 import com.example.admin.e_torn.Adapters.SuperAdapter;
 import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.Response.PostUserResponse;
 import com.example.admin.e_torn.Services.RetrofitManager;
 import com.example.admin.e_torn.Services.SuperService;
+import com.example.admin.e_torn.Services.UserService;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,11 +36,28 @@ public class SuperActivity extends AppCompatActivity {
     private List<Super> supers;
     private RecyclerView recyclerView;
     private Context context;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview);
+
+        //Efectuem crida a post /users per a obtenir una ID per a l'usuari
+        UserService userService = RetrofitManager.retrofit.create(UserService.class);
+        final Call<PostUserResponse> call = userService.getUserId();
+        call.enqueue(new Callback<PostUserResponse>() {
+            @Override
+            public void onResponse(Call<PostUserResponse> call, Response<PostUserResponse> response) {
+                userId = response.body().getUserId();
+            }
+
+            @Override
+            public void onFailure(Call<PostUserResponse> call, Throwable t) {
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+            }
+        });
+
         (findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);

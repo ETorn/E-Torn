@@ -76,7 +76,7 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:id="@+id/disponibleTurn"
+                    android:id="@+id/userTurn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -85,10 +85,10 @@
                     android:textSize="30dp" />
 
                 <TextView
-                    android:id="@+id/disponibleTurnText"
+                    android:id="@+id/userTurnText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Torn disponible"
+                    android:text="El teu torn"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold"
                     android:layout_alignParentTop="true"
@@ -155,32 +155,7 @@
 
             </RelativeLayout>
 
-
-
-
-
         </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:text="Demana torn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/getTurnBtn"
-                android:padding="5dp"
-                android:textColor="@android:color/white"
-                android:background="@color/colorPrimary"
-                android:layout_marginRight="13dp"
-                android:layout_marginEnd="13dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="11dp" />
-
-        </RelativeLayout>
 
 
     </LinearLayout>

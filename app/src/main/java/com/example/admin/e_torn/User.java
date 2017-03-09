@@ -7,26 +7,28 @@ package com.example.admin.e_torn;
 public class User {
 
     private int turn;
-    private int id;
+    private String _id;
 
-    public User(int turn, int id) {
+    public User(int turn, String id) {
         this.turn = turn;
-        this.id = id;
+        this._id = id;
     }
+
+    public User() {};
 
     public int getTurn() {
         return turn;
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return _id;
     }
 
     public void setTurn(int turn) {
         this.turn = turn;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(String _id) {
+        this._id = _id;
     }
 }
