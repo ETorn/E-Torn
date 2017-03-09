@@ -6,17 +6,17 @@ package com.example.admin.e_torn;
 
 public class User {
 
-    private int turn;
+    private Integer turn;
     private String _id;
 
-    public User(int turn, String id) {
+    public User(Integer turn, String id) {
         this.turn = turn;
         this._id = id;
     }
 
     public User() {};
 
-    public int getTurn() {
+    public Integer getTurn() {
         return turn;
     }
 
@@ -24,7 +24,7 @@ public class User {
         return _id;
     }
 
-    public void setTurn(int turn) {
+    public void setTurn(Integer turn) {
         this.turn = turn;
     }
 
