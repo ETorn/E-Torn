@@ -2,15 +2,13 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-
 
 import com.example.admin.e_torn.Adapters.SuperAdapter;
 import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
@@ -19,8 +17,6 @@ import com.example.admin.e_torn.Services.RetrofitManager;
 import com.example.admin.e_torn.Services.SuperService;
 import com.example.admin.e_torn.Services.UserService;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +24,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 
 public class SuperActivity extends AppCompatActivity {
