@@ -57,16 +57,12 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         //prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
         //userId = prefs.getString("userId", null);
 
-
         //CANVIAR PER ID FIREBASE!!!!
         userId = "58c15c99051e1529b8be52a4";
-
 
         self = this;
 
         storeId = getIntent().getStringExtra("id");
-        storeTurn = getIntent().getIntExtra("storeTurn", 1);
-        usersTurn = getIntent().getIntExtra("usersTurn", 1);
 
         store.setId(storeId);
 
