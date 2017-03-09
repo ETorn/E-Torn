@@ -59,7 +59,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
 
         //CANVIAR PER ID FIREBASE!!!!
-        userId = "58c15cc4051e1529b8be52a5";
+        userId = "58c15c99051e1529b8be52a4";
 
 
         self = this;
@@ -91,13 +91,6 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         super.onResume();
 
         storeSubscription.subscribe();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        storeSubscription.unsubscribe();
 
         StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
         final Call<Store> call = storeService.getStoreById(store.getId());
@@ -122,6 +115,15 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                 Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        storeSubscription.unsubscribe();
+
+
     }
 
 
