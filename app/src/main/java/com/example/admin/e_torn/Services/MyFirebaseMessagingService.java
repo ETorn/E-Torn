@@ -1,11 +1,14 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.Services;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -21,6 +24,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
 
         Log.d(TAG, "PUSH Message recieved");
+
+        Log.d(TAG, "From: " + remoteMessage.getFrom().replace("/topics/", ""));
 
         String notificationTitle;
         if (remoteMessage.getNotification() != null) {
@@ -40,6 +45,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Has data: false");
 
         }
+
+        Intent intent = new Intent();
+        intent.putExtra("remoteMessage", remoteMessage);
+        intent.setAction(Constants.packageName + "." + remoteMessage.getFrom().replace("/topics/", ""));
+        sendBroadcast(intent);
 
         Notification n = new Notification.Builder(this)
                 .setContentTitle(notificationTitle)
