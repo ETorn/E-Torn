@@ -1,52 +1,111 @@
 package com.example.admin.e_torn;
 
-import android.graphics.Color;
-import android.graphics.Point;
-import android.os.Build;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.util.TypedValue;
-import android.view.Display;
+import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import com.example.admin.e_torn.Adapters.SuperAdapter;
+import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.Response.PostUserResponse;
+import com.example.admin.e_torn.Services.RetrofitManager;
+import com.example.admin.e_torn.Services.SuperService;
+import com.example.admin.e_torn.Services.UserService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class SuperActivity extends AppCompatActivity {
+
+    private List<Super> supers;
+    private RecyclerView recyclerView;
+    private Context context;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_super);
+        setContentView(R.layout.recyclerview);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+        //Efectuem crida a post /users per a obtenir una ID per a l'usuari
+        UserService userService = RetrofitManager.retrofit.create(UserService.class);
+        final Call<PostUserResponse> call = userService.getUserId();
+        call.enqueue(new Callback<PostUserResponse>() {
+            @Override
+            public void onResponse(Call<PostUserResponse> call, Response<PostUserResponse> response) {
+                userId = response.body().getUserId();
+            }
 
-        int width = size.x;
-        int height = size.y;
+            @Override
+            public void onFailure(Call<PostUserResponse> call, Throwable t) {
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+            }
+        });
 
-        CardView cardView = (CardView) findViewById(R.id.cardView);
-
-        int actionBarHeight = 0;
-        // Calculate ActionBar's height
-        TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-        }
-
-        cardView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (height - actionBarHeight) / 2));
-
-        TextView superName = (TextView) findViewById(R.id.super_name);
-        TextView superAddress = (TextView) findViewById(R.id.super_address);
-        superName.setText("Caprabo");
-        superAddress.setText("mec");
-
-
+        (findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+        this.context = getApplicationContext();
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        //recyclerView.setHasFixedSize(true); Per a quan sabem que el tamany del recyclerView no canviara
+        inicialitzeData();
+       // initializeAdapter();
     }
 
 
+    public void inicialitzeData (){
+
+        supers = new ArrayList<>();
+
+
+        SuperService superService = RetrofitManager.retrofit.create(SuperService.class);
+        final Call<List<Super>> call = superService.getSupers();
+
+        call.enqueue(new Callback<List<Super>>() {
+            @Override
+            public void onResponse(Call<List<Super>> call, Response<List<Super>> response) {
+                (findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                Log.d("Response", response.body().toString());
+                for (Super superM: response.body()) {
+                    supers.add(new Super(superM.getId(), superM.getName(), superM.getAddress(), superM.getPhone(), superM.getFax(), R.drawable.capraboicon, superM.getStores()));
+                /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
+                supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
+                supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
+                }
+                SuperAdapter adapter = new SuperAdapter(context, supers);
+                recyclerView.setAdapter(adapter);
+                recyclerView.addOnItemTouchListener(
+                    new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener(){
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            List<Store> stores = supers.get(position).getStores();
+                            Intent intent = new Intent(context, StoreActivity.class);
+                            intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }
+                    })
+                );
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Super>> call, Throwable t) {
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+            }
+        });
+
+    }
 }
