@@ -20,13 +20,13 @@ public class StoreInfoActivity extends AppCompatActivity {
         storeTurn = getIntent().getIntExtra("storeTurn", 1);
         usersTurn = getIntent().getIntExtra("usersTurn", 1);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("stores/" + storeId);
+        FirebaseMessaging.getInstance().subscribeToTopic("stores_" + storeId);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("stores/" + storeId);
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("stores_" + storeId);
     }
 }

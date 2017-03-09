@@ -8,15 +8,15 @@ import android.os.Parcelable;
  */
 
 public class Store implements Parcelable{
-    private String id;
+    private String _id;
     private String name;
     private int storeTurn;
     private int usersTurn;
     private int queue;
     private int photo;
 
-    public Store(String id, String name, int usersTurn, int storeTurn, int photo) {
-        this.id = id;
+    public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
+        this._id = _id;
         this.usersTurn = usersTurn;
         this.storeTurn = storeTurn;
         this.name = name;
@@ -37,14 +37,18 @@ public class Store implements Parcelable{
     }
     public Store (Parcel in) {
         this.name = in.readString();
+        this._id = in.readString();
+        this.storeTurn = in.readInt();
+        this.usersTurn = in.readInt();
+        this.queue = in.readInt();
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
     public String getName() {
@@ -87,6 +91,10 @@ public class Store implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
+        dest.writeString(this._id);
+        dest.writeInt(this.storeTurn);
+        dest.writeInt(this.usersTurn);
+        dest.writeInt(this.queue);
     }
 
     public static final Creator<Store> CREATOR = new Creator<Store>() {
