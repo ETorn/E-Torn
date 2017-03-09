@@ -1,5 +1,7 @@
 package com.example.admin.e_torn;
 
+import android.content.SharedPreferences;
+
 /**
  * Created by Admin on 06/02/2017.
  */
@@ -13,4 +15,5 @@ public class Constants {
 
     public static final String serverURL = "http://192.168.1.128:8080";
 
+    public static final String PREFERENCES_NAME = "UserPreferences";
 }

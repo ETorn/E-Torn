@@ -2,6 +2,7 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     int usersTurn;
     int queue;
 
+    String userId;
+    Integer userTurn;
+
     TextView actualTurnText;
     TextView disponibleTurnText;
     TextView queueText;
@@ -37,17 +41,24 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     Button getTurnBtn;
 
     Store store;
-    User user;
+
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_info);
         store = new Store();
-        user = new User();
+
+        //Extreure ID de FIREBASE
+        //prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
+        //userId = prefs.getString("userId", null);
+
+
         //CANVIAR PER ID FIREBASE!!!!
-        //user.setId("58c15dff051e1529b8be52aa");
-        //Generar ID (POST /users)
+        userId = "58c15cc4051e1529b8be52a5";
+
 
         actualTurnText = (TextView) findViewById(R.id.actualTurn);
         disponibleTurnText = (TextView) findViewById(R.id.disponibleTurn);
@@ -88,31 +99,38 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.getTurnBtn) {
-            if (user.getTurn() == 0) {
-                StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
-                final Call<PostUserAddResponse> call = storeService.addUserToStore(store.getId(), user.getId());
-                call.enqueue(new Callback<PostUserAddResponse>() {
-                    @Override
-                    public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
-                        user.setTurn(response.body().getTurn());
-                        Log.d(TAG, "Torn demanat");
-
+            StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
+            final Call<PostUserAddResponse> call = storeService.addUserToStore(store.getId(), userId);
+            call.enqueue(new Callback<PostUserAddResponse>() {
+                @Override
+                public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
+                    Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
+                    userTurn = response.body().getTurn();
+                    putIdInPref(usersTurn);
+                    if(userTurn != null) {
                         Context context = getApplicationContext();
                         Intent intent = new Intent(context, UserTurnInfo.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
+                        finish();
                     }
+                    else {
+                        //L'usuari ja ha demanat torn
+                        Log.d(TAG, "Usuari ja ha demanat torn");
+                    }
+                }
 
-                    @Override
-                    public void onFailure(Call<PostUserAddResponse> call, Throwable t) {
-                        Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
-                    }
-                });
-            }
-            else {
-                //L'usuari ja ha demanat torn
-                Log.d(TAG, "Usuari ja ha demanat torn");
-            }
+                @Override
+                public void onFailure(Call<PostUserAddResponse> call, Throwable t) {
+                    Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+                }
+            });
         }
+    }
+
+    public void putIdInPref (Integer turn) {
+        editor = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE).edit();
+        editor.putInt("userTurn", turn);
+        editor.commit();
     }
 }
