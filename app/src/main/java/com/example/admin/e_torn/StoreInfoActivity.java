@@ -76,6 +76,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         storeSubscription.setListener(new PushUpdateListener() {
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
+                queueText.setText(remoteMessage.getData().get("storeQueue"));
+                actualTurnText.setText(remoteMessage.getData().get("storeTurn"));
                 Toast.makeText(self, "PUSH", Toast.LENGTH_SHORT).show();
             }
         });
@@ -137,6 +139,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                     if(userTurn != null) {
                         Context context = getApplicationContext();
                         Intent intent = new Intent(context, UserTurnInfo.class);
+                        intent.putExtra("id", storeId);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                         finish();
