@@ -1,4 +1,4 @@
-package com.example.admin.e_torn.Services;
+package com.example.admin.e_torn.services;
 
 import android.app.Notification;
 import android.app.NotificationManager;

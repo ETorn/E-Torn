@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import com.example.admin.e_torn.Listeners.PushUpdateListener;
+import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 
