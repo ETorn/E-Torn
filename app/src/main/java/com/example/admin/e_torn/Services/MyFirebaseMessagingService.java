@@ -53,7 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Notification n = new Notification.Builder(this)
                 .setContentTitle("New FCM push notification")
-                .setContentText("Notification" + notificationTitle + "\nData: " + remoteMessage.getData())
+                .setContentText("Notification: " + notificationTitle + ", Data: " + remoteMessage.getData())
                 .setSmallIcon(R.drawable.capraboicon)
                 .build();
 
