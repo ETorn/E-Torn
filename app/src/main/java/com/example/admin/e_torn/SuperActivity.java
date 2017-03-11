@@ -10,17 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.example.admin.e_torn.Adapters.SuperAdapter;
-import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
-import com.example.admin.e_torn.Response.PostUserResponse;
-import com.example.admin.e_torn.Services.RetrofitManager;
-import com.example.admin.e_torn.Services.SuperService;
-import com.example.admin.e_torn.Services.UserService;
+import com.example.admin.e_torn.adapters.SuperAdapter;
+import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.response.PostUserResponse;
+import com.example.admin.e_torn.services.RetrofitManager;
+import com.example.admin.e_torn.services.SuperService;
+import com.example.admin.e_torn.services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

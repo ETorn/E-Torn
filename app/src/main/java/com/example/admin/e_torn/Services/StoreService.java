@@ -1,6 +1,6 @@
-package com.example.admin.e_torn.Services;
+package com.example.admin.e_torn.services;
 
-import com.example.admin.e_torn.Response.PostUserAddResponse;
+import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.Store;
 
 import retrofit2.Call;

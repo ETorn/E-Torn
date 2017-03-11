@@ -1,4 +1,4 @@
-package com.example.admin.e_torn.Services;
+package com.example.admin.e_torn.services;
 
 import com.example.admin.e_torn.Constants;
 

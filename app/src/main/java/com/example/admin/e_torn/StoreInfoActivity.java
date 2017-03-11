@@ -11,10 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.admin.e_torn.Listeners.PushUpdateListener;
-import com.example.admin.e_torn.Response.PostUserAddResponse;
-import com.example.admin.e_torn.Services.RetrofitManager;
-import com.example.admin.e_torn.Services.StoreService;
+import com.example.admin.e_torn.listeners.PushUpdateListener;
+import com.example.admin.e_torn.response.PostUserAddResponse;
+import com.example.admin.e_torn.services.RetrofitManager;
+import com.example.admin.e_torn.services.StoreService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import retrofit2.Call;
@@ -43,22 +43,21 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     Store store;
 
     SharedPreferences.Editor editor;
-    SharedPreferences prefs;
 
     TopicSubscription storeSubscription;
+
+    ETornApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_info);
+
+        app = (ETornApplication) getApplication();
+
         store = new Store();
 
-        //Extreure ID de FIREBASE
-        //prefs = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
-        //userId = prefs.getString("userId", null);
-
-        //CANVIAR PER ID FIREBASE!!!!
-        userId = "58c15c99051e1529b8be52a4";
+        userId = app.getFCMToken();
 
         self = this;
 
@@ -163,7 +162,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void putIdInPref (Integer turn) {
-        editor = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE).edit();
+        editor = ((ETornApplication) getApplication()).getSharedPreferences().edit();
         editor.putInt("userTurn", turn);
         editor.commit();
     }

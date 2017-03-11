@@ -1,4 +1,4 @@
-package com.example.admin.e_torn.Listeners;
+package com.example.admin.e_torn.listeners;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

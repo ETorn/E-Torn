@@ -1,4 +1,4 @@
-package com.example.admin.e_torn.Adapters;
+package com.example.admin.e_torn.adapters;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.Store;
-import com.example.admin.e_torn.Super;
 
 import java.util.List;
 

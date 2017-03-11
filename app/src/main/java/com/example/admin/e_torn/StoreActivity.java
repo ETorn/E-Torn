@@ -9,8 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.example.admin.e_torn.Adapters.StoreAdapter;
-import com.example.admin.e_torn.Listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.adapters.StoreAdapter;
+import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 
 import java.util.List;
 

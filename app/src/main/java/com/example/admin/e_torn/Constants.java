@@ -12,8 +12,10 @@ public class Constants {
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
     public static final String serverURL = "http://192.168.1.128:8080";
-    
+
     public static final String packageName = "com.example.admin.e_torn";
 
-    public static final String PREFERENCES_NAME = "UserPreferences";
+    public static final String PREFERENCES_NAME = packageName + "UserPreferences";
+
+    public static final String FCE_TOKEN_NAME = "FCEToken";
 }

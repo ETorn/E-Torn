@@ -1,4 +1,4 @@
-package com.example.admin.e_torn.Response;
+package com.example.admin.e_torn.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

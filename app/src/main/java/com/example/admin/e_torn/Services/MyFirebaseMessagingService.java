@@ -1,4 +1,4 @@
-package com.example.admin.e_torn.Services;
+package com.example.admin.e_torn.services;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -52,8 +52,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         sendBroadcast(intent);
 
         Notification n = new Notification.Builder(this)
-                .setContentTitle(notificationTitle)
-                .setContentText("Data: " + remoteMessage.getData())
+                .setContentTitle("New FCM push notification")
+                .setContentText("Notification: " + notificationTitle + ", Data: " + remoteMessage.getData())
                 .setSmallIcon(R.drawable.capraboicon)
                 .build();
 
