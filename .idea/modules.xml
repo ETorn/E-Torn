@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/E-Torn.iml" filepath="$PROJECT_DIR$/E-Torn.iml" />
-      <module fileurl="file:///dades/dades/Victor/Android/E-Torn/E-Torn.iml" filepath="/dades/dades/Victor/Android/E-Torn/E-Torn.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file:///dades/dades/Victor/Android/E-Torn/app/app.iml" filepath="/dades/dades/Victor/Android/E-Torn/app/app.iml" />
     </modules>
   </component>
 </project>
