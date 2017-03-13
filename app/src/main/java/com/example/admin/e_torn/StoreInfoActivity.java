@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
@@ -50,7 +50,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     TextView disponibleTurnText;
     TextView queueText;
     TextView aproxTimeText;
-    Button getTurnBtn;
+    FloatingActionButton getTurnBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         disponibleTurnText = (TextView) findViewById(R.id.disponibleTurn);
         queueText = (TextView) findViewById(R.id.queue);
         aproxTimeText = (TextView) findViewById(R.id.aproxTime);
-        getTurnBtn = (Button) findViewById(R.id.getTurnBtn);
+        getTurnBtn = (FloatingActionButton) findViewById(R.id.getTurnBtn);
         getTurnBtn.setOnClickListener(this);
 
         storeSubscription = new TopicSubscription(this, "store." + storeId);
