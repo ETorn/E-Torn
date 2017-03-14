@@ -28,10 +28,8 @@ public class StoreActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         this.stores = getIntent().getParcelableArrayListExtra("stores");
-        //recyclerView.setHasFixedSize(true); Per a quan sabem que el tamany del recyclerView no canviara
+        recyclerView.setHasFixedSize(true); //Per a quan sabem que el tamany del recyclerView no canviara
         inicialitzeData();
-        initializeAdapter();
-
     }
 
     public void inicialitzeData (){
@@ -59,11 +57,5 @@ public class StoreActivity extends AppCompatActivity {
                     }
                 })
         );
-
-
-    }
-
-    private void initializeAdapter(){
-
     }
 }
