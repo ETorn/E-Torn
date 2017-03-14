@@ -167,7 +167,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     private void updateUI() {
         actualTurnText.setText(String.valueOf(store.getStoreTurn()));
         disponibleTurnText.setText(String.valueOf(store.getUsersTurn()));
-        queueText.setText(String.valueOf(store.getReloadedQueue()));
+        queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
     }
 
     public void putUserTurnInPref(Integer turn) {
