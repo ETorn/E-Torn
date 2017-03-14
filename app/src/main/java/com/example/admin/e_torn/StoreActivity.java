@@ -41,7 +41,6 @@ public class StoreActivity extends AppCompatActivity {
         stores.add(new Store("Peixateria01", 1, 1, R.drawable.capraboicon));
         stores.add(new Store("Peixateria02", 1, 1, R.drawable.capraboicon));*/
         for (Store store: stores) {
-            store.setPhoto(R.drawable.capraboicon);
             Log.d("store", store.toString());
         }
 

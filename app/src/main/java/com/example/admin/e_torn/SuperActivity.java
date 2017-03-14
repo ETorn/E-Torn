@@ -77,7 +77,7 @@ public class SuperActivity extends AppCompatActivity {
                 (findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 Log.d("Response", response.body().toString());
                 for (Super superM: response.body()) {
-                    supers.add(new Super(superM.getId(), superM.getName(), superM.getAddress(), superM.getPhone(), superM.getFax(), R.drawable.capraboicon, superM.getStores()));
+                    supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getCoords()));
                 /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
                 supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
                 supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/

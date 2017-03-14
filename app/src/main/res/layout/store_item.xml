@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/cardView"
+    android:layout_margin="10dp"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:padding="16dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="130px"
+            android:id="@+id/top_item_store"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_store_name"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:textSize="20sp"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_time_icon"
+                android:layout_below="@+id/item_name"
+                android:textSize="15sp"
+                android:layout_centerInParent="true"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_time"
+                android:layout_marginLeft="10px"
+                android:layout_below="@+id/item_name"
+                android:layout_toRightOf="@id/item_time_icon"
+
+                />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1px"
+            android:layout_marginBottom="5px"
+            android:background="@android:color/darker_gray"
+            android:id="@+id/item_separator"
+            android:layout_below="@id/top_item_store"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            />
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/item_separator">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="200px"
+                    android:layout_height="70px"
+                    android:text="Actual"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="200px"
+                    android:layout_height="70px"
+                    android:text="Disponible"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

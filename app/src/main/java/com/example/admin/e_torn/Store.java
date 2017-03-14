@@ -13,14 +13,12 @@ public class Store implements Parcelable{
     private int storeTurn;
     private int usersTurn;
     private int queue;
-    private int photo;
 
     public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
         this._id = _id;
         this.usersTurn = usersTurn;
         this.storeTurn = storeTurn;
         this.name = name;
-        this.photo = photo;
         this.queue = usersTurn - storeTurn;
     }
     public Store(){};
@@ -76,14 +74,6 @@ public class Store implements Parcelable{
         this.usersTurn = usersTurn;
     }
 
-    public int getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(int photo) {
-        this.photo = photo;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -118,7 +108,6 @@ public class Store implements Parcelable{
                 ", storeTurn=" + storeTurn +
                 ", usersTurn=" + usersTurn +
                 ", queue=" + queue +
-                ", photo=" + photo +
                 '}';
     }
 }

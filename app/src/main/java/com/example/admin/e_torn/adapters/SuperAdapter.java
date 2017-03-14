@@ -56,9 +56,10 @@ public class SuperAdapter extends RecyclerView.Adapter<SuperAdapter.SuperViewHol
 
     @Override
     public void onBindViewHolder(SuperViewHolder superViewHolder, int position) {
-        superViewHolder.superName.setText(supers.get(position).getName());
         superViewHolder.superAddress.setText(supers.get(position).getAddress());
-        superViewHolder.superPhoto.setImageResource(supers.get(position).getPhoto());
+        superViewHolder.superCity.setText(supers.get(position).getCity());
+        //superViewHolder.superDistance.setText(supers.get(position).getDistance());
+        superViewHolder.superDistance.setText("10m"); // Canviar quan tinguem la localització funcional
     }
 
     @Override
@@ -71,16 +72,16 @@ public class SuperAdapter extends RecyclerView.Adapter<SuperAdapter.SuperViewHol
     public class SuperViewHolder extends RecyclerView.ViewHolder{
 
         CardView cardView;
-        TextView superName;
+        TextView superCity;
         TextView superAddress;
-        ImageView superPhoto;
+        TextView superDistance;
 
         public SuperViewHolder(final View itemView) {
             super(itemView);
             cardView = (CardView)itemView.findViewById(R.id.cardView);
-            superName = (TextView) itemView.findViewById(R.id.item_name);
-            superAddress = (TextView) itemView.findViewById(R.id.item_address);
-            superPhoto = (ImageView) itemView.findViewById(R.id.item_photo);
+            superCity = (TextView) itemView.findViewById(R.id.item_city);
+            superAddress = (TextView) itemView.findViewById(R.id.item_name);
+            superDistance = (TextView) itemView.findViewById(R.id.item_distance);
         }
 
     }

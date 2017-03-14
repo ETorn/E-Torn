@@ -24,13 +24,11 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     public static class StoreViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView storeName;
-        ImageView storePhoto;
 
         public StoreViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.cardView);
-            storeName = (TextView) itemView.findViewById(R.id.item_name);
-            storePhoto = (ImageView) itemView.findViewById(R.id.item_photo);
+            cardView = (CardView) itemView.findViewById(R.id.cardViewStore);
+            storeName = (TextView) itemView.findViewById(R.id.item_store_name);
         }
     }
 
@@ -55,9 +53,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         @Override
         public void onBindViewHolder(StoreViewHolder storeViewHolder, int position) {
             storeViewHolder.storeName.setText(stores.get(position).getName());
-            storeViewHolder.storePhoto.setImageResource(stores.get(position).getPhoto());
             if (stores.size() == 0) {
-                Log.d("ee","ee");
                 storeViewHolder.storeName.setText("No stores");
             }
         }

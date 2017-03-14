@@ -1,6 +1,5 @@
 package com.example.admin.e_torn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,25 +9,50 @@ import java.util.List;
 public class Super {
 
     private String _id;
-    private String name;
-    private String address;
+    private String city;
+    private String address; //super name
+    private List<Double> coords;
+    private int distance;
     private String phone;
     private String fax;
-    private int photo;
     private List<Store> stores;
 
-    Super(String _id, String name, String address, String phone, String fax, int photo, List<Store> stores) {
+    Super(String _id, String name, String address, String phone, String fax, List<Store> stores, List<Double> coords) {
         this._id = _id;
-        this.name = name;
+        this.city = name;
         this.address =address;
         this.phone = phone;
         this.fax = fax;
-        this.photo = photo;
         this.stores = stores;
+        this.coords = coords;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public List<Double> getCoords() {
+        return coords;
+    }
+
+    public void setCoords(List<Double> coords) {
+        this.coords = coords;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public void setAddress(String address) {
@@ -43,16 +67,12 @@ public class Super {
         this.fax = fax;
     }
 
-    public void setPhoto(int photo) {
-        this.photo = photo;
-    }
-
     public void setStores(List<Store> stores) {
         this.stores = stores;
     }
 
-    public String getName() {
-        return name;
+    public String getCity() {
+        return city;
     }
 
     public String getAddress() {
@@ -65,10 +85,6 @@ public class Super {
 
     public String getFax() {
         return fax;
-    }
-
-    public int getPhoto() {
-        return photo;
     }
 
     public List<Store> getStores() {
@@ -87,11 +103,10 @@ public class Super {
     public String toString() {
         return "Super{" +
                 "id='" + _id + '\'' +
-                ", name='" + name + '\'' +
+                ", city='" + city + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 ", fax='" + fax + '\'' +
-                ", photo=" + photo +
                 ", stores=" + stores +
                 '}';
     }
