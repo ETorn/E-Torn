@@ -1,99 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/cardView"
     android:layout_margin="10dp"
     >
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:padding="16dp"
-        >
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="130px"
-            android:id="@+id/top_item_store"
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_store_name"
-                android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
-                android:textSize="20sp"
+        <TextView
+            android:id="@+id/item_store_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:text="Nom"
 
-                />
+            android:textSize="20sp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_time_icon"
-                android:layout_below="@+id/item_name"
-                android:textSize="15sp"
-                android:layout_centerInParent="true"
-                />
+        <ImageView
+            android:id="@+id/time_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toLeftOf="@+id/item_time"
+            app:srcCompat="@mipmap/ic_access_time_black_24dp"
+            android:layout_marginRight="0dp"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/item_store_name" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_time"
-                android:layout_marginLeft="10px"
-                android:layout_below="@+id/item_name"
-                android:layout_toRightOf="@id/item_time_icon"
+        <TextView
+            android:id="@+id/item_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_name"
 
-                />
-        </RelativeLayout>
+            android:text="Time"
+            app:layout_constraintLeft_toRightOf="@+id/time_icon"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/time_icon"
+            android:layout_marginTop="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/time_icon"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintVertical_bias="0.5" />
 
         <View
-            android:layout_width="wrap_content"
-            android:layout_height="1px"
-            android:layout_marginBottom="5px"
-            android:background="@android:color/darker_gray"
             android:id="@+id/item_separator"
-            android:layout_below="@id/top_item_store"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            />
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/time_icon" />
 
-        <LinearLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/item_separator">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+        <TextView
+            android:id="@+id/actual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="Actual"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/disponible"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/item_separator"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintVertical_bias="0.52" />
 
-                <TextView
-                    android:layout_width="200px"
-                    android:layout_height="70px"
-                    android:text="Actual"
-                    android:gravity="center"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+        <TextView
+            android:id="@+id/disponible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:text="Disponible"
+            app:layout_constraintLeft_toRightOf="@+id/actual"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:layout_conversion_absoluteHeight="30dp"
+            tools:layout_conversion_absoluteWidth="100dp"
+            tools:layout_conversion_absoluteX="215dp"
+            tools:layout_conversion_absoluteY="84dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/actual" />
 
-                <TextView
-                    android:layout_width="200px"
-                    android:layout_height="70px"
-                    android:text="Disponible"
-                    android:gravity="center"
-                    android:layout_centerInParent="true"/>
 
-            </RelativeLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>
