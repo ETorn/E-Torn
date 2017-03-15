@@ -116,7 +116,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/disponible_turn_design"
+            android:background="@drawable/actual_turn_design"
             android:gravity="center_vertical|center_horizontal"
             android:text="15"
             android:textColor="@android:color/white"
