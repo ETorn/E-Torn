@@ -6,7 +6,14 @@ import android.content.res.Configuration;
 import android.util.Log;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
+import com.example.admin.e_torn.response.PostUserResponse;
+import com.example.admin.e_torn.services.RetrofitManager;
+import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ETornApplication extends Application implements PushUpdateListener {
@@ -16,7 +23,6 @@ public class ETornApplication extends Application implements PushUpdateListener 
     TopicSubscription allSubscription;
 
     SharedPreferences sharedPreferences;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -25,6 +31,21 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
 
+        //Efectuem crida a post /users per a obtenir una ID per a l'usuari
+        UserService userService = RetrofitManager.retrofit.create(UserService.class);
+        final Call<PostUserResponse> call = userService.getUserId();
+        call.enqueue(new Callback<PostUserResponse>() {
+            @Override
+            public void onResponse(Call<PostUserResponse> call, Response<PostUserResponse> response) {
+                putUserIdInPref(response.body().getUserId());
+            }
+
+            @Override
+            public void onFailure(Call<PostUserResponse> call, Throwable t) {
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+            }
+        });
+
         allSubscription = new TopicSubscription(this, "everyone");
         allSubscription.setListener(this);
         allSubscription.subscribe();
@@ -32,6 +53,12 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
+    }
+
+    public void putUserIdInPref(String id) {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putString("userId", id);
+        editor.commit();
     }
 
     public String getFCMToken() {

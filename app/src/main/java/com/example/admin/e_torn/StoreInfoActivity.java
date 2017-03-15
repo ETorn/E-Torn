@@ -141,14 +141,15 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
                     Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
                     userTurn = response.body().getTurn();
-                    putUserTurnInPref(userTurn);
+                    //putUserTurnInPref(userTurn);
                     if(userTurn != null) {
-                        Context context = getApplicationContext();
+                        //TODO Fer animacio  i canviar text per el Teu Torn
+                        /*Context context = getApplicationContext();
                         Intent intent = new Intent(context, UserTurnInfo.class);
                         intent.putExtra("id", storeId);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
-                        finish();
+                        finish();*/
                     }
                     else {
                         //L'usuari ja ha demanat torn
@@ -170,9 +171,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
     }
 
-    public void putUserTurnInPref(Integer turn) {
+    /*public void putUserTurnInPref(Integer turn) {
         SharedPreferences.Editor editor = ((ETornApplication) getApplication()).getSharedPreferences().edit();
         editor.putInt("userTurn", turn);
         editor.commit();
-    }
+    }*/
 }

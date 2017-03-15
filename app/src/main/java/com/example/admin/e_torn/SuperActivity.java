@@ -30,27 +30,11 @@ public class SuperActivity extends AppCompatActivity {
     private List<Super> supers;
     private RecyclerView recyclerView;
     private Context context;
-    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview);
-
-        //Efectuem crida a post /users per a obtenir una ID per a l'usuari
-        UserService userService = RetrofitManager.retrofit.create(UserService.class);
-        final Call<PostUserResponse> call = userService.getUserId();
-        call.enqueue(new Callback<PostUserResponse>() {
-            @Override
-            public void onResponse(Call<PostUserResponse> call, Response<PostUserResponse> response) {
-                userId = response.body().getUserId();
-            }
-
-            @Override
-            public void onFailure(Call<PostUserResponse> call, Throwable t) {
-                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
-            }
-        });
 
         (findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
