@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.R;
@@ -49,7 +48,7 @@ public class SuperAdapter extends RecyclerView.Adapter<SuperAdapter.SuperViewHol
 
     @Override
     public SuperViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.super_item, viewGroup, false);
         SuperViewHolder superViewHolder = new SuperViewHolder(view);
         return  superViewHolder;
     }
