@@ -39,10 +39,10 @@ public class SuperActivity extends AppCompatActivity {
         (findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        inicialitzeData();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         //recyclerView.setHasFixedSize(true); Per a quan sabem que el tamany del recyclerView no canviara
-        inicialitzeData();
        // initializeAdapter();
     }
 
