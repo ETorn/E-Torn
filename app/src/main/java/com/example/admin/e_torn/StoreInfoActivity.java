@@ -64,7 +64,6 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         store = new Store();
 
         userId = app.getFCMToken();
-
         self = this;
 
         storeId = getIntent().getStringExtra("id");
@@ -83,9 +82,6 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
                 Log.d(TAG, "push recieved");
-
-                // TODO: Queue no va XD
-                //queueText.setText(remoteMessage.getData().get("storeQueue"));
 
                 if (remoteMessage.getData().get("storeTurn") != null)
                     store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
