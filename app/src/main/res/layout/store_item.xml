@@ -48,7 +48,6 @@
             android:id="@+id/item_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/item_name"
 
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="8dp"
@@ -58,8 +57,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/time_icon"
             app:layout_constraintLeft_toRightOf="@+id/time_icon"
             app:layout_constraintRight_toRightOf="@+id/item_store_name"
-            app:layout_constraintTop_toTopOf="@+id/time_icon"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintTop_toTopOf="@+id/time_icon" />
 
         <View
             android:id="@+id/item_separator"
@@ -69,7 +67,6 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="16dp"
             android:background="@android:color/darker_gray"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/time_icon" />
@@ -140,7 +137,6 @@
             app:layout_constraintLeft_toRightOf="@+id/item_separarator_v"
             app:layout_constraintRight_toLeftOf="@+id/textView_disponible"
             app:layout_constraintTop_toBottomOf="@+id/item_separator"
-            app:layout_constraintVertical_bias="0.5"
             tools:layout_conversion_absoluteHeight="30dp"
             tools:layout_conversion_absoluteWidth="100dp"
             tools:layout_conversion_absoluteX="215dp"
@@ -164,8 +160,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/disponible"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_separator"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintTop_toBottomOf="@+id/item_separator" />
 
 
     </android.support.constraint.ConstraintLayout>
