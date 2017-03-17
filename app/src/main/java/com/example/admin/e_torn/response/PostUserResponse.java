@@ -12,6 +12,20 @@ public class PostUserResponse {
     @Expose
     private String userId;
 
+    private String firebaseId;
+
+    public PostUserResponse(String firebaseId) {
+        this.firebaseId = firebaseId;
+    }
+
+    public String getFirebaseId() {
+        return firebaseId;
+    }
+
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
+    }
+
     public String getUserId() {
         return userId;
     }

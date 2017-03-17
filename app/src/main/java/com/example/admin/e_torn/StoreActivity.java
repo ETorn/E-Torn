@@ -24,12 +24,12 @@ public class StoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview);
         this.context = getApplicationContext();
+        this.stores = getIntent().getParcelableArrayListExtra("stores");
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        inicialitzeData();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        this.stores = getIntent().getParcelableArrayListExtra("stores");
-        recyclerView.setHasFixedSize(true); //Per a quan sabem que el tamany del recyclerView no canviara
-        inicialitzeData();
+        //recyclerView.setHasFixedSize(true); //Per a quan sabem que el tamany del recyclerView no canviara
     }
 
     public void inicialitzeData (){

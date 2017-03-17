@@ -63,7 +63,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
         store = new Store();
 
-        userId = app.getFCMToken();
+        userId = app.user.getId();
         self = this;
 
         storeId = getIntent().getStringExtra("id");
@@ -139,7 +139,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             call.enqueue(new Callback<PostUserAddResponse>() {
                 @Override
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
-                    Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
+                    Log.d(TAG, "ResponseTurn: " + response.body().toString());
                     userTurn = response.body().getTurn();
                     //putUserTurnInPref(userTurn);
                     if(userTurn != null) {
