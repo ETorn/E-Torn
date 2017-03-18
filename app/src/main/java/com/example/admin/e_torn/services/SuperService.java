@@ -15,5 +15,5 @@ import retrofit2.http.Query;
 public interface SuperService {
 
     @GET("/supers")
-    Call<List<Super>> getSupers (@Query("latitude") double latitude, @Query("longitude") double longitude);
+    Call<List<Super>> getSupers (@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("distance") double distance);
 }

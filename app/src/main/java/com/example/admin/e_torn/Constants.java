@@ -20,4 +20,6 @@ public class Constants {
     public static final String FCE_TOKEN_NAME = "FCEToken";
 
     public static final String USER_ID = "userId";
+
+    public static int DEFAULT_DISTANCE = 3000;
 }

@@ -2,13 +2,11 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SuperActivity extends AppCompatActivity {
+public class SuperActivity extends PermissionManager {
     private AppCompatActivity self;
     double userLatitude;
     double userLongitude;
@@ -39,6 +37,8 @@ public class SuperActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Context context;
     private static final String TAG = "SuperActivity";
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +51,14 @@ public class SuperActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             GetGpsTask task = new GetGpsTask(this);
             task.execute(locationManager);
         }
 
-       LocationListener locationListener = new LocationListener() {
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Log.d(TAG, location.toString());
@@ -89,34 +89,35 @@ public class SuperActivity extends AppCompatActivity {
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        requestPermissions();
+
     }
 
-    public void inicialitzeData (){
+    @Override
+    protected void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
+        Log.d(TAG, "Permissos rebuts");
+        try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        } catch (SecurityException ignored) {
+        }
+    }
+
+    public void inicialitzeData() {
 
         supers = new ArrayList<>();
 
 
         SuperService superService = RetrofitManager.retrofit.create(SuperService.class);
-        final Call<List<Super>> call = superService.getSupers(41.386404, 2.107540);
-        //final Call<List<Super>> call = superService.getSupers(userLatitude, userLongitude); Comentat per a fer proves
+        final Call<List<Super>> call = superService.getSupers(userLatitude, userLongitude, Constants.DEFAULT_DISTANCE);
 
         call.enqueue(new Callback<List<Super>>() {
             @Override
             public void onResponse(Call<List<Super>> call, Response<List<Super>> response) {
                 (findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 Log.d("Response", response.body().toString());
-                for (Super superM: response.body()) {
+                for (Super superM : response.body()) {
                     supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
                 /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
                 supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
@@ -125,7 +126,7 @@ public class SuperActivity extends AppCompatActivity {
                 SuperAdapter adapter = new SuperAdapter(context, supers);
                 recyclerView.setAdapter(adapter);
                 recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener(){
+                    new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
 
                         @Override
                         public void onItemClick(View view, int position) {
@@ -146,5 +147,12 @@ public class SuperActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        locationManager.removeUpdates(locationListener);
     }
 }
