@@ -23,21 +23,27 @@ public class ETornApplication extends Application implements PushUpdateListener 
     TopicSubscription allSubscription;
 
     SharedPreferences sharedPreferences;
+
+    User user;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         Log.d(TAG, "APP STARTED");
 
+        user = new User();
+
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
 
         //Efectuem crida a post /users per a obtenir una ID per a l'usuari
         UserService userService = RetrofitManager.retrofit.create(UserService.class);
-        final Call<PostUserResponse> call = userService.getUserId();
+        PostUserResponse postUserResponse = new PostUserResponse(getFCMToken());
+        final Call<PostUserResponse> call = userService.getUserId(postUserResponse);
         call.enqueue(new Callback<PostUserResponse>() {
             @Override
             public void onResponse(Call<PostUserResponse> call, Response<PostUserResponse> response) {
-                putUserIdInPref(response.body().getUserId());
+                user.setId(response.body().getUserId());
             }
 
             @Override
@@ -53,12 +59,6 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
-    }
-
-    public void putUserIdInPref(String id) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putString("userId", id);
-        editor.commit();
     }
 
     public String getFCMToken() {

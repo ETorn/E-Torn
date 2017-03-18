@@ -63,8 +63,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
         store = new Store();
 
-        userId = app.getFCMToken();
-
+        userId = app.user.getId();
         self = this;
 
         storeId = getIntent().getStringExtra("id");
@@ -84,11 +83,12 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             public void onPushUpdate(RemoteMessage remoteMessage) {
                 Log.d(TAG, "push recieved");
 
-                // TODO: Queue no va XD
-                queueText.setText(remoteMessage.getData().get("storeQueue"));
-
-                store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
-
+                if (remoteMessage.getData().get("storeTurn") != null)
+                    store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+                if (remoteMessage.getData().get("storeQueue") != null)
+                    store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                if (remoteMessage.getData().get("usersTurn") != null)
+                    store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
                 updateUI();
             }
         });
@@ -139,7 +139,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             call.enqueue(new Callback<PostUserAddResponse>() {
                 @Override
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
-                    Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
+                    Log.d(TAG, "ResponseTurn: " + response.body().toString());
                     userTurn = response.body().getTurn();
                     //putUserTurnInPref(userTurn);
                     if(userTurn != null) {
@@ -168,7 +168,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     private void updateUI() {
         actualTurnText.setText(String.valueOf(store.getStoreTurn()));
         disponibleTurnText.setText(String.valueOf(store.getUsersTurn()));
-        queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
+        //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
+        queueText.setText(String.valueOf(store.getQueue()) + " torns");
     }
 
     /*public void putUserTurnInPref(Integer turn) {

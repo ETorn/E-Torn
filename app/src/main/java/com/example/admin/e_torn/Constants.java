@@ -18,4 +18,6 @@ public class Constants {
     public static final String PREFERENCES_NAME = packageName + "UserPreferences";
 
     public static final String FCE_TOKEN_NAME = "FCEToken";
+
+    public static final String USER_ID = "userId";
 }
