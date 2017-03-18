@@ -21,6 +21,9 @@ import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,13 +35,21 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     TopicSubscription allSubscription;
 
+    HashMap<String, Store> storeIdAndStoreMap;
+
     SharedPreferences sharedPreferences;
 
     User user;
 
+    Store store;
+
+    Application self;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        self = this;
 
         Log.d(TAG, "APP STARTED");
 
@@ -69,7 +80,22 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     }
 
-
+    public void subscribeStores() {
+        for (final Map.Entry entry : storeIdAndStoreMap.entrySet()) {
+            TopicSubscription storeSubscription = new TopicSubscription(self, "store." + entry.getKey().toString());
+            storeSubscription.setListener(new PushUpdateListener() {
+                @Override
+                public void onPushUpdate(RemoteMessage remoteMessage) {
+                    if (remoteMessage.getData().get("storeTurn") != null)
+                        ((Store) entry.getValue()).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+                    if (remoteMessage.getData().get("storeQueue") != null)
+                        ((Store) entry.getValue()).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                    if (remoteMessage.getData().get("usersTurn") != null)
+                        ((Store) entry.getValue()).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+                }
+            });
+        }
+    }
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
