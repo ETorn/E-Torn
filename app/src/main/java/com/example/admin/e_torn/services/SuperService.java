@@ -6,6 +6,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 /**
  * Created by Patango on 04/03/2017.
@@ -14,5 +15,5 @@ import retrofit2.http.GET;
 public interface SuperService {
 
     @GET("/supers")
-    Call<List<Super>> getSupers ();
+    Call<List<Super>> getSupers (@Query("latitude") double latitude, @Query("longitude") double longitude);
 }
