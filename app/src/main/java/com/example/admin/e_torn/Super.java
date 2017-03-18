@@ -11,27 +11,26 @@ public class Super {
     private String _id;
     private String city;
     private String address; //super name
-    private List<Double> coords;
-    private int distance;
+    private long distance;
     private String phone;
     private String fax;
     private List<Store> stores;
 
-    Super(String _id, String name, String address, String phone, String fax, List<Store> stores, List<Double> coords) {
+    Super(String _id, String name, String address, String phone, String fax, List<Store> stores, Long distance) {
         this._id = _id;
         this.city = name;
         this.address =address;
         this.phone = phone;
         this.fax = fax;
         this.stores = stores;
-        this.coords = coords;
+        this.distance = distance;
     }
 
-    public int getDistance() {
+    public long getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(long distance) {
         this.distance = distance;
     }
 
@@ -41,14 +40,6 @@ public class Super {
 
     public void set_id(String _id) {
         this._id = _id;
-    }
-
-    public List<Double> getCoords() {
-        return coords;
-    }
-
-    public void setCoords(List<Double> coords) {
-        this.coords = coords;
     }
 
     public void setCity(String city) {
@@ -102,9 +93,10 @@ public class Super {
     @Override
     public String toString() {
         return "Super{" +
-                "id='" + _id + '\'' +
+                "_id='" + _id + '\'' +
                 ", city='" + city + '\'' +
                 ", address='" + address + '\'' +
+                ", distance=" + distance +
                 ", phone='" + phone + '\'' +
                 ", fax='" + fax + '\'' +
                 ", stores=" + stores +
