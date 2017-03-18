@@ -2,8 +2,8 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.example.admin.e_torn.adapters.StoreAdapter;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.models.Store;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.example.admin.e_torn.services;
 
-import com.example.admin.e_torn.Super;
+import com.example.admin.e_torn.models.Super;
 
 import java.util.List;
 

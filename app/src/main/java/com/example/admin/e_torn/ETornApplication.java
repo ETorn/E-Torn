@@ -1,21 +1,12 @@
 package com.example.admin.e_torn;
 
-import android.app.AlertDialog;
 import android.app.Application;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
+import com.example.admin.e_torn.models.User;
 import com.example.admin.e_torn.response.PostUserResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.UserService;

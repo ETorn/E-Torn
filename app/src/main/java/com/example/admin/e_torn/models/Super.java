@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.models;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class Super {
     private String fax;
     private List<Store> stores;
 
-    Super(String _id, String name, String address, String phone, String fax, List<Store> stores, List<Double> coords) {
+    public Super(String _id, String name, String address, String phone, String fax, List<Store> stores, List<Double> coords) {
         this._id = _id;
         this.city = name;
         this.address =address;

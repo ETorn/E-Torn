@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.R;
-import com.example.admin.e_torn.Store;
+import com.example.admin.e_torn.models.Store;
 
 import java.util.List;
 

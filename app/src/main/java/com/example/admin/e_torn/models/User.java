@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.models;
 
 /**
  * Created by Patango on 01/03/2017.

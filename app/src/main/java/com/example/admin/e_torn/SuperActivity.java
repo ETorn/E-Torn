@@ -18,6 +18,8 @@ import android.view.View;
 import com.example.admin.e_torn.adapters.SuperAdapter;
 import com.example.admin.e_torn.asynctasks.GetGpsTask;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
+import com.example.admin.e_torn.models.Store;
+import com.example.admin.e_torn.models.Super;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.SuperService;
 

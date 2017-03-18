@@ -1,11 +1,10 @@
 package com.example.admin.e_torn.services;
 
+import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.response.PostUserAddResponse;
-import com.example.admin.e_torn.Store;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 

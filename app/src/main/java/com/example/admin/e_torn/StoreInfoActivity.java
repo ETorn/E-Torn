@@ -1,8 +1,5 @@
 package com.example.admin.e_torn;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
+import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;

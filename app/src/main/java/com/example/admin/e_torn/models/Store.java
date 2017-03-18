@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
