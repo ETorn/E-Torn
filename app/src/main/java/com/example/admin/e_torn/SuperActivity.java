@@ -114,7 +114,7 @@ public class SuperActivity extends AppCompatActivity {
 
 
         SuperService superService = RetrofitManager.retrofit.create(SuperService.class);
-        final Call<List<Super>> call = superService.getSupers(41.386404, 2.107540);
+        final Call<List<Super>> call = superService.getSupers(userLatitude, userLongitude);
 
         call.enqueue(new Callback<List<Super>>() {
             @Override
