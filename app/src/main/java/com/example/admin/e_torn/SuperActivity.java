@@ -35,7 +35,6 @@ public class SuperActivity extends AppCompatActivity {
     private AppCompatActivity self;
     double userLatitude;
     double userLongitude;
-
     private List<Super> supers;
     private RecyclerView recyclerView;
     private Context context;
@@ -65,8 +64,7 @@ public class SuperActivity extends AppCompatActivity {
                 Log.d(TAG, location.toString());
                 userLatitude = location.getLatitude();
                 userLongitude = location.getLongitude();
-
-
+                //Es van fent peticions a /GET supers cada vegada que s'actualitza la localització
                 inicialitzeData();
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
                 recyclerView.setLayoutManager(linearLayoutManager);
@@ -102,12 +100,6 @@ public class SuperActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
-
-
-
-
-
     }
 
     public void inicialitzeData (){
@@ -116,7 +108,8 @@ public class SuperActivity extends AppCompatActivity {
 
 
         SuperService superService = RetrofitManager.retrofit.create(SuperService.class);
-        final Call<List<Super>> call = superService.getSupers(userLatitude, userLongitude);
+        final Call<List<Super>> call = superService.getSupers(41.386404, 2.107540);
+        //final Call<List<Super>> call = superService.getSupers(userLatitude, userLongitude); Comentat per a fer proves
 
         call.enqueue(new Callback<List<Super>>() {
             @Override
@@ -124,7 +117,7 @@ public class SuperActivity extends AppCompatActivity {
                 (findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 Log.d("Response", response.body().toString());
                 for (Super superM: response.body()) {
-                    supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getCoords()));
+                    supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
                 /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
                 supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
                 supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/

@@ -57,8 +57,7 @@ public class SuperAdapter extends RecyclerView.Adapter<SuperAdapter.SuperViewHol
     public void onBindViewHolder(SuperViewHolder superViewHolder, int position) {
         superViewHolder.superAddress.setText(supers.get(position).getAddress());
         superViewHolder.superCity.setText(supers.get(position).getCity());
-        //superViewHolder.superDistance.setText(supers.get(position).getDistance());
-        superViewHolder.superDistance.setText("10m"); // Canviar quan tinguem la localització funcional
+        superViewHolder.superDistance.setText(supers.get(position).getDistance() + "m");
     }
 
     @Override
