@@ -1,13 +1,12 @@
 package com.example.admin.e_torn;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
@@ -15,6 +14,8 @@ import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.w3c.dom.Text;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,17 +46,27 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     //Torn que ha agafat l'usuari
     Integer userTurn;
 
-    // UI
-    TextView actualTurnText;
-    TextView disponibleTurnText;
-    TextView queueText;
-    TextView aproxTimeText;
-    FloatingActionButton getTurnBtn;
+    boolean inTurn;
 
+    // UI
+    TextView actualTurn;
+    TextView disponibleTurn;
+    TextView turnText;
+    TextView queueText;
+    TextView aproxTime;
+    FloatingActionButton getTurnBtn;
+    Animation in;
+    Animation out;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_info);
+
+        in = new AlphaAnimation(0.0f, 1.0f);
+        in.setDuration(2000);
+
+        out = new AlphaAnimation(1.0f, 0.0f);
+        out.setDuration(2000);
 
         Log.d(TAG, "onCreate()");
 
@@ -70,10 +81,11 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
         store.setId(storeId);
 
-        actualTurnText = (TextView) findViewById(R.id.actualTurn);
-        disponibleTurnText = (TextView) findViewById(R.id.disponibleTurn);
+        turnText = (TextView) findViewById(R.id.disponibleTurnText);
+        actualTurn = (TextView) findViewById(R.id.actualTurn);
+        disponibleTurn = (TextView) findViewById(R.id.disponibleTurn);
         queueText = (TextView) findViewById(R.id.queue);
-        aproxTimeText = (TextView) findViewById(R.id.aproxTime);
+        aproxTime = (TextView) findViewById(R.id.time);
         getTurnBtn = (FloatingActionButton) findViewById(R.id.getTurnBtn);
         getTurnBtn.setOnClickListener(this);
 
@@ -133,6 +145,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         int id = v.getId();
+
         if (id == R.id.getTurnBtn) {
             StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
             final Call<PostUserAddResponse> call = storeService.addUserToStore(store.getId(), userId);
@@ -140,10 +153,34 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
                     Log.d(TAG, "ResponseTurn: " + response.body().toString());
-                    userTurn = response.body().getTurn();
+
                     //putUserTurnInPref(userTurn);
-                    if(userTurn != null) {
-                        //TODO Fer animacio  i canviar text per el Teu Torn
+                    if(userTurn == null) {
+                        // El torn que demana el usuari es el actual disponible de la store
+                        // Ja que el torn que retorna retrofit es el seguent disponible
+                        userTurn = store.getUsersTurn();
+                        inTurn = true;
+
+                        turnText.startAnimation(out);
+
+                        out.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                turnText.setText("EL TEU TORN");
+                                turnText.startAnimation(in);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+
                         /*Context context = getApplicationContext();
                         Intent intent = new Intent(context, UserTurnInfo.class);
                         intent.putExtra("id", storeId);
@@ -166,8 +203,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void updateUI() {
-        actualTurnText.setText(String.valueOf(store.getStoreTurn()));
-        disponibleTurnText.setText(String.valueOf(store.getUsersTurn()));
+        actualTurn.setText(String.valueOf(store.getStoreTurn()));
+        disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
         queueText.setText(String.valueOf(store.getQueue()) + " torns");
     }

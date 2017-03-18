@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.google.firebase.messaging.RemoteMessage;
 
+//Classe no funcional de moment
 public class UserTurnInfo extends AppCompatActivity {
 
     AppCompatActivity self;
@@ -16,7 +17,7 @@ public class UserTurnInfo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_turn_info);
+        //setContentView(R.layout.activity_user_turn_info);
 
         storeId = getIntent().getStringExtra("id");
         storeSubscription = new TopicSubscription(this, "store." + storeId);
