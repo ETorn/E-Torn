@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.StoreActivity;
+import com.example.admin.e_torn.Utils;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
 
@@ -57,7 +58,7 @@ public class SuperAdapter extends RecyclerView.Adapter<SuperAdapter.SuperViewHol
     public void onBindViewHolder(SuperViewHolder superViewHolder, int position) {
         superViewHolder.superAddress.setText(supers.get(position).getAddress());
         superViewHolder.superCity.setText(supers.get(position).getCity());
-        superViewHolder.superDistance.setText(supers.get(position).getDistance() + "m");
+        superViewHolder.superDistance.setText(Utils.humanizeMeters(supers.get(position).getDistance()));
     }
 
     @Override
