@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,16 +30,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SuperActivity extends PermissionManager {
+public class SuperActivity extends AppCompatActivity {
+    private static final String TAG = "SuperActivity";
     private AppCompatActivity self;
     double userLatitude;
     double userLongitude;
     private List<Super> supers;
     private RecyclerView recyclerView;
     private Context context;
-    private static final String TAG = "SuperActivity";
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    PermissionManager permissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,19 +92,27 @@ public class SuperActivity extends PermissionManager {
             }
         };
 
-        addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionManager = new PermissionManager(this);
+        permissionManager.addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionManager.setPermissionRequestResultListener(new PermissionRequestResultListerner() {
+            @Override
+            public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
+                Log.d(TAG, "Permissos rebuts");
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                } catch (SecurityException ignored) {
+                }
+            }
+        });
 
-        requestPermissions();
+        permissionManager.requestPermissions();
 
     }
 
     @Override
-    protected void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
-        Log.d(TAG, "Permissos rebuts");
-        try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        } catch (SecurityException ignored) {
-        }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void inicialitzeData() {
