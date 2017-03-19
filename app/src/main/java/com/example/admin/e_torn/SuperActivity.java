@@ -46,7 +46,7 @@ public class SuperActivity extends PermissionManager {
         setContentView(R.layout.recyclerview);
         self = this;
 
-        (findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+        //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -115,7 +115,7 @@ public class SuperActivity extends PermissionManager {
         call.enqueue(new Callback<List<Super>>() {
             @Override
             public void onResponse(Call<List<Super>> call, Response<List<Super>> response) {
-                (findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                (findViewById(R.id.loading_layout)).setVisibility(View.GONE);
                 Log.d("Response", response.body().toString());
                 for (Super superM : response.body()) {
                     supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
