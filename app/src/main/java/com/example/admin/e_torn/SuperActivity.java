@@ -1,21 +1,26 @@
 package com.example.admin.e_torn;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin.e_torn.adapters.SuperAdapter;
-import com.example.admin.e_torn.asynctasks.GetGpsTask;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
@@ -30,82 +35,149 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SuperActivity extends PermissionManager {
-    private AppCompatActivity self;
+public class SuperActivity extends AppCompatActivity {
+    private static final String TAG = "SuperActivity";
     double userLatitude;
     double userLongitude;
+    PermissionManager permissionManager;
+    private AppCompatActivity self;
     private List<Super> supers;
     private RecyclerView recyclerView;
     private Context context;
-    private static final String TAG = "SuperActivity";
     private LocationManager locationManager;
     private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recyclerview);
+        setContentView(R.layout.recyclerview_supers);
+
+        Log.d(TAG, "onCreate");
+
         self = this;
 
         //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            GetGpsTask task = new GetGpsTask(this);
-            task.execute(locationManager);
-        }
+//        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//            GetGpsTask task = new GetGpsTask(this);
+//            task.execute(locationManager);
+//        }
 
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Log.d(TAG, location.toString());
+                Log.d(TAG, "Location changed " + location.toString());
                 userLatitude = location.getLatitude();
                 userLongitude = location.getLongitude();
 
-                inicialitzeData();
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                //recyclerView.setHasFixedSize(true); Per a quan sabem que el tamany del recyclerView no canviara
-                // initializeAdapter();
-
+                //Es van fent peticions a /GET supers cada vegada que s'actualitza la localització
+                updateData();
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
+                Log.d(TAG, "Status changed: " + provider + " " + status);
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-
+                Log.d(TAG, "Provider enabled: " + provider);
             }
 
             @Override
             public void onProviderDisabled(String provider) {
+                Log.d(TAG, "Provider disabled: " + provider);
 
+                new AlertDialog.Builder(self)
+                        .setMessage("Sembla que la teva localització està desactivada. Vols activar-la?")
+                        .setCancelable(false)
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                self.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                dialog.cancel();
+                                Toast.makeText(self, ":(", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .create()
+                        .show();
             }
         };
 
-        addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionManager = new PermissionManager(this);
+        permissionManager.addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionManager.setPermissionRequestResultListener(new PermissionRequestResultListerner() {
+            @Override
+            public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
+                Log.d(TAG, "Resultat permisos rebuts");
 
-        requestPermissions();
+                if (successAll) {
+                    Log.d(TAG, "Ens han donat tots els permisos");
 
+                    try {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    } catch (SecurityException ignored) {
+                    }
+                } else {
+                    Log.d(TAG, "No ens han donat tots els permisos");
+
+                    new AlertDialog.Builder(self)
+                            .setMessage("Hmmm. ok.")
+                            .setCancelable(true)
+                            .setPositiveButton("D'acord", null)
+                            .create()
+                            .show();
+
+                    ((TextView)findViewById(R.id.loading_textView)).setText("No tenim permisos de localització");
+                }
+            }
+        });
+
+        permissionManager.setPermissionRationale(new PermissionRationale() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+            @Override
+            public void onShowPermissionRationale(final CallBack cb) {
+                new AlertDialog.Builder(self)
+                        .setMessage("Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.")
+                        .setCancelable(true)
+                        .setPositiveButton("D'acord", null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                cb.call();
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
     }
 
     @Override
-    protected void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
-        Log.d(TAG, "Permissos rebuts");
-        try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        } catch (SecurityException ignored) {
-        }
+    protected void onResume() {
+        super.onResume();
+
+        // Començar el proces de demanar permisos
+        permissionManager.requestPermissions();
     }
 
-    public void inicialitzeData() {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void updateData() {
 
         supers = new ArrayList<>();
 
@@ -144,11 +216,10 @@ public class SuperActivity extends PermissionManager {
                     );
                 }
                 else {
-                    ((TextView)findViewById(R.id.loadingTextView)).setText("No hem trobat cap super proper");
+                    ((TextView)findViewById(R.id.loading_textView)).setText("No hem trobat cap super proper");
                     (findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
                     (findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 }
-
             }
 
             @Override
@@ -160,8 +231,8 @@ public class SuperActivity extends PermissionManager {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
 
         locationManager.removeUpdates(locationListener);
     }

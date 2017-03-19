@@ -23,7 +23,7 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recyclerview);
+        setContentView(R.layout.recyclerview_stores);
         this.context = getApplicationContext();
         this.stores = getIntent().getParcelableArrayListExtra("stores");
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);

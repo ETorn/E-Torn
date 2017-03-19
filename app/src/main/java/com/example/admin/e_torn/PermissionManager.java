@@ -8,46 +8,112 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class PermissionManager extends AppCompatActivity {
+interface PermissionRequestResultListerner {
+    void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions);
+}
+
+interface CallBack {
+    void call();
+}
+
+interface PermissionRationale {
+    void onShowPermissionRationale(CallBack cb);
+}
+
+class PermissionManager {
 
     private static final String TAG = "Permission Manager";
 
-    private ArrayList<String> requestedPermissions = new ArrayList<>();
+    private AppCompatActivity ctx;
 
-    protected void addPermission(String permission) {
+    private List<String> requestedPermissions;
+
+    private PermissionRequestResultListerner listener;
+    private PermissionRationale rationale;
+
+    private int requestCode;
+
+    private boolean forceRetry;
+
+    PermissionManager(AppCompatActivity activity, boolean forceRetry) {
+        ctx = activity;
+        this.forceRetry = forceRetry;
+
+        requestCode = 1;
+        requestedPermissions = new ArrayList<>();
+        listener = new PermissionRequestResultListerner() {
+            @Override
+            public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
+                Log.w(TAG, "Funcio onPermissionRequestDone() per defecte cridada");
+                Log.w(TAG, "Fes un override d'aquesta funcio!");
+            }
+        };
+        rationale = new PermissionRationale() {
+            @Override
+            public void onShowPermissionRationale(CallBack cb) {
+                cb.call();
+            }
+        };
+    }
+
+    PermissionManager(AppCompatActivity a) {
+        this(a, false);
+    }
+
+    void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
+        listener = l;
+    }
+
+    void setPermissionRationale(PermissionRationale r) {
+        rationale = r;
+    }
+
+    void addPermission(String permission) {
         requestedPermissions.add(permission);
     }
 
-    public void requestPermissions() {
+    void requestPermissions() {
         Log.d(TAG, ".requestPermissions() cridat");
 
         Log.d(TAG, "Permission: " + requestedPermissions.get(0));
-        if (ContextCompat.checkSelfPermission(this, requestedPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(ctx, requestedPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "No tenim aquest permis");
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, requestedPermissions.get(0))) {
-                Log.d(TAG, "Demanant permisos");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(ctx, requestedPermissions.get(0))) {
+                Log.d(TAG, "Mostrant explicació");
 
-                ActivityCompat.requestPermissions(this, new String[]{requestedPermissions.get(0)}, 1);
+                rationale.onShowPermissionRationale(new CallBack() {
+                    @Override
+                    public void call() {
+                        Log.d(TAG, "Demanant permisos");
+
+                        ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
+                    }
+                });
+
             } else {
-                Log.d(TAG, "L'usuari ha denegat el permis, i no vol que el demanem mes");
+                Log.d(TAG, "Primera vegada que demanem permisos, o l'usuari no vol saber res de nosltres. Demanant permisos");
 
-                //TODO: Aixo no hauria d'estar aqui
-                ActivityCompat.requestPermissions(this, new String[]{requestedPermissions.get(0)}, 1);
+                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
             }
         } else {
             Log.d(TAG, "Ja tenim aquest permis");
 
-            onPermissionRequestDone(true, new ArrayList<String>());
+            listener.onPermissionRequestDone(true, new ArrayList<String>());
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult cridat");
 
         ArrayList<String> result = new ArrayList<>();
+
+        if (requestCode != this.requestCode) {
+            Log.d(TAG, "No es el nostre callback");
+            return;
+        }
 
         for (int i = 0; i < permissions.length; i++) {
             Log.d(TAG, "Permission:" + permissions[i] + "/Result:" + grantResults[i]);
@@ -58,11 +124,13 @@ public class PermissionManager extends AppCompatActivity {
 
         boolean successAll = permissions.length == result.size();
 
-        onPermissionRequestDone(successAll, result);
-    }
+        Log.d(TAG, "successAll = " + successAll);
 
-    protected void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
-        Log.w(TAG, "Funcio onPermissionRequestDone() per defecte cridada");
-        Log.w(TAG, "Fes un override d'aquesta funcio!");
+        if (!successAll && forceRetry) {
+            Log.d(TAG, "Reintentant (forceRetry = true)");
+            requestPermissions();
+        }
+
+        listener.onPermissionRequestDone(successAll, result);
     }
 }
