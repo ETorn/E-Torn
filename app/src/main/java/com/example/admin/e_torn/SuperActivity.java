@@ -1,13 +1,17 @@
 package com.example.admin.e_torn;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -108,10 +112,37 @@ public class SuperActivity extends AppCompatActivity {
                     }
                 } else {
                     Log.d(TAG, "No ens han donat tots els permisos");
+
+                    new AlertDialog.Builder(self)
+                            .setMessage("Hmmm. ok.")
+                            .setCancelable(true)
+                            .setPositiveButton("D'acord", null)
+                            .create()
+                            .show();
                 }
             }
         });
 
+        permissionManager.setPermissionRationale(new PermissionRationale() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+            @Override
+            public void onShowPermissionRationale(final CallBack cb) {
+                new AlertDialog.Builder(self)
+                        .setMessage("Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.")
+                        .setCancelable(true)
+                        .setPositiveButton("D'acord", null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                cb.call();
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
+
+        // Començar el proces de demanar permisos
         permissionManager.requestPermissions();
 
     }

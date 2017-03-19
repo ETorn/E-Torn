@@ -14,6 +14,14 @@ interface PermissionRequestResultListerner {
     void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions);
 }
 
+interface CallBack {
+    void call();
+}
+
+interface PermissionRationale {
+    void onShowPermissionRationale(CallBack cb);
+}
+
 class PermissionManager {
 
     private static final String TAG = "Permission Manager";
@@ -23,6 +31,7 @@ class PermissionManager {
     private List<String> requestedPermissions;
 
     private PermissionRequestResultListerner listener;
+    private PermissionRationale rationale;
 
     private int requestCode;
 
@@ -41,6 +50,12 @@ class PermissionManager {
                 Log.w(TAG, "Fes un override d'aquesta funcio!");
             }
         };
+        rationale = new PermissionRationale() {
+            @Override
+            public void onShowPermissionRationale(CallBack cb) {
+                cb.call();
+            }
+        };
     }
 
     PermissionManager(AppCompatActivity a) {
@@ -49,6 +64,10 @@ class PermissionManager {
 
     void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
         listener = l;
+    }
+
+    void setPermissionRationale(PermissionRationale r) {
+        rationale = r;
     }
 
     void addPermission(String permission) {
@@ -63,13 +82,20 @@ class PermissionManager {
             Log.d(TAG, "No tenim aquest permis");
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(ctx, requestedPermissions.get(0))) {
-                Log.d(TAG, "Demanant permisos");
+                Log.d(TAG, "Mostrant explicació");
 
-                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
+                rationale.onShowPermissionRationale(new CallBack() {
+                    @Override
+                    public void call() {
+                        Log.d(TAG, "Demanant permisos");
+
+                        ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
+                    }
+                });
+
             } else {
-                Log.d(TAG, "L'usuari ha denegat el permis, i no vol que el demanem mes");
+                Log.d(TAG, "Primera vegada que demanem permisos, o l'usuari no vol saber res de nosltres. Demanant permisos");
 
-                //TODO: Aixo no hauria d'estar aqui
                 ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
             }
         } else {
