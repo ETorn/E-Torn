@@ -24,9 +24,12 @@ class PermissionManager {
 
     PermissionRequestResultListerner listener;
 
+    int requestCode;
+
     public PermissionManager(AppCompatActivity activity) {
         ctx = activity;
 
+        requestCode = 1;
         requestedPermissions = new ArrayList<>();
         listener = new PermissionRequestResultListerner() {
             @Override
@@ -55,12 +58,12 @@ class PermissionManager {
             if (ActivityCompat.shouldShowRequestPermissionRationale(ctx, requestedPermissions.get(0))) {
                 Log.d(TAG, "Demanant permisos");
 
-                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, 1);
+                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
             } else {
                 Log.d(TAG, "L'usuari ha denegat el permis, i no vol que el demanem mes");
 
                 //TODO: Aixo no hauria d'estar aqui
-                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, 1);
+                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
             }
         } else {
             Log.d(TAG, "Ja tenim aquest permis");
@@ -69,10 +72,15 @@ class PermissionManager {
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult cridat");
 
         ArrayList<String> result = new ArrayList<>();
+
+        if (requestCode != this.requestCode) {
+            Log.d(TAG, "No es el nostre callback");
+            return;
+        }
 
         for (int i = 0; i < permissions.length; i++) {
             Log.d(TAG, "Permission:" + permissions[i] + "/Result:" + grantResults[i]);

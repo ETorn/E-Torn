@@ -97,10 +97,17 @@ public class SuperActivity extends AppCompatActivity {
         permissionManager.setPermissionRequestResultListener(new PermissionRequestResultListerner() {
             @Override
             public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
-                Log.d(TAG, "Permissos rebuts");
-                try {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-                } catch (SecurityException ignored) {
+                Log.d(TAG, "Resultat permisos rebuts");
+
+                if (successAll) {
+                    Log.d(TAG, "Ens han donat tots els permisos");
+
+                    try {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    } catch (SecurityException ignored) {
+                    }
+                } else {
+                    Log.d(TAG, "No ens han donat tots els permisos");
                 }
             }
         });
