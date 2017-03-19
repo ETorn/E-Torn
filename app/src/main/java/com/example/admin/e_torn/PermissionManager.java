@@ -22,12 +22,15 @@ class PermissionManager {
 
     private List<String> requestedPermissions;
 
-    PermissionRequestResultListerner listener;
+    private PermissionRequestResultListerner listener;
 
-    int requestCode;
+    private int requestCode;
 
-    public PermissionManager(AppCompatActivity activity) {
+    private boolean forceRetry;
+
+    PermissionManager(AppCompatActivity activity, boolean forceRetry) {
         ctx = activity;
+        this.forceRetry = forceRetry;
 
         requestCode = 1;
         requestedPermissions = new ArrayList<>();
@@ -38,6 +41,10 @@ class PermissionManager {
                 Log.w(TAG, "Fes un override d'aquesta funcio!");
             }
         };
+    }
+
+    PermissionManager(AppCompatActivity a) {
+        this(a, false);
     }
 
     void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
@@ -90,6 +97,13 @@ class PermissionManager {
         }
 
         boolean successAll = permissions.length == result.size();
+
+        Log.d(TAG, "successAll = " + successAll);
+
+        if (!successAll && forceRetry) {
+            Log.d(TAG, "Reintentant (forceRetry = true)");
+            requestPermissions();
+        }
 
         listener.onPermissionRequestDone(successAll, result);
     }
