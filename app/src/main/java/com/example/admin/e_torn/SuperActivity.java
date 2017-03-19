@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin.e_torn.adapters.SuperAdapter;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
@@ -109,6 +110,7 @@ public class SuperActivity extends AppCompatActivity {
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                 dialog.cancel();
+                                Toast.makeText(self, ":(", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .create()
@@ -163,6 +165,11 @@ public class SuperActivity extends AppCompatActivity {
                         .show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         // Començar el proces de demanar permisos
         permissionManager.requestPermissions();
@@ -219,8 +226,8 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
 
         locationManager.removeUpdates(locationListener);
     }
