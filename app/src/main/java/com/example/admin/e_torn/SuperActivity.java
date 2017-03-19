@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.admin.e_torn.adapters.SuperAdapter;
 import com.example.admin.e_torn.asynctasks.GetGpsTask;
@@ -64,7 +65,7 @@ public class SuperActivity extends PermissionManager {
                 Log.d(TAG, location.toString());
                 userLatitude = location.getLatitude();
                 userLongitude = location.getLongitude();
-                //Es van fent peticions a /GET supers cada vegada que s'actualitza la localització
+
                 inicialitzeData();
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
                 recyclerView.setLayoutManager(linearLayoutManager);
@@ -116,28 +117,37 @@ public class SuperActivity extends PermissionManager {
             @Override
             public void onResponse(Call<List<Super>> call, Response<List<Super>> response) {
                 (findViewById(R.id.loading_layout)).setVisibility(View.GONE);
-                Log.d("Response", response.body().toString());
-                for (Super superM : response.body()) {
-                    supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
-                /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
-                supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
-                supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
-                }
-                SuperAdapter adapter = new SuperAdapter(context, supers);
-                recyclerView.setAdapter(adapter);
-                recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+                Log.d(TAG + " Response", response.body().toString());
 
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            List<Store> stores = supers.get(position).getStores();
-                            Intent intent = new Intent(context, StoreActivity.class);
-                            intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                        }
-                    })
-                );
+                if (response.body().size() != 0) {
+                    for (Super superM : response.body()) {
+                        supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
+                        /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
+                        supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
+                        supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
+                    }
+
+                    SuperAdapter adapter = new SuperAdapter(context, supers);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.addOnItemTouchListener(
+                            new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    List<Store> stores = supers.get(position).getStores();
+                                    Intent intent = new Intent(context, StoreActivity.class);
+                                    intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(intent);
+                                }
+                            })
+                    );
+                }
+                else {
+                    ((TextView)findViewById(R.id.loadingTextView)).setText("No hem trobat cap super proper");
+                    (findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
+                    (findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                }
 
             }
 

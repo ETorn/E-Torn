@@ -22,10 +22,11 @@ public class GetGpsTask extends AsyncTask<LocationManager, Void, Void> {
         builder = new AlertDialog.Builder(self);
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        builder.setMessage("Sembla que el teu GPS está desactivat, vols activar-lo?")
+    public void showAlert (boolean accept) {
+        String text = "Sembla que el teu GPS está desactivat, vols activar-lo?";
+        if (accept == false)
+            text = "Per a mostrar-te els supermercats més propers necessitem que activis el GPS, vols activar-lo?";
+        builder.setMessage(text)
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
@@ -35,10 +36,17 @@ public class GetGpsTask extends AsyncTask<LocationManager, Void, Void> {
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         dialog.cancel();
+                        showAlert(false);
                     }
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        showAlert(true);
     }
 
     @Override
