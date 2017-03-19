@@ -17,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.admin.e_torn.adapters.SuperAdapter;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
@@ -138,6 +139,8 @@ public class SuperActivity extends AppCompatActivity {
                             .setPositiveButton("D'acord", null)
                             .create()
                             .show();
+
+                    ((TextView)findViewById(R.id.loading_textView)).setText("No tenim permisos de localització");
                 }
             }
         });
