@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.admin.e_torn.adapters.SuperAdapter;
-import com.example.admin.e_torn.asynctasks.GetGpsTask;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
@@ -51,48 +50,68 @@ public class SuperActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview);
+
+        Log.d(TAG, "onCreate");
+
         self = this;
 
         //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            GetGpsTask task = new GetGpsTask(this);
-            task.execute(locationManager);
-        }
+//        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//            GetGpsTask task = new GetGpsTask(this);
+//            task.execute(locationManager);
+//        }
 
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Log.d(TAG, location.toString());
+                Log.d(TAG, "Location changed " + location.toString());
                 userLatitude = location.getLatitude();
                 userLongitude = location.getLongitude();
+
                 //Es van fent peticions a /GET supers cada vegada que s'actualitza la localització
-                inicialitzeData();
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
-                recyclerView.setLayoutManager(linearLayoutManager);
+                updateData();
+
                 //recyclerView.setHasFixedSize(true); Per a quan sabem que el tamany del recyclerView no canviara
-                // initializeAdapter();
 
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
+                Log.d(TAG, "Status changed: " + provider + " " + status);
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-
+                Log.d(TAG, "Provider enabled: " + provider);
             }
 
             @Override
             public void onProviderDisabled(String provider) {
+                Log.d(TAG, "Provider disabled: " + provider);
 
+                new AlertDialog.Builder(self)
+                        .setMessage("Sembla que la teva localització està desactivada. Vols activar-la?")
+                        .setCancelable(false)
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                self.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .create()
+                        .show();
             }
         };
 
@@ -144,7 +163,6 @@ public class SuperActivity extends AppCompatActivity {
 
         // Començar el proces de demanar permisos
         permissionManager.requestPermissions();
-
     }
 
     @Override
@@ -153,7 +171,7 @@ public class SuperActivity extends AppCompatActivity {
         permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public void inicialitzeData() {
+    public void updateData() {
 
         supers = new ArrayList<>();
 
@@ -187,7 +205,6 @@ public class SuperActivity extends AppCompatActivity {
                         }
                     })
                 );
-
             }
 
             @Override
