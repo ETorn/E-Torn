@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ public class SuperActivity extends PermissionManager {
     double userLongitude;
     private List<Super> supers;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Context context;
     private static final String TAG = "SuperActivity";
     private LocationManager locationManager;
@@ -52,6 +54,14 @@ public class SuperActivity extends PermissionManager {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                inicialitzeData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -106,7 +116,6 @@ public class SuperActivity extends PermissionManager {
     }
 
     public void inicialitzeData() {
-
         supers = new ArrayList<>();
 
 
