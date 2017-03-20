@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.models.Store;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +23,17 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     static class StoreViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView storeName;
+        TextView itemTime;
+        TextView actualNumber;
+        TextView disponibleNumber;
 
         StoreViewHolder(View itemView) {
             super(itemView);
             cardView = (CardView) itemView.findViewById(R.id.cardViewStore);
             storeName = (TextView) itemView.findViewById(R.id.item_store_name);
+            itemTime = (TextView) itemView.findViewById(R.id.item_time);
+            actualNumber = (TextView) itemView.findViewById(R.id.textView_actual_number);
+            disponibleNumber = (TextView) itemView.findViewById(R.id.textView_disponible_number);
         }
     }
 
@@ -50,6 +57,9 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     @Override
     public void onBindViewHolder(StoreViewHolder storeViewHolder, int position) {
         storeViewHolder.storeName.setText(stores.get(position).getName());
+        //storeViewHolder.itemTime.setText(stores.get(position).getTime());
+        storeViewHolder.actualNumber.setText(String.valueOf(stores.get(position).getStoreTurn()));
+        storeViewHolder.disponibleNumber.setText(String.valueOf(stores.get(position).getUsersTurn()));
         if (stores.size() == 0) {
             storeViewHolder.storeName.setText("No stores");
         }
