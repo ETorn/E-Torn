@@ -199,6 +199,9 @@ public class SuperActivity extends AppCompatActivity {
                         supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
                     }
 
+                    if (response.body().size() == 1)
+                        startStoreIntent(0);
+
                     SuperAdapter adapter = new SuperAdapter(context, supers);
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
@@ -206,11 +209,7 @@ public class SuperActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    List<Store> stores = supers.get(position).getStores();
-                                    Intent intent = new Intent(context, StoreActivity.class);
-                                    intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    context.startActivity(intent);
+                                    startStoreIntent(position);
                                 }
                             })
                     );
@@ -228,6 +227,15 @@ public class SuperActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void startStoreIntent (int position){
+        List<Store> stores = supers.get(position).getStores();
+        Intent intent = new Intent(context, StoreActivity.class);
+        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
+        context.startActivity(intent);
     }
 
     @Override
