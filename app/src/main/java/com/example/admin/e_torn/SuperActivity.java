@@ -46,6 +46,7 @@ public class SuperActivity extends AppCompatActivity {
     private Context context;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    SuperAdapter superAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +60,11 @@ public class SuperActivity extends AppCompatActivity {
         //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
 
+        superAdapter  = new SuperAdapter(context);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(superAdapter); // S'ha de setejar abans el adapter del recyclerView al crearse (encara que estigui buit) per evitar errors
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -202,8 +205,8 @@ public class SuperActivity extends AppCompatActivity {
                     if (response.body().size() == 1)
                         startStoreIntent(0);
 
-                    SuperAdapter adapter = new SuperAdapter(context, supers);
-                    recyclerView.setAdapter(adapter);
+                    superAdapter = new SuperAdapter(context, supers);
+                    recyclerView.setAdapter(superAdapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
 
