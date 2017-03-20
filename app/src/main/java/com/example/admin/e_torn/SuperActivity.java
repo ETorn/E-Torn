@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +45,7 @@ public class SuperActivity extends AppCompatActivity {
     private AppCompatActivity self;
     private List<Super> supers;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Context context;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -66,6 +69,14 @@ public class SuperActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(superAdapter); // S'ha de setejar abans el adapter del recyclerView al crearse (encara que estigui buit) per evitar errors
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 //        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -181,7 +192,7 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     public void updateData() {
-
+        //swipeRefreshLayout
         supers = new ArrayList<>();
 
 
