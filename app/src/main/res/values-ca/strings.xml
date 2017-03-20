@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="info_no_stores">Cap parada</string>
+    <string name="your_turn">EL TEU TORN</string>
+    <string name="turns">torns</string>
+    <string name="quetion_enable_location">Sembla que la teva localització està desactivada. Vols activar-la?</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="ok">D\'acord</string>
+    <string name="info_location_permission_needed">Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.</string>
+    <string name="info_no_close_super">No hem trobat cap super proper</string>
+</resources>

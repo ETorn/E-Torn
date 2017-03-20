@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="info_no_stores">Ninguna parada</string>
+    <string name="your_turn">TU TURNO</string>
+    <string name="turns">turnos</string>
+    <string name="quetion_enable_location">Parece que el pocisionamiento esta desactivado.Quieres activarlo?</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="ok">De acuerdo</string>
+    <string name="info_location_permission_needed">Necesitamos permiso para usar el GPS para mostrarte los supermercados mas cercanos. SIn este permiso la app no funcinara correctament.</string>
+    <string name="info_no_close_super">No hemos encontrado ningun supermercado cercano</string>
+</resources>

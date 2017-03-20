@@ -16,8 +16,6 @@ import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.w3c.dom.Text;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -172,7 +170,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
-                                turnText.setText("EL TEU TORN");
+                                turnText.setText(R.string.your_turn);
                                 turnText.startAnimation(in);
                             }
 
@@ -207,7 +205,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
         disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
-        queueText.setText(String.valueOf(store.getQueue()) + " torns");
+        queueText.setText(String.valueOf(store.getQueue()) + getString(R.string.turns));
     }
 
     /*public void putUserTurnInPref(Integer turn) {

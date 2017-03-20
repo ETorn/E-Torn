@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -96,14 +97,14 @@ public class SuperActivity extends AppCompatActivity {
                 Log.d(TAG, "Provider disabled: " + provider);
 
                 new AlertDialog.Builder(self)
-                        .setMessage("Sembla que la teva localització està desactivada. Vols activar-la?")
+                        .setMessage(R.string.quetion_enable_location)
                         .setCancelable(false)
-                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                self.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                self.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                             }
                         })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                 dialog.cancel();
                                 Toast.makeText(self, ":(", Toast.LENGTH_SHORT).show();
@@ -134,7 +135,7 @@ public class SuperActivity extends AppCompatActivity {
                     new AlertDialog.Builder(self)
                             .setMessage("Hmmm. ok.")
                             .setCancelable(true)
-                            .setPositiveButton("D'acord", null)
+                            .setPositiveButton(R.string.ok, null)
                             .create()
                             .show();
 
@@ -148,9 +149,9 @@ public class SuperActivity extends AppCompatActivity {
             @Override
             public void onShowPermissionRationale(final CallBack cb) {
                 new AlertDialog.Builder(self)
-                        .setMessage("Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.")
+                        .setMessage(R.string.info_location_permission_needed)
                         .setCancelable(true)
-                        .setPositiveButton("D'acord", null)
+                        .setPositiveButton(R.string.ok, null)
                         .setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialogInterface) {
@@ -216,7 +217,7 @@ public class SuperActivity extends AppCompatActivity {
                     );
                 }
                 else {
-                    ((TextView)findViewById(R.id.loading_textView)).setText("No hem trobat cap super proper");
+                    ((TextView)findViewById(R.id.loading_textView)).setText(R.string.info_no_close_super);
                     (findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
                     (findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 }
