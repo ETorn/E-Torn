@@ -11,7 +11,7 @@ public class Constants {
     static final int SPLASH_DISPLAY_LENGTH = 3000;
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
-    public static final String serverURL = "http://192.168.1.128:8080";
+    public static final String serverURL = "http://192.168.204.227:8080";
 
     public static final String packageName = "com.example.admin.e_torn";
 

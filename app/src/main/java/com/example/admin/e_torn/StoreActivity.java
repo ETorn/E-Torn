@@ -10,16 +10,22 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.admin.e_torn.adapters.StoreAdapter;
+import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.List;
 
 public class StoreActivity extends AppCompatActivity {
-
+    private static final String TAG = "StoreActivity";
     private List<Store> stores;
     private RecyclerView recyclerView;
     private Context context;
+
+    TopicSubscription storeSubscription;
+    // Subscripció al topic de les store disponibles
+    List<TopicSubscription> storeSubscriptions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,13 +33,13 @@ public class StoreActivity extends AppCompatActivity {
         this.context = getApplicationContext();
         this.stores = getIntent().getParcelableArrayListExtra("stores");
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        inicialitzeData();
+        updateUI();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         //recyclerView.setHasFixedSize(true); //Per a quan sabem que el tamany del recyclerView no canviara
     }
 
-    public void inicialitzeData (){
+    public void updateUI (){
         /*stores = new ArrayList<>();
         stores.add(new Store("Carniceria01", 1, 1, R.drawable.capraboicon));
         stores.add(new Store("Carniceria02", 1, 1, R.drawable.capraboicon));
@@ -41,6 +47,8 @@ public class StoreActivity extends AppCompatActivity {
         stores.add(new Store("Peixateria02", 1, 1, R.drawable.capraboicon));*/
         for (Store store: stores) {
             Log.d("store", store.toString());
+            storeSubscriptionListeners();
+            //storeSubscriptions.add(new TopicSubscription(this, "store." + store.getId()));
         }
 
         StoreAdapter adapter = new StoreAdapter(stores);
@@ -58,5 +66,29 @@ public class StoreActivity extends AppCompatActivity {
                     }
                 })
         );
+    }
+
+    int storeIndex;
+    public void storeSubscriptionListeners () {
+
+        for(TopicSubscription storeSubscription: storeSubscriptions) {
+
+            storeSubscription.setListener(new PushUpdateListener() {
+
+                @Override
+                public void onPushUpdate(RemoteMessage remoteMessage) {
+                    Log.d(TAG, "push recieved");
+
+                    if (remoteMessage.getData().get("storeTurn") != null)
+                        stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+                    if (remoteMessage.getData().get("storeQueue") != null)
+                        stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                    if (remoteMessage.getData().get("usersTurn") != null)
+                        stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+                    updateUI();
+                }
+            });
+            storeIndex++;
+        }
     }
 }
