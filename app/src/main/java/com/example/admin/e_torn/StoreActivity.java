@@ -63,6 +63,7 @@ public class StoreActivity extends AppCompatActivity {
                 new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        unsuscribeAllStores();
                         Store store = stores.get(position);
                         Intent intent = new Intent(context, StoreInfoActivity.class);
                         // Pasem a StoreInfoActivity la id necessaria per fer la peticio al servidor
@@ -107,6 +108,10 @@ public class StoreActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+
+    }
+
+    public void unsuscribeAllStores () {
         for( TopicSubscription storeSubscription: storeSubscriptions) {
             storeSubscription.unsubscribe();
         }
