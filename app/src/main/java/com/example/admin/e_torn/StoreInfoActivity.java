@@ -64,10 +64,10 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_store_info);
 
         in = new AlphaAnimation(0.0f, 1.0f);
-        in.setDuration(2000);
+        in.setDuration(1000);
 
         out = new AlphaAnimation(1.0f, 0.0f);
-        out.setDuration(2000);
+        out.setDuration(1000);
 
         Log.d(TAG, "onCreate()");
 
