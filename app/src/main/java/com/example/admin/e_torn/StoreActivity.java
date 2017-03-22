@@ -111,4 +111,10 @@ public class StoreActivity extends AppCompatActivity {
             storeSubscription.unsubscribe();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
