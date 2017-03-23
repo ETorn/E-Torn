@@ -105,6 +105,7 @@ class PermissionManager {
             Log.d(TAG, "Ja tenim el permis no cal mostrar rationale");
 
         currentRationaleIndex++;
+        showNextRationale();
     }
 
     private void doneShowingRationales() {
