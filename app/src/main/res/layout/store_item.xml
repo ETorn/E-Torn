@@ -99,12 +99,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/textView_actual"
+            app:layout_constraintRight_toLeftOf="@+id/textView_actual_number"
             app:layout_constraintTop_toBottomOf="@+id/item_separator" />
 
 
         <TextView
-            android:id="@+id/textView_actual"
+            android:id="@+id/textView_actual_number"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginBottom="8dp"
@@ -115,7 +115,6 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/actual_turn_design"
             android:gravity="center_vertical|center_horizontal"
-            android:text="15"
             android:textColor="@android:color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -135,7 +134,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toRightOf="@+id/item_separarator_v"
-            app:layout_constraintRight_toLeftOf="@+id/textView_disponible"
+            app:layout_constraintRight_toLeftOf="@+id/textView_disponible_number"
             app:layout_constraintTop_toBottomOf="@+id/item_separator"
             tools:layout_conversion_absoluteHeight="30dp"
             tools:layout_conversion_absoluteWidth="100dp"
@@ -143,7 +142,7 @@
             tools:layout_conversion_absoluteY="84dp" />
 
         <TextView
-            android:id="@+id/textView_disponible"
+            android:id="@+id/textView_disponible_number"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="8dp"
@@ -154,7 +153,6 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/disponible_turn_design"
             android:gravity="center_vertical|center_horizontal"
-            android:text="30"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -14,6 +14,8 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,9 +47,11 @@ public class SuperActivity extends AppCompatActivity {
     private AppCompatActivity self;
     private List<Super> supers;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Context context;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    SuperAdapter superAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +65,20 @@ public class SuperActivity extends AppCompatActivity {
         //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
 
+        superAdapter  = new SuperAdapter(context);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(superAdapter); // S'ha de setejar abans el adapter del recyclerView al crearse (encara que estigui buit) per evitar errors
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 //        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -164,7 +178,7 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     public void updateData() {
-
+        //swipeRefreshLayout
         supers = new ArrayList<>();
 
 
@@ -185,18 +199,17 @@ public class SuperActivity extends AppCompatActivity {
                         supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
                     }
 
-                    SuperAdapter adapter = new SuperAdapter(context, supers);
-                    recyclerView.setAdapter(adapter);
+                    if (response.body().size() == 1)
+                        startStoreIntent(0);
+
+                    superAdapter = new SuperAdapter(context, supers);
+                    recyclerView.setAdapter(superAdapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    List<Store> stores = supers.get(position).getStores();
-                                    Intent intent = new Intent(context, StoreActivity.class);
-                                    intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    context.startActivity(intent);
+                                    startStoreIntent(position);
                                 }
                             })
                     );
@@ -214,6 +227,15 @@ public class SuperActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void startStoreIntent (int position){
+        List<Store> stores = supers.get(position).getStores();
+        Intent intent = new Intent(context, StoreActivity.class);
+        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
+        context.startActivity(intent);
     }
 
     @Override

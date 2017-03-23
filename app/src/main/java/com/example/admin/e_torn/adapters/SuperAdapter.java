@@ -42,6 +42,11 @@ public class SuperAdapter extends RecyclerView.Adapter<SuperAdapter.SuperViewHol
         this.supers = supers;
     }
 
+    public SuperAdapter(Context context) {
+        this.context = context;
+        this.supers = new ArrayList<>();
+    }
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
