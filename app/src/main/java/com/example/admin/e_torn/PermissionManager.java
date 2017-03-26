@@ -1,7 +1,11 @@
 package com.example.admin.e_torn;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +13,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+class ResultListenerNotSpecified extends RuntimeException {
+    ResultListenerNotSpecified(String reason) {
+        super(reason);
+    }
+}
 
 interface PermissionRequestResultListerner {
     void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions);
@@ -28,81 +38,93 @@ class PermissionManager {
 
     private AppCompatActivity ctx;
 
-    private List<String> requestedPermissions;
+    private List<String> permissions;
+    private List<String> rationales;
 
     private PermissionRequestResultListerner listener;
-    private PermissionRationale rationale;
+
+    private int currentRationaleIndex;
 
     private int requestCode;
 
-    private boolean forceRetry;
-
-    PermissionManager(AppCompatActivity activity, boolean forceRetry) {
+    PermissionManager(AppCompatActivity activity) {
         ctx = activity;
-        this.forceRetry = forceRetry;
 
         requestCode = 1;
-        requestedPermissions = new ArrayList<>();
-        listener = new PermissionRequestResultListerner() {
-            @Override
-            public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
-                Log.w(TAG, "Funcio onPermissionRequestDone() per defecte cridada");
-                Log.w(TAG, "Fes un override d'aquesta funcio!");
-            }
-        };
-        rationale = new PermissionRationale() {
-            @Override
-            public void onShowPermissionRationale(CallBack cb) {
-                cb.call();
-            }
-        };
-    }
-
-    PermissionManager(AppCompatActivity a) {
-        this(a, false);
+        permissions = new ArrayList<>();
+        rationales = new ArrayList<>();
     }
 
     void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
         listener = l;
     }
 
-    void setPermissionRationale(PermissionRationale r) {
-        rationale = r;
+    void addPermission(String permission, String rationale) {
+        permissions.add(permission);
+        rationales.add(rationale);
     }
 
-    void addPermission(String permission) {
-        requestedPermissions.add(permission);
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void showNextRationale() {
+        Log.d(TAG, "showNextRationale()");
+
+        if (currentRationaleIndex >= permissions.size()) {
+            Log.d(TAG, "Acabats els rationales");
+            doneShowingRationales();
+            return;
+        }
+
+        String perm = permissions.get(currentRationaleIndex);
+
+        Log.d(TAG, "Permission: " + perm);
+        if (ContextCompat.checkSelfPermission(ctx, perm) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "No tenim aquest permis");
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(ctx, perm)) {
+
+                if (rationales.get(currentRationaleIndex) != null) {
+                    Log.d(TAG, "Mostrant explicació");
+
+                    new AlertDialog.Builder(ctx)
+                            .setMessage(rationales.get(currentRationaleIndex))
+                            .setCancelable(true)
+                            .setPositiveButton("D'acord", null)
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    Log.d(TAG, "Rationale dismissed");
+                                    showNextRationale();
+                                }
+                            })
+                            .create()
+                            .show();
+                } else
+                    Log.d(TAG, "No explicació especificada. Saltant");
+            }
+        } else
+            Log.d(TAG, "Ja tenim el permis no cal mostrar rationale");
+
+        currentRationaleIndex++;
+        showNextRationale();
     }
 
+    private void doneShowingRationales() {
+        Log.d(TAG, "doneShowingRationales()");
+
+        Log.d(TAG, "Demanant permisos");
+        ActivityCompat.requestPermissions(ctx, permissions.toArray(new String[0]), requestCode);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     void requestPermissions() {
         Log.d(TAG, ".requestPermissions() cridat");
 
-        Log.d(TAG, "Permission: " + requestedPermissions.get(0));
-        if (ContextCompat.checkSelfPermission(ctx, requestedPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "No tenim aquest permis");
+        if (listener == null)
+            throw new ResultListenerNotSpecified("Listener no especificat");
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(ctx, requestedPermissions.get(0))) {
-                Log.d(TAG, "Mostrant explicació");
+        currentRationaleIndex = 0;
 
-                rationale.onShowPermissionRationale(new CallBack() {
-                    @Override
-                    public void call() {
-                        Log.d(TAG, "Demanant permisos");
-
-                        ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
-                    }
-                });
-
-            } else {
-                Log.d(TAG, "Primera vegada que demanem permisos, o l'usuari no vol saber res de nosltres. Demanant permisos");
-
-                ActivityCompat.requestPermissions(ctx, new String[]{requestedPermissions.get(0)}, requestCode);
-            }
-        } else {
-            Log.d(TAG, "Ja tenim aquest permis");
-
-            listener.onPermissionRequestDone(true, new ArrayList<String>());
-        }
+        showNextRationale();
     }
 
     void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -125,11 +147,6 @@ class PermissionManager {
         boolean successAll = permissions.length == result.size();
 
         Log.d(TAG, "successAll = " + successAll);
-
-        if (!successAll && forceRetry) {
-            Log.d(TAG, "Reintentant (forceRetry = true)");
-            requestPermissions();
-        }
 
         listener.onPermissionRequestDone(successAll, result);
     }

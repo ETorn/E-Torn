@@ -1,5 +1,6 @@
 package com.example.admin.e_torn;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 
@@ -114,7 +116,7 @@ public class SuperActivity extends AppCompatActivity {
                         .setCancelable(false)
                         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                self.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                self.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -129,7 +131,7 @@ public class SuperActivity extends AppCompatActivity {
         };
 
         permissionManager = new PermissionManager(this);
-        permissionManager.addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionManager.addPermission(Manifest.permission.ACCESS_FINE_LOCATION, "Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.");
         permissionManager.setPermissionRequestResultListener(new PermissionRequestResultListerner() {
             @Override
             public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
@@ -156,30 +158,14 @@ public class SuperActivity extends AppCompatActivity {
                 }
             }
         });
-
-        permissionManager.setPermissionRationale(new PermissionRationale() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-            @Override
-            public void onShowPermissionRationale(final CallBack cb) {
-                new AlertDialog.Builder(self)
-                        .setMessage("Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.")
-                        .setCancelable(true)
-                        .setPositiveButton("D'acord", null)
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                cb.call();
-                            }
-                        })
-                        .create()
-                        .show();
-            }
-        });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart()");
 
         // Començar el proces de demanar permisos
         permissionManager.requestPermissions();
