@@ -53,7 +53,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="0dp"
             android:layout_marginTop="0dp"
-            android:text="Time"
+            android:text="3 minuts"
             app:layout_constraintBottom_toBottomOf="@+id/time_icon"
             app:layout_constraintLeft_toRightOf="@+id/time_icon"
             app:layout_constraintRight_toRightOf="@+id/item_store_name"
