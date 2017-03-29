@@ -199,8 +199,10 @@ public class SuperActivity extends AppCompatActivity {
                         supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
                     }
 
-                    if (response.body().size() == 1)
+                    if (response.body().size() == 1) {
                         startStoreIntent(0);
+                        return;  //TODO: Hack
+                    }
 
                     superAdapter = new SuperAdapter(context, supers);
                     recyclerView.setAdapter(superAdapter);

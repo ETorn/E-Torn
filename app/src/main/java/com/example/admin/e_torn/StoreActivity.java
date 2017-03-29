@@ -46,8 +46,6 @@ public class StoreActivity extends AppCompatActivity {
             Log.d("store", store.toString());
             storeSubscriptions.add(new TopicSubscription(this, "store." + store.getId()));
         }
-
-        storeSubscriptionsListener();
     }
 
     public void updateUI (){
@@ -93,6 +91,13 @@ public class StoreActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        storeSubscriptionsListener();
     }
 
     public int getTopicStoreIndex (String topic) {
