@@ -26,13 +26,14 @@ public class StoreActivity extends AppCompatActivity {
 
     // Subscripció al topic de les store disponibles
     List<TopicSubscription> storeSubscriptions;
+    private StoreAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview_stores);
         storeSubscriptions = new ArrayList<>();
-        this.context = getApplicationContext();
+        this.context = this;
         this.stores = getIntent().getParcelableArrayListExtra("stores");
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -55,7 +56,7 @@ public class StoreActivity extends AppCompatActivity {
         stores.add(new Store("Peixateria01", 1, 1, R.drawable.capraboicon));
         stores.add(new Store("Peixateria02", 1, 1, R.drawable.capraboicon));*/
 
-        StoreAdapter adapter = new StoreAdapter(stores);
+        adapter = new StoreAdapter(stores);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
@@ -66,7 +67,7 @@ public class StoreActivity extends AppCompatActivity {
                         Intent intent = new Intent(context, StoreInfoActivity.class);
                         // Pasem a StoreInfoActivity la id necessaria per fer la peticio al servidor
                         intent.putExtra("id", store.getId());
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }
                 })
@@ -87,7 +88,8 @@ public class StoreActivity extends AppCompatActivity {
                         stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
                     if (remoteMessage.getData().get("usersTurn") != null)
                         stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
-                    updateUI();
+                    //updateUI();
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
@@ -117,7 +119,9 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     public void unsuscribeAllStores () {
+        Log.d(TAG, storeSubscriptions.toString());
         for( TopicSubscription storeSubscription: storeSubscriptions) {
+            Log.d(TAG, "storeSubscription" + storeSubscription.getTopic());
             storeSubscription.unsubscribe();
         }
     }
