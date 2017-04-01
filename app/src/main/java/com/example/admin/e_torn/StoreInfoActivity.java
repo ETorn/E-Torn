@@ -47,8 +47,6 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     //Torn que ha agafat l'usuari
     Integer userTurn;
 
-    boolean inTurn;
-
     // UI
     TextView actualTurn;
     TextView disponibleTurn;
@@ -153,14 +151,13 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             call.enqueue(new Callback<PostUserAddResponse>() {
                 @Override
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
-                    Log.d(TAG, "ResponseTurn: " + response.body().toString());
+                    Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
+                    userTurn = response.body().getTurn();
 
                     //putUserTurnInPref(userTurn);
-                    if(userTurn == null) {
-                        // El torn que demana el usuari es el actual disponible de la store
-                        // Ja que el torn que retorna retrofit es el seguent disponible
-                        userTurn = store.getUsersTurn();
-                        inTurn = true;
+                    if(userTurn != null) {
+
+                        app.getUserInfo().put(app.getUser().getId(), new InfoTurn(store.getId(), userTurn));
 
                         turnText.startAnimation(out);
 

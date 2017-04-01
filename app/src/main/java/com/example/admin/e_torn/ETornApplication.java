@@ -12,6 +12,8 @@ import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +27,9 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     SharedPreferences sharedPreferences;
 
+    //Map per a identificar en quina store ha demanat torn el usuari
+    HashMap<String, InfoTurn> userInfo;
+
     User user;
 
     @Override
@@ -34,6 +39,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
         Log.d(TAG, "APP STARTED");
 
         user = new User();
+
+        userInfo = new HashMap<>();
 
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
 
@@ -80,5 +87,21 @@ public class ETornApplication extends Application implements PushUpdateListener 
     @Override
     public void onPushUpdate(RemoteMessage remoteMessage) {
         Log.d(TAG, "New push notification for everyone");
+    }
+
+    public HashMap<String, InfoTurn> getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(HashMap<String, InfoTurn> userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
