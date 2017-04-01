@@ -157,7 +157,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                     //putUserTurnInPref(userTurn);
                     if(userTurn != null) {
 
-                        app.getUserInfo().put(app.getUser().getId(), new InfoTurn(store.getId(), userTurn));
+                        app.getUserInfo().put(store.getId(), new InfoTurn(app.getUser().getId(), userTurn));
 
                         turnText.startAnimation(out);
 

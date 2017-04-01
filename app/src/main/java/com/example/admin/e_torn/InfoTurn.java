@@ -6,20 +6,20 @@ package com.example.admin.e_torn;
 
 class InfoTurn {
 
-    private String storeId;
+    private String userId;
     private int userTurn;
 
     public InfoTurn(String storeId, int userTurn) {
-        this.storeId = storeId;
+        this.userId = storeId;
         this.userTurn = userTurn;
     }
 
-    public String getStoreId() {
-        return storeId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setStoreId(String storeId) {
-        this.storeId = storeId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public int getUserTurn() {
