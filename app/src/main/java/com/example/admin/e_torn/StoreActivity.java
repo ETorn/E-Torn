@@ -23,6 +23,8 @@ public class StoreActivity extends AppCompatActivity {
     // Referencia a la classe global Application
     ETornApplication app;
 
+    boolean activityRestarted;
+
     private static final String TAG = "StoreActivity";
     private List<Store> stores;
     private RecyclerView recyclerView;
@@ -36,6 +38,8 @@ public class StoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview_stores);
+
+        activityRestarted = false;
 
         app = (ETornApplication) getApplication();
 
@@ -55,7 +59,17 @@ public class StoreActivity extends AppCompatActivity {
             storeSubscriptions.add(new TopicSubscription(this, "store." + stores.get(i).getId()));
             if (storeInTurn(i)){
                 stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
-                //Canviar tambe el nom del torn disponible per "El teu torn"
+                stores.get(i).setInTurn(true);
+            }
+        }
+    }
+
+    public void checkStoresInTorn () {
+        Log.d(TAG, "Checking stores in turn...");
+        for (int i = 0; i < stores.size(); i++) {
+            if (storeInTurn(i)){
+                stores.get(i).setInTurn(true);
+                adapter.notifyDataSetChanged();
             }
         }
     }
@@ -120,10 +134,20 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        activityRestarted = true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         storeSubscriptionsListener();
+
+        if (activityRestarted) {
+            checkStoresInTorn();
+        }
     }
 
     public int getTopicStoreIndex (String topic) {

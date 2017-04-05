@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.models.Store;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         TextView itemTime;
         TextView actualNumber;
         TextView disponibleNumber;
+        TextView userTurn;
 
         StoreViewHolder(View itemView) {
             super(itemView);
@@ -33,6 +36,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             storeName = (TextView) itemView.findViewById(R.id.item_store_name);
             itemTime = (TextView) itemView.findViewById(R.id.item_time);
             actualNumber = (TextView) itemView.findViewById(R.id.textView_actual_number);
+            userTurn = (TextView) itemView.findViewById(R.id.disponible);
             disponibleNumber = (TextView) itemView.findViewById(R.id.textView_disponible_number);
         }
     }
@@ -42,7 +46,6 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     public StoreAdapter(List<Store> stores) {
         this.stores = stores;
     }
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -60,6 +63,13 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         //storeViewHolder.itemTime.setText(stores.get(position).getTime());
         storeViewHolder.actualNumber.setText(String.valueOf(stores.get(position).getStoreTurn()));
         storeViewHolder.disponibleNumber.setText(String.valueOf(stores.get(position).getUsersTurn()));
+        if (stores.get(position).isInTurn()) {
+            storeViewHolder.userTurn.setText("El teu torn");
+        }
+        else {
+            storeViewHolder.userTurn.setText("Disponible");
+        }
+
         if (stores.size() == 0) {
             storeViewHolder.storeName.setText("No stores");
         }

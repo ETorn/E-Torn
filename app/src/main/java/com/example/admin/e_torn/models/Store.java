@@ -13,6 +13,7 @@ public class Store implements Parcelable{
     private int storeTurn;
     private int usersTurn;
     private int queue;
+    private boolean inTurn;
 
     public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
         this._id = _id;
@@ -22,6 +23,22 @@ public class Store implements Parcelable{
         this.queue = usersTurn - storeTurn;
     }
     public Store(){};
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public boolean isInTurn() {
+        return inTurn;
+    }
+
+    public void setInTurn(boolean inTurn) {
+        this.inTurn = inTurn;
+    }
 
     public int getQueue() {
         return queue;
