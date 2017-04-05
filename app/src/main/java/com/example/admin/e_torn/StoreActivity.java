@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoreActivity extends AppCompatActivity {
+
+    // Referencia a la classe global Application
+    ETornApplication app;
+
     private static final String TAG = "StoreActivity";
     private List<Store> stores;
     private RecyclerView recyclerView;
@@ -32,6 +36,9 @@ public class StoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview_stores);
+
+        app = (ETornApplication) getApplication();
+
         storeSubscriptions = new ArrayList<>();
         this.context = this;
         this.stores = getIntent().getParcelableArrayListExtra("stores");
@@ -43,10 +50,22 @@ public class StoreActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         //recyclerView.setHasFixedSize(true); //Per a quan sabem que el tamany del recyclerView no canviara
 
-        for (Store store: stores) {
-            Log.d("store", store.toString());
-            storeSubscriptions.add(new TopicSubscription(this, "store." + store.getId()));
+        for (int i = 0; i < stores.size(); i++) {
+            Log.d("store", stores.get(i).toString());
+            storeSubscriptions.add(new TopicSubscription(this, "store." + stores.get(i).getId()));
+            if (storeInTurn(i)){
+                stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
+                //Canviar tambe el nom del torn disponible per "El teu torn"
+            }
         }
+    }
+
+    public boolean storeInTurn (int index) {
+        if (app.getUserInfo().get(stores.get(index).getId()) != null){
+            Log.d(TAG, "inTurn " + app.getUserInfo().get(stores.get(index).getId()).toString());
+            return true;
+        }
+        return false;
     }
 
     public void updateUI (){
@@ -86,8 +105,13 @@ public class StoreActivity extends AppCompatActivity {
                         stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
                     if (remoteMessage.getData().get("storeQueue") != null)
                         stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
-                    if (remoteMessage.getData().get("usersTurn") != null)
-                        stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+                    if (!storeInTurn(storeIndex)) {
+                        if (remoteMessage.getData().get("usersTurn") != null)
+                            stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+                    }
+                    /*else {
+                        stores.get(storeIndex).setUsersTurn(app.getUserInfo().get(stores.get(storeIndex).getId()).getTurn());
+                    }*/
                     //updateUI();
                     adapter.notifyDataSetChanged();
                 }
