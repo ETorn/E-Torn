@@ -1,34 +1,59 @@
 package com.example.admin.e_torn.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 /**
  * Created by Patango on 01/03/2017.
  */
 
 public class User {
 
-    private Integer turn;
+    private String firebaseId;
     private String _id;
+    private List<Turn> turns;
 
-    public User(Integer turn, String id) {
-        this.turn = turn;
-        this._id = id;
+    public User() {
     }
 
-    public User() {};
-
-    public Integer getTurn() {
-        return turn;
+    public User(String firebaseId, String _id, List<Turn> turns) {
+        this.firebaseId = firebaseId;
+        this._id = _id;
+        this.turns = turns;
     }
 
-    public String getId() {
+    public String getFirebaseId() {
+        return firebaseId;
+    }
+
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
+    }
+
+    public String get_id() {
         return _id;
     }
 
-    public void setTurn(Integer turn) {
-        this.turn = turn;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public void setId(String _id) {
-        this._id = _id;
+    public List<Turn> getTurns() {
+        return turns;
+    }
+
+    public void setTurns(List<Turn> turns) {
+        this.turns = turns;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "firebaseId='" + firebaseId + '\'' +
+                ", _id='" + _id + '\'' +
+                ", turns=" + turns +
+                '}';
     }
 }
