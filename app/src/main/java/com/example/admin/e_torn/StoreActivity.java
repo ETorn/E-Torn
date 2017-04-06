@@ -53,25 +53,6 @@ public class StoreActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         //recyclerView.setHasFixedSize(true); //Per a quan sabem que el tamany del recyclerView no canviara
-
-        for (int i = 0; i < stores.size(); i++) {
-            Log.d("store", stores.get(i).toString());
-            storeSubscriptions.add(new TopicSubscription(this, "store." + stores.get(i).getId()));
-            if (storeInTurn(i)){
-                stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
-                stores.get(i).setInTurn(true);
-            }
-        }
-    }
-
-    public void checkStoresInTorn () {
-        Log.d(TAG, "Checking stores in turn...");
-        for (int i = 0; i < stores.size(); i++) {
-            if (storeInTurn(i)){
-                stores.get(i).setInTurn(true);
-                adapter.notifyDataSetChanged();
-            }
-        }
     }
 
     public boolean storeInTurn (int index) {
@@ -113,6 +94,7 @@ public class StoreActivity extends AppCompatActivity {
             storeSubscription.setListener(new PushUpdateListener() {
                 @Override
                 public void onPushUpdate(RemoteMessage remoteMessage) {
+
                     Log.d(TAG + " From ",remoteMessage.getFrom());
                     int storeIndex = getTopicStoreIndex(remoteMessage.getFrom());
                     if (remoteMessage.getData().get("storeTurn") != null)
@@ -143,11 +125,19 @@ public class StoreActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        storeSubscriptionsListener();
-
-        if (activityRestarted) {
-            checkStoresInTorn();
+        storeSubscriptions.clear();
+        for (int i = 0; i < stores.size(); i++) {
+            Log.d("store", stores.get(i).toString());
+            storeSubscriptions.add(new TopicSubscription(this, "store." + stores.get(i).getId()));
+            if (storeInTurn(i)){
+                stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
+                stores.get(i).setInTurn(true);
+            }
         }
+
+        adapter.notifyDataSetChanged();
+
+        storeSubscriptionsListener();
     }
 
     public int getTopicStoreIndex (String topic) {
@@ -163,7 +153,7 @@ public class StoreActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-
+        unsuscribeAllStores();
     }
 
     public void unsuscribeAllStores () {
