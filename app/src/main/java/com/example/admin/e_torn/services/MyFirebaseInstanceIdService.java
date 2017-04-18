@@ -14,6 +14,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     public MyFirebaseInstanceIdService() {
     }
 
+    //Es crida només la primera vegada que s'inicia la app
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.

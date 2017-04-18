@@ -167,6 +167,7 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        //finish();
+        moveTaskToBack(true);
     }
 }
