@@ -71,7 +71,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         }
 
         if (stores.size() == 0) {
-            storeViewHolder.storeName.setText("No stores");
+            storeViewHolder.storeName.setText(R.string.info_no_stores);
         }
     }
 

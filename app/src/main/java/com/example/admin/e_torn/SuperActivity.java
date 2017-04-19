@@ -150,11 +150,11 @@ public class SuperActivity extends AppCompatActivity {
                     new AlertDialog.Builder(self)
                             .setMessage("Hmmm. ok.")
                             .setCancelable(true)
-                            .setPositiveButton("D'acord", null)
+                            .setPositiveButton(R.string.ok, null)
                             .create()
                             .show();
 
-                    ((TextView)findViewById(R.id.loading_textView)).setText("No tenim permisos de localització");
+                    ((TextView)findViewById(R.id.loading_textView)).setText(R.string.no_location_permission);
                 }
             }
         });
@@ -217,7 +217,7 @@ public class SuperActivity extends AppCompatActivity {
                     );
                 }
                 else {
-                    ((TextView)findViewById(R.id.loading_textView)).setText("No hem trobat cap super proper");
+                    ((TextView)findViewById(R.id.loading_textView)).setText(R.string.info_no_close_super);
                     (findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
                     (findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 }
