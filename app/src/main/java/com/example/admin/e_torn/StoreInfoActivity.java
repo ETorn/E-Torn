@@ -89,7 +89,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
         if (inTurn()) {
             getTurnBtn.setVisibility(View.GONE);
-            turnText.setText("EL TEU TORN");
+            turnText.setText(R.string.your_turn);
         }
         storeSubscription = new TopicSubscription(this, "store." + store.getId());
         storeSubscription.setListener(new PushUpdateListener() {
@@ -220,7 +220,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         else
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
-        queueText.setText(String.valueOf(store.getQueue()) + getString(R.string.turns));
+        queueText.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
     }
 
     /*public void putUserTurnInPref(Integer turn) {

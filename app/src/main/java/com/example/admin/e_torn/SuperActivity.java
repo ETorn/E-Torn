@@ -154,7 +154,7 @@ public class SuperActivity extends AppCompatActivity {
                             .create()
                             .show();
 
-                    ((TextView)findViewById(R.id.loading_textView)).setText("No tenim permisos de localització");
+                    ((TextView)findViewById(R.id.loading_textView)).setText(R.string.no_location_permission);
                 }
             }
         });

@@ -3,10 +3,11 @@
     <string name="info_no_stores">No stores</string>
     <string name="your_turn">YOUR TURN</string>
     <string name="turns">turns</string>
-    <string name="quetion_enable_location">Looks like location is disabled. Do you want to enable it?</string>
+    <string name="question_enable_location">Looks like location is disabled. Do you want to enable it?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="ok">OK</string>
     <string name="info_location_permission_needed">We need permission to use GPS to show you the closest supermarkets. Without this permission the app won\'t function correctly.</string>
     <string name="info_no_close_super">We didn\'t find any close supermarkets</string>
+    <string name="no_location_permission">We don\'t have location permission</string>
 </resources>
