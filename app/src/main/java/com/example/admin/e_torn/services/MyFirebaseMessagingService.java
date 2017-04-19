@@ -49,7 +49,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = new Intent();
         intent.putExtra("remoteMessage", remoteMessage);
         intent.setAction(Constants.packageName + "." + remoteMessage.getFrom().replace("/topics/", ""));
-        sendBroadcast(intent);
+        sendBroadcast(intent); //envia el missatge de la notificacio als topicSubscription que estan escoltant en el metode onPushUpdate
 
         Notification n = new Notification.Builder(this)
                 .setContentTitle("New FCM push notification")

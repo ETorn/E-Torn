@@ -1,5 +1,6 @@
 package com.example.admin.e_torn;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,8 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,9 +47,11 @@ public class SuperActivity extends AppCompatActivity {
     private AppCompatActivity self;
     private List<Super> supers;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Context context;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    SuperAdapter superAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +65,20 @@ public class SuperActivity extends AppCompatActivity {
         //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
 
+        superAdapter  = new SuperAdapter(context);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(self);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(superAdapter); // S'ha de setejar abans el adapter del recyclerView al crearse (encara que estigui buit) per evitar errors
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 //        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -97,14 +112,14 @@ public class SuperActivity extends AppCompatActivity {
                 Log.d(TAG, "Provider disabled: " + provider);
 
                 new AlertDialog.Builder(self)
-                        .setMessage(R.string.quetion_enable_location)
+                        .setMessage("Sembla que la teva localització està desactivada. Vols activar-la?")
                         .setCancelable(false)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                 self.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                             }
                         })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                                 dialog.cancel();
                                 Toast.makeText(self, ":(", Toast.LENGTH_SHORT).show();
@@ -116,7 +131,7 @@ public class SuperActivity extends AppCompatActivity {
         };
 
         permissionManager = new PermissionManager(this);
-        permissionManager.addPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionManager.addPermission(Manifest.permission.ACCESS_FINE_LOCATION, "Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.");
         permissionManager.setPermissionRequestResultListener(new PermissionRequestResultListerner() {
             @Override
             public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {
@@ -143,30 +158,14 @@ public class SuperActivity extends AppCompatActivity {
                 }
             }
         });
-
-        permissionManager.setPermissionRationale(new PermissionRationale() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-            @Override
-            public void onShowPermissionRationale(final CallBack cb) {
-                new AlertDialog.Builder(self)
-                        .setMessage(R.string.info_location_permission_needed)
-                        .setCancelable(true)
-                        .setPositiveButton(R.string.ok, null)
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                cb.call();
-                            }
-                        })
-                        .create()
-                        .show();
-            }
-        });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart()");
 
         // Començar el proces de demanar permisos
         permissionManager.requestPermissions();
@@ -179,7 +178,7 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     public void updateData() {
-
+        //swipeRefreshLayout
         supers = new ArrayList<>();
 
 
@@ -200,18 +199,19 @@ public class SuperActivity extends AppCompatActivity {
                         supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
                     }
 
-                    SuperAdapter adapter = new SuperAdapter(context, supers);
-                    recyclerView.setAdapter(adapter);
+                    if (response.body().size() == 1) {
+                        startStoreIntent(0);
+                        return;  //TODO: Hack
+                    }
+
+                    superAdapter = new SuperAdapter(context, supers);
+                    recyclerView.setAdapter(superAdapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    List<Store> stores = supers.get(position).getStores();
-                                    Intent intent = new Intent(context, StoreActivity.class);
-                                    intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    context.startActivity(intent);
+                                    startStoreIntent(position);
                                 }
                             })
                     );
@@ -229,6 +229,15 @@ public class SuperActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void startStoreIntent (int position){
+        List<Store> stores = supers.get(position).getStores();
+        Intent intent = new Intent(context, StoreActivity.class);
+        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
+        context.startActivity(intent);
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.models.Store;
+import com.example.admin.e_torn.models.Turn;
 import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;
@@ -45,8 +46,6 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     //Torn que ha agafat l'usuari
     Integer userTurn;
 
-    boolean inTurn;
-
     // UI
     TextView actualTurn;
     TextView disponibleTurn;
@@ -62,10 +61,10 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_store_info);
 
         in = new AlphaAnimation(0.0f, 1.0f);
-        in.setDuration(2000);
+        in.setDuration(1000);
 
         out = new AlphaAnimation(1.0f, 0.0f);
-        out.setDuration(2000);
+        out.setDuration(1000);
 
         Log.d(TAG, "onCreate()");
 
@@ -73,12 +72,12 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
         store = new Store();
 
-        userId = app.user.getId();
+        userId = app.user.get_id();
         self = this;
 
         storeId = getIntent().getStringExtra("id");
 
-        store.setId(storeId);
+        store.setId(getIntent().getStringExtra("id"));
 
         turnText = (TextView) findViewById(R.id.disponibleTurnText);
         actualTurn = (TextView) findViewById(R.id.actualTurn);
@@ -88,21 +87,34 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         getTurnBtn = (FloatingActionButton) findViewById(R.id.getTurnBtn);
         getTurnBtn.setOnClickListener(this);
 
-        storeSubscription = new TopicSubscription(this, "store." + storeId);
+        if (inTurn()) {
+            getTurnBtn.setVisibility(View.GONE);
+            turnText.setText("EL TEU TORN");
+        }
+        storeSubscription = new TopicSubscription(this, "store." + store.getId());
         storeSubscription.setListener(new PushUpdateListener() {
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
-                Log.d(TAG, "push recieved");
+            Log.d(TAG, "push recieved");
 
-                if (remoteMessage.getData().get("storeTurn") != null)
-                    store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
-                if (remoteMessage.getData().get("storeQueue") != null)
-                    store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
-                if (remoteMessage.getData().get("usersTurn") != null)
-                    store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
-                updateUI();
+            if (remoteMessage.getData().get("storeTurn") != null)
+                store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+            if (remoteMessage.getData().get("storeQueue") != null)
+                store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+            // Si ja te un torn demanat, no actualitzarem usersTurn (que es el disponible quan no ha demanat torn i es el torn del usuari quan l'ha demanat)
+            if (remoteMessage.getData().get("usersTurn") != null && !inTurn())
+                store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+            updateUI();
             }
         });
+    }
+
+    public boolean inTurn () {
+        if (app.getUserInfo().get(store.getId()) != null){
+            Log.d(TAG, "inTurn " + app.getUserInfo().get(store.getId()).toString());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -151,21 +163,21 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             call.enqueue(new Callback<PostUserAddResponse>() {
                 @Override
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
-                    Log.d(TAG, "ResponseTurn: " + response.body().toString());
+                    Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
+                    userTurn = response.body().getTurn();
 
                     //putUserTurnInPref(userTurn);
-                    if(userTurn == null) {
-                        // El torn que demana el usuari es el actual disponible de la store
-                        // Ja que el torn que retorna retrofit es el seguent disponible
-                        userTurn = store.getUsersTurn();
-                        inTurn = true;
+                    if(userTurn != null) {
+                        app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurn));
+                        Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
 
                         turnText.startAnimation(out);
-
+                        getTurnBtn.startAnimation(out);
                         out.setAnimationListener(new Animation.AnimationListener() {
                             @Override
                             public void onAnimationStart(Animation animation) {
-
+                                getTurnBtn.setVisibility(View.GONE);
+                                getTurnBtn.setEnabled(false);
                             }
 
                             @Override
@@ -203,7 +215,10 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
     private void updateUI() {
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
-        disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
+        if (inTurn())
+            disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.getId()).getTurn()));
+        else
+            disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
         queueText.setText(String.valueOf(store.getQueue()) + getString(R.string.turns));
     }

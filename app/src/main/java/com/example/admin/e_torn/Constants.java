@@ -11,7 +11,7 @@ public class Constants {
     static final int SPLASH_DISPLAY_LENGTH = 3000;
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
-    public static final String serverURL = "http://192.168.1.128:8080";
+    public static final String serverURL = "http://192.168.137.1.:8080";
 
     public static final String packageName = "com.example.admin.e_torn";
 
@@ -21,5 +21,5 @@ public class Constants {
 
     public static final String USER_ID = "userId";
 
-    public static int DEFAULT_DISTANCE = 3000;
+    public static int DEFAULT_DISTANCE = 1000;
 }
