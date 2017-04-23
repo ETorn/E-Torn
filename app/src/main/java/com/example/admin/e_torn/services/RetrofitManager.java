@@ -10,8 +10,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitManager {
-    public static final Retrofit retrofit = new Retrofit.Builder()
+    public static Retrofit getInstance(String url) {
+        return new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+    /*public static final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Constants.serverURL)
             .addConverterFactory(GsonConverterFactory.create())
-            .build();
+            .build();*/
 }

@@ -182,7 +182,7 @@ public class SuperActivity extends AppCompatActivity {
         supers = new ArrayList<>();
 
 
-        SuperService superService = RetrofitManager.retrofit.create(SuperService.class);
+        SuperService superService = RetrofitManager.getInstance(Constants.serverURL).create(SuperService.class);
         final Call<List<Super>> call = superService.getSupers(userLatitude, userLongitude, Constants.DEFAULT_DISTANCE);
 
         call.enqueue(new Callback<List<Super>>() {

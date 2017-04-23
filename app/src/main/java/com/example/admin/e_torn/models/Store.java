@@ -13,6 +13,7 @@ public class Store implements Parcelable{
     private int storeTurn;
     private int usersTurn;
     private int queue;
+    private int aproxTime;
     private boolean inTurn;
 
     public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
@@ -46,6 +47,14 @@ public class Store implements Parcelable{
 
     public void setQueue(int queue) {
         this.queue = queue;
+    }
+
+    public int getAproxTime() {
+        return aproxTime;
+    }
+
+    public void setAproxTime(int aproxTime) {
+        this.aproxTime = aproxTime;
     }
 
     public int getReloadedQueue () {
