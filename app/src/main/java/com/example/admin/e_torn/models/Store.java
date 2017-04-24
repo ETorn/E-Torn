@@ -66,6 +66,7 @@ public class Store implements Parcelable{
         this.storeTurn = in.readInt();
         this.usersTurn = in.readInt();
         this.queue = in.readInt();
+        this.aproxTime = in.readInt();
     }
 
     public String getId() {
@@ -112,6 +113,7 @@ public class Store implements Parcelable{
         dest.writeInt(this.storeTurn);
         dest.writeInt(this.usersTurn);
         dest.writeInt(this.queue);
+        dest.writeInt(this.aproxTime);
     }
 
     public static final Creator<Store> CREATOR = new Creator<Store>() {
@@ -129,11 +131,13 @@ public class Store implements Parcelable{
     @Override
     public String toString() {
         return "Store{" +
-                "id=" + _id +
+                "_id='" + _id + '\'' +
                 ", name='" + name + '\'' +
                 ", storeTurn=" + storeTurn +
                 ", usersTurn=" + usersTurn +
                 ", queue=" + queue +
+                ", aproxTime=" + aproxTime +
+                ", inTurn=" + inTurn +
                 '}';
     }
 }

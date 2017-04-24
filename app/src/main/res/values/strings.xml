@@ -10,4 +10,5 @@
     <string name="info_location_permission_needed">We need permission to use GPS to show you the closest supermarkets. Without this permission the app won\'t function correctly.</string>
     <string name="info_no_close_super">We didn\'t find any close supermarkets</string>
     <string name="no_location_permission">We don\'t have location permission</string>
+    <string name="minutes">minutes</string>
 </resources>

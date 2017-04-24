@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
@@ -52,6 +53,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     TextView turnText;
     TextView queueText;
     TextView aproxTime;
+    ImageView timeIcon;
+
     FloatingActionButton getTurnBtn;
     Animation in;
     Animation out;
@@ -84,6 +87,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         disponibleTurn = (TextView) findViewById(R.id.disponibleTurn);
         queueText = (TextView) findViewById(R.id.queue);
         aproxTime = (TextView) findViewById(R.id.time);
+        timeIcon = (ImageView) findViewById(R.id.timeIcon);
         getTurnBtn = (FloatingActionButton) findViewById(R.id.getTurnBtn);
         getTurnBtn.setOnClickListener(this);
 
@@ -240,7 +244,16 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
         queueText.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
-        aproxTime.setText(String.valueOf(store.getAproxTime()));
+        if (store.getAproxTime() == 0) {
+            timeIcon.setVisibility(View.GONE);
+            aproxTime.setVisibility(View.GONE);
+        }
+
+        else {
+            timeIcon.setVisibility(View.VISIBLE);
+            aproxTime.setVisibility(View.VISIBLE);
+            aproxTime.setText(String.valueOf(store.getAproxTime()) + " " + getString(R.string.minutes));
+        }
     }
 
     /*public void putUserTurnInPref(Integer turn) {

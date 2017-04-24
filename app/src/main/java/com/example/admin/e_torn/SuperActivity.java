@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -29,6 +30,7 @@ import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
 import com.example.admin.e_torn.services.RetrofitManager;
+import com.example.admin.e_torn.services.StoreService;
 import com.example.admin.e_torn.services.SuperService;
 
 import java.util.ArrayList;
@@ -232,12 +234,39 @@ public class SuperActivity extends AppCompatActivity {
     }
 
     public void startStoreIntent (int position){
-        List<Store> stores = supers.get(position).getStores();
-        Intent intent = new Intent(context, StoreActivity.class);
-        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
-        context.startActivity(intent);
+
+        final int[] requests = {0};
+        final List<Store> stores = supers.get(position).getStores();
+        StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
+        for (final Store store: stores) {
+            Call<Integer> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
+            caesarCall.enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    requests[0]++;
+                    if (response.body() != null) {
+                        Log.d(TAG, "CaesarResponse: " + response.body());
+                        store.setAproxTime(response.body());
+                    }
+                    if (requests[0] == stores.size()) {
+                        Log.d(TAG, "SUCCESS");
+                        Intent intent = new Intent(context, StoreActivity.class);
+                        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
+                        context.startActivity(intent);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+                }
+            });
+
+        }
+
+
     }
 
     @Override
