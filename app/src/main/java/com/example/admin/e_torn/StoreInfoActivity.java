@@ -144,14 +144,15 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         });
     }
 
+
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
 
         // Ja no estem a l'activitat, ens desubscribim
         storeSubscription.unsubscribe();
     }
-
 
     @Override
     public void onClick(View v) {
