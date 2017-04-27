@@ -24,6 +24,7 @@
         <activity android:name=".StoreActivity" />
         <activity android:name=".StoreInfoActivity" />
         <activity android:name=".UserTurnInfo" />
+        <activity android:name=".MyPreferencesActivity" />
 
         <service
             android:name=".services.MyFirebaseMessagingService"

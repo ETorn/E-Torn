@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen android:title="@string/notification_mode"
+        android:key="notificationMode"
+        android:persistent="false">
+
+        <PreferenceScreen
+            android:key="turn_pref_editText"
+            android:widgetLayout="@layout/turn_widget"
+            android:title="@string/turn_notification">
+
+            <EditTextPreference
+                android:key="turn_pref_editText">
+                android:summary="@string/turn_notification_summary"
+            </EditTextPreference>
+
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:key="time_pref_editText"
+
+            android:title="@string/time_notification">
+
+            <EditTextPreference
+                android:key="time_pref_editText"
+                android:summary="@string/time_notification_summary">
+
+            </EditTextPreference>
+
+        </PreferenceScreen>
+
+    </PreferenceScreen>
+</PreferenceScreen>
