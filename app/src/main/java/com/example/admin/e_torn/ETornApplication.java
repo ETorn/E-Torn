@@ -4,14 +4,23 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.util.Log;
-import com.example.admin.e_torn.models.*;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
+import com.example.admin.e_torn.models.Turn;
 import com.example.admin.e_torn.models.User;
 import com.example.admin.e_torn.response.PostUserResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.HashMap;
 
@@ -23,6 +32,9 @@ import retrofit2.Response;
 public class ETornApplication extends Application implements PushUpdateListener {
 
     private static final String TAG = "ETornApplication";
+    private static final String MQTT_TAG = TAG + ":mqtt";
+
+    MqttAndroidClient mqttAndroidClient;
 
     TopicSubscription allSubscription;
 
@@ -89,16 +101,76 @@ public class ETornApplication extends Application implements PushUpdateListener 
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
             }
-    });
+        });
+
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), Constants.MQTT_URL, "ID");
+        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                Log.d(MQTT_TAG, "Connect complete. Is reconnect:" + reconnect);
+
+                subscribeToTopic();
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                Log.d(MQTT_TAG, "Connection lost");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                Log.d(MQTT_TAG, "Message arrived. Topic: " + topic + " Payload: " + message.toString());
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                Log.d(MQTT_TAG, "Delivery complete");
+            }
+        });
+
+        MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setCleanSession(false);
+
+        try {
+            mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(MQTT_TAG, "Connected sucessfully");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(MQTT_TAG, "Failed to connect");
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
 
         allSubscription = new TopicSubscription(this, "everyone");
         allSubscription.setListener(this);
         allSubscription.subscribe();
-
-
     }
 
+    public void subscribeToTopic(){
+        try {
+            mqttAndroidClient.subscribe("etorn/store/#", 0, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(MQTT_TAG, "Subscribed!");
+                }
 
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(MQTT_TAG, "Failed to subscribe");
+                }
+            });
+        } catch (MqttException ex){
+            System.err.println("Exception whilst subscribing");
+            ex.printStackTrace();
+        }
+    }
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;

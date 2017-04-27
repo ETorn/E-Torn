@@ -11,7 +11,8 @@ public class Constants {
     static final int SPLASH_DISPLAY_LENGTH = 3000;
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
-    public static final String serverURL = "http://192.168.137.1.:8080";
+    public static final String serverURL = "http://192.168.137.1:8080";
+    public static final String MQTT_URL = "tcp://192.168.137.1:1883";
 
     public static final String packageName = "com.example.admin.e_torn";
 
