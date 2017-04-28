@@ -14,14 +14,24 @@ public class User {
     private String firebaseId;
     private String _id;
     private List<Turn> turns;
+    private int notificationTurns;
 
     public User() {
     }
 
-    public User(String firebaseId, String _id, List<Turn> turns) {
+    public User(String firebaseId, String _id, List<Turn> turns, int notificationTurns) {
         this.firebaseId = firebaseId;
         this._id = _id;
         this.turns = turns;
+        this.notificationTurns = notificationTurns;
+    }
+
+    public int getNotificationTurns() {
+        return notificationTurns;
+    }
+
+    public void setNotificationTurns(int notificationTurns) {
+        this.notificationTurns = notificationTurns;
     }
 
     public String getFirebaseId() {

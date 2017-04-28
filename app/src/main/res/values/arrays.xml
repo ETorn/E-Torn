@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="notification_modes">
-        <item>Turn Notification</item>
-        <item>Time Notification</item>
+    <string-array name="turn_notifications">
+        <item>1 torn</item>
+        <item>3 torns</item>
+        <item>5 torns</item>
     </string-array>
+
+    <string-array name="turn_notifications_values">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
 </resources>

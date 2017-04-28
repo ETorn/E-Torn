@@ -4,29 +4,14 @@
         android:key="notificationMode"
         android:persistent="false">
 
-        <PreferenceScreen
-            android:key="turn_pref_editText"
-            android:widgetLayout="@layout/turn_widget"
-            android:title="@string/turn_notification">
-
-            <EditTextPreference
-                android:key="turn_pref_editText">
+            <ListPreference
+                android:key="turn_pref_editText"
+                android:entries="@array/turn_notifications"
+                android:entryValues="@array/turn_notifications_values"
                 android:summary="@string/turn_notification_summary"
-            </EditTextPreference>
+                android:widgetLayout="@layout/turn_widget">
 
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="time_pref_editText"
-
-            android:title="@string/time_notification">
-
-            <EditTextPreference
-                android:key="time_pref_editText"
-                android:summary="@string/time_notification_summary">
-
-            </EditTextPreference>
-
-        </PreferenceScreen>
+            </ListPreference>
 
     </PreferenceScreen>
 </PreferenceScreen>
