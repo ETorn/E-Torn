@@ -5,14 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.models.Store;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +19,7 @@ import java.util.List;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder> {
 
+    private static final String TAG = "StoreAdapter";
 
     static class StoreViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -29,12 +28,14 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         TextView actualNumber;
         TextView disponibleNumber;
         TextView userTurn;
+        ImageView timeIcon;
 
         StoreViewHolder(View itemView) {
             super(itemView);
             cardView = (CardView) itemView.findViewById(R.id.cardViewStore);
             storeName = (TextView) itemView.findViewById(R.id.item_store_name);
             itemTime = (TextView) itemView.findViewById(R.id.item_time);
+            timeIcon = (ImageView) itemView.findViewById(R.id.timeIcon);
             actualNumber = (TextView) itemView.findViewById(R.id.textView_actual_number);
             userTurn = (TextView) itemView.findViewById(R.id.disponible);
             disponibleNumber = (TextView) itemView.findViewById(R.id.textView_disponible_number);
@@ -61,6 +62,15 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     public void onBindViewHolder(StoreViewHolder storeViewHolder, int position) {
         storeViewHolder.storeName.setText(stores.get(position).getName());
         //storeViewHolder.itemTime.setText(stores.get(position).getTime());
+        if (stores.get(position).getAproxTime() == 0) {
+            storeViewHolder.itemTime.setVisibility(View.GONE);
+            storeViewHolder.timeIcon.setVisibility(View.GONE);
+        }
+        else {
+            storeViewHolder.itemTime.setVisibility(View.VISIBLE);
+            storeViewHolder.timeIcon.setVisibility(View.VISIBLE);
+        }
+        storeViewHolder.itemTime.setText(String.valueOf(stores.get(position).getAproxTime()) + " " + R.string.minutes);
         storeViewHolder.actualNumber.setText(String.valueOf(stores.get(position).getStoreTurn()));
         storeViewHolder.disponibleNumber.setText(String.valueOf(stores.get(position).getUsersTurn()));
         if (stores.get(position).isInTurn()) {

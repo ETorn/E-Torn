@@ -46,7 +46,7 @@ public class ETornApplication extends Application implements PushUpdateListener 
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
 
         //Efectuem crida a post /users per a obtenir una ID per a l'usuari
-        final UserService userService = RetrofitManager.retrofit.create(UserService.class);
+        final UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
         final Call<User> findCall = userService.getExistingUser(getFCMToken());
         findCall.enqueue(new Callback<User>() {
             @Override

@@ -13,6 +13,7 @@ public class Store implements Parcelable{
     private int storeTurn;
     private int usersTurn;
     private int queue;
+    private int aproxTime;
     private boolean inTurn;
 
     public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
@@ -48,6 +49,14 @@ public class Store implements Parcelable{
         this.queue = queue;
     }
 
+    public int getAproxTime() {
+        return aproxTime;
+    }
+
+    public void setAproxTime(int aproxTime) {
+        this.aproxTime = aproxTime;
+    }
+
     public int getReloadedQueue () {
        return this.queue = this.usersTurn - this.storeTurn;
     }
@@ -57,6 +66,7 @@ public class Store implements Parcelable{
         this.storeTurn = in.readInt();
         this.usersTurn = in.readInt();
         this.queue = in.readInt();
+        this.aproxTime = in.readInt();
     }
 
     public String getId() {
@@ -103,6 +113,7 @@ public class Store implements Parcelable{
         dest.writeInt(this.storeTurn);
         dest.writeInt(this.usersTurn);
         dest.writeInt(this.queue);
+        dest.writeInt(this.aproxTime);
     }
 
     public static final Creator<Store> CREATOR = new Creator<Store>() {
@@ -120,11 +131,13 @@ public class Store implements Parcelable{
     @Override
     public String toString() {
         return "Store{" +
-                "id=" + _id +
+                "_id='" + _id + '\'' +
                 ", name='" + name + '\'' +
                 ", storeTurn=" + storeTurn +
                 ", usersTurn=" + usersTurn +
                 ", queue=" + queue +
+                ", aproxTime=" + aproxTime +
+                ", inTurn=" + inTurn +
                 '}';
     }
 }

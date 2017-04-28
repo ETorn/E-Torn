@@ -17,6 +17,9 @@ public interface StoreService {
     @GET("/stores/{id}")
     Call<Store> getStoreById(@Path("id") String id);
 
+    @GET("/averageTime/{id}")
+    Call<Integer> getStoreAverageTime(@Path("id") String id);
+
     @PUT("/stores/{storeId}/users/{userId}")
     Call<PostUserAddResponse> addUserToStore(@Path("storeId") String storeId, @Path("userId") String userId);
 }

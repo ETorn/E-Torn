@@ -10,8 +10,6 @@
     <string name="info_location_permission_needed">We need permission to use GPS to show you the closest supermarkets. Without this permission the app won\'t function correctly.</string>
     <string name="info_no_close_super">We didn\'t find any close supermarkets</string>
     <string name="no_location_permission">We don\'t have location permission</string>
-<<<<<<< Updated upstream
-=======
     <string name="minutes">minutes</string>
     <string name="settings">Settings</string>
     <string name="notification_mode">Notification mode</string>
@@ -19,5 +17,4 @@
     <string name="time_notification">Time notification</string>
     <string name="turn_notification_summary">From how many turns you want to be notified?</string>
     <string name="time_notification_summary">From how much time you want to be notified?</string>
->>>>>>> Stashed changes
 </resources>

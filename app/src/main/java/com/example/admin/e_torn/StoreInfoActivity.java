@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
@@ -52,6 +53,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     TextView turnText;
     TextView queueText;
     TextView aproxTime;
+    ImageView timeIcon;
+
     FloatingActionButton getTurnBtn;
     Animation in;
     Animation out;
@@ -84,6 +87,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         disponibleTurn = (TextView) findViewById(R.id.disponibleTurn);
         queueText = (TextView) findViewById(R.id.queue);
         aproxTime = (TextView) findViewById(R.id.time);
+        timeIcon = (ImageView) findViewById(R.id.timeIcon);
         getTurnBtn = (FloatingActionButton) findViewById(R.id.getTurnBtn);
         getTurnBtn.setOnClickListener(this);
 
@@ -101,6 +105,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                 store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
             if (remoteMessage.getData().get("storeQueue") != null)
                 store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+            if (remoteMessage.getData().get("aproxTime") != null)
+                store.setAproxTime(Integer.parseInt(remoteMessage.getData().get("aproxTime")));
             // Si ja te un torn demanat, no actualitzarem usersTurn (que es el disponible quan no ha demanat torn i es el torn del usuari quan l'ha demanat)
             if (remoteMessage.getData().get("usersTurn") != null && !inTurn())
                 store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
@@ -125,7 +131,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         storeSubscription.subscribe();
 
         // Crida inicial a retrofit per omplir la variable store
-        StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
+        final StoreService storeService = RetrofitManager.getInstance(Constants.serverURL).create(StoreService.class);
         final Call<Store> call = storeService.getStoreById(store.getId());
         call.enqueue(new Callback<Store>() {
             @Override
@@ -134,7 +140,23 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
                 store = response.body();
 
-                updateUI();
+                StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
+                Call<Integer> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
+                caesarCall.enqueue(new Callback<Integer>() {
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                        if (response.body() != null) {
+                            Log.d(TAG, "CaesarResponse: " + response.body());
+                            store.setAproxTime(response.body());
+                        }
+                        updateUI();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t) {
+                        Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+                    }
+                });
             }
 
             @Override
@@ -159,7 +181,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         int id = v.getId();
 
         if (id == R.id.getTurnBtn) {
-            StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
+            StoreService storeService = RetrofitManager.getInstance(Constants.serverURL).create(StoreService.class);
             final Call<PostUserAddResponse> call = storeService.addUserToStore(store.getId(), userId);
             call.enqueue(new Callback<PostUserAddResponse>() {
                 @Override
@@ -222,6 +244,16 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
         queueText.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
+        if (store.getAproxTime() == 0) {
+            timeIcon.setVisibility(View.GONE);
+            aproxTime.setVisibility(View.GONE);
+        }
+
+        else {
+            timeIcon.setVisibility(View.VISIBLE);
+            aproxTime.setVisibility(View.VISIBLE);
+            aproxTime.setText(String.valueOf(store.getAproxTime()) + " " + getString(R.string.minutes));
+        }
     }
 
     /*public void putUserTurnInPref(Integer turn) {

@@ -10,4 +10,5 @@
     <string name="info_location_permission_needed">Necesitamos permiso para usar el GPS para mostrarte los supermercados mas cercanos. SIn este permiso la app no funcinara correctament.</string>
     <string name="info_no_close_super">No hemos encontrado ningun supermercado cercano</string>
     <string name="no_location_permission">No tenemos permisos de localización</string>
+    <string name="minutes">minutos</string>
 </resources>
