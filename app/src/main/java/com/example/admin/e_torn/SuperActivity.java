@@ -132,6 +132,9 @@ public class SuperActivity extends AppCompatActivity {
 
         permissionManager = new PermissionManager(this);
         permissionManager.addPermission(Manifest.permission.ACCESS_FINE_LOCATION, "Necessitem permis per fer servir el GPS per mostrat-te els supermercats més propers. Sense aquest permís la app no funcinarà correctament.");
+        permissionManager.addPermission(Manifest.permission.WAKE_LOCK, "Es necessari wakelock");
+        permissionManager.addPermission(Manifest.permission.ACCESS_NETWORK_STATE, "Es necessari network state");
+        permissionManager.addPermission(Manifest.permission.READ_PHONE_STATE, "Es necessari phone state");
         permissionManager.setPermissionRequestResultListener(new PermissionRequestResultListerner() {
             @Override
             public void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions) {

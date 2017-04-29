@@ -15,7 +15,8 @@ import com.example.admin.e_torn.models.Turn;
 import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;
-import com.google.firebase.messaging.RemoteMessage;
+
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +36,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     Store store;
 
     // Subscripció al topic d'aquesta store
-    TopicSubscription storeSubscription;
+    private TopicSubscription storeSubscriptionStoreTurn;
+    private TopicSubscription storeSubscriptionStoreQueue;
+    private TopicSubscription storeSubscriptionUsersTurn;
 
     // Id de store rebuda per Intent
     String storeId;
@@ -55,6 +58,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     FloatingActionButton getTurnBtn;
     Animation in;
     Animation out;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,20 +95,34 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             getTurnBtn.setVisibility(View.GONE);
             turnText.setText(R.string.your_turn);
         }
-        storeSubscription = new TopicSubscription(this, "store." + store.getId());
-        storeSubscription.setListener(new PushUpdateListener() {
-            @Override
-            public void onPushUpdate(RemoteMessage remoteMessage) {
-            Log.d(TAG, "push recieved");
 
-            if (remoteMessage.getData().get("storeTurn") != null)
-                store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
-            if (remoteMessage.getData().get("storeQueue") != null)
-                store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
-            // Si ja te un torn demanat, no actualitzarem usersTurn (que es el disponible quan no ha demanat torn i es el torn del usuari quan l'ha demanat)
-            if (remoteMessage.getData().get("usersTurn") != null && !inTurn())
-                store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
-            updateUI();
+        storeSubscriptionStoreTurn = new TopicSubscription(app, app.getMqttClient(), "etorn/store/" + store.getId() + "/storeTurn");
+        storeSubscriptionStoreTurn.setListener(new PushUpdateListener() {
+            @Override
+            public void onPushUpdate(MqttMessage remoteMessage) {
+                Log.d(TAG, "StoreTurn recieved");
+                store.setStoreTurn(Integer.parseInt(new String(remoteMessage.getPayload())));
+                updateUI();
+            }
+        });
+
+        storeSubscriptionStoreQueue = new TopicSubscription(app, app.getMqttClient(), "etorn/store/" + store.getId() + "/storeQueue");
+        storeSubscriptionStoreQueue.setListener(new PushUpdateListener() {
+            @Override
+            public void onPushUpdate(MqttMessage remoteMessage) {
+                Log.d(TAG, "StoreQueue recieved");
+                store.setQueue(Integer.parseInt(new String(remoteMessage.getPayload())));
+                updateUI();
+            }
+        });
+
+        storeSubscriptionUsersTurn = new TopicSubscription(app, app.getMqttClient(), "etorn/store/" + store.getId() + "/usersTurn");
+        storeSubscriptionUsersTurn.setListener(new PushUpdateListener() {
+            @Override
+            public void onPushUpdate(MqttMessage remoteMessage) {
+                Log.d(TAG, "UsersTurn recieved");
+                store.setUsersTurn(Integer.parseInt(new String(remoteMessage.getPayload())));
+                updateUI();
             }
         });
     }
@@ -122,7 +140,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         super.onResume();
 
         // Subscribim al topic de la store per rebre updates s'estat
-        storeSubscription.subscribe();
+        storeSubscriptionStoreTurn.subscribe();
+        storeSubscriptionStoreQueue.subscribe();
+        storeSubscriptionUsersTurn.subscribe();
 
         // Crida inicial a retrofit per omplir la variable store
         StoreService storeService = RetrofitManager.retrofit.create(StoreService.class);
@@ -151,7 +171,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         super.onPause();
 
         // Ja no estem a l'activitat, ens desubscribim
-        storeSubscription.unsubscribe();
+        storeSubscriptionStoreTurn.unsubscribe();
+        storeSubscriptionStoreQueue.unsubscribe();
+        storeSubscriptionUsersTurn.unsubscribe();
     }
 
     @Override

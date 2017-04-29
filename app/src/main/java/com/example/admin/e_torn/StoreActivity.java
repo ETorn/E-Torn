@@ -13,7 +13,8 @@ import com.example.admin.e_torn.adapters.StoreAdapter;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
-import com.google.firebase.messaging.RemoteMessage;
+
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +94,11 @@ public class StoreActivity extends AppCompatActivity {
             storeSubscription.subscribe();
             storeSubscription.setListener(new PushUpdateListener() {
                 @Override
-                public void onPushUpdate(RemoteMessage remoteMessage) {
+                public void onPushUpdate(MqttMessage remoteMessage) {
 
+                    Log.d(TAG, "New noti recivevd");
+
+                    /*
                     Log.d(TAG + " From ",remoteMessage.getFrom());
                     int storeIndex = getTopicStoreIndex(remoteMessage.getFrom());
                     if (remoteMessage.getData().get("storeTurn") != null)
@@ -128,7 +132,7 @@ public class StoreActivity extends AppCompatActivity {
         storeSubscriptions.clear();
         for (int i = 0; i < stores.size(); i++) {
             Log.d("store", stores.get(i).toString());
-            storeSubscriptions.add(new TopicSubscription(this, "store." + stores.get(i).getId()));
+            storeSubscriptions.add(new TopicSubscription(app, app.getMqttClient(), "etorn/store/" + stores.get(i).getId() + "/#"));
             if (storeInTurn(i)){
                 stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
                 stores.get(i).setInTurn(true);

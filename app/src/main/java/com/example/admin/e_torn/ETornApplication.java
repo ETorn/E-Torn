@@ -11,13 +11,11 @@ import com.example.admin.e_torn.models.User;
 import com.example.admin.e_torn.response.PostUserResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.UserService;
-import com.google.firebase.messaging.RemoteMessage;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -29,12 +27,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ETornApplication extends Application implements PushUpdateListener {
+public class ETornApplication extends Application {
 
     private static final String TAG = "ETornApplication";
     private static final String MQTT_TAG = TAG + ":mqtt";
 
     MqttAndroidClient mqttAndroidClient;
+    String mqttId;
 
     TopicSubscription allSubscription;
 
@@ -103,7 +102,9 @@ public class ETornApplication extends Application implements PushUpdateListener 
             }
         });
 
-        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), Constants.MQTT_URL, "ID");
+        mqttId = MqttClient.generateClientId();
+
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), Constants.MQTT_URL, mqttId);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -131,45 +132,35 @@ public class ETornApplication extends Application implements PushUpdateListener 
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setKeepAliveInterval(1);
 
         try {
-            mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(MQTT_TAG, "Connected sucessfully");
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(MQTT_TAG, "Failed to connect");
-                }
-            });
+            mqttAndroidClient.connect(mqttConnectOptions);
         } catch (MqttException e) {
             e.printStackTrace();
         }
-
-        allSubscription = new TopicSubscription(this, "everyone");
-        allSubscription.setListener(this);
-        allSubscription.subscribe();
     }
 
     public void subscribeToTopic(){
         try {
-            mqttAndroidClient.subscribe("etorn/store/#", 0, null, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(MQTT_TAG, "Subscribed!");
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(MQTT_TAG, "Failed to subscribe");
-                }
-            });
+            mqttAndroidClient.subscribe("etorn/everyone", 0);
         } catch (MqttException ex){
             System.err.println("Exception whilst subscribing");
             ex.printStackTrace();
         }
+
+        TopicSubscription ts = new TopicSubscription(getApplicationContext(), mqttAndroidClient, "etorn/#");
+        ts.setListener(new PushUpdateListener() {
+            @Override
+            public void onPushUpdate(MqttMessage remoteMessage) {
+                Log.d("IT FUCKING WORKS", "LOL");
+            }
+        });
+        ts.subscribe();
+    }
+
+    public MqttAndroidClient getMqttClient() {
+        return mqttAndroidClient;
     }
 
     public SharedPreferences getSharedPreferences() {
@@ -185,11 +176,6 @@ public class ETornApplication extends Application implements PushUpdateListener 
         super.onConfigurationChanged(newConfig);
 
         Log.d(TAG, "New configuration");
-    }
-
-    @Override
-    public void onPushUpdate(RemoteMessage remoteMessage) {
-        Log.d(TAG, "New push notification for everyone");
     }
 
     public HashMap<String, Turn> getUserInfo() {

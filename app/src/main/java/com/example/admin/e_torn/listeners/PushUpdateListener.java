@@ -1,8 +1,7 @@
 package com.example.admin.e_torn.listeners;
 
-import com.google.firebase.messaging.RemoteMessage;
-
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public interface PushUpdateListener {
-    void onPushUpdate(RemoteMessage remoteMessage);
+    void onPushUpdate(MqttMessage remoteMessage);
 }

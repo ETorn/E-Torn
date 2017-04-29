@@ -8,7 +8,7 @@ public class Constants {
 
     /** Duration of wait **/
     /** Called when the activity is first created. */
-    static final int SPLASH_DISPLAY_LENGTH = 3000;
+    static final int SPLASH_DISPLAY_LENGTH = 0;//3000;
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
     public static final String serverURL = "http://192.168.137.1:8080";
@@ -22,5 +22,5 @@ public class Constants {
 
     public static final String USER_ID = "userId";
 
-    public static int DEFAULT_DISTANCE = 1000;
+    public static int DEFAULT_DISTANCE = 3000;
 }

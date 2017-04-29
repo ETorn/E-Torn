@@ -1,20 +1,17 @@
 package com.example.admin.e_torn;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 
-public class TopicSubscription extends BroadcastReceiver implements PushUpdateListener {
+public class TopicSubscription implements PushUpdateListener {
 
     private static final String TAG = "TopicSubscription";
 
@@ -23,16 +20,14 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
     String topic;
     PushUpdateListener listener;
 
+    MqttAndroidClient mqttClient;
     Context ctx;
 
-    boolean subscribed;
-
-    public TopicSubscription(Context ctx, String topic) {
+    public TopicSubscription(Context ctx, MqttAndroidClient mqttClient, String topic) {
         this.topic = topic;
         this.ctx = ctx;
+        this.mqttClient = mqttClient;
         listener = this;
-
-        subscribed = false;
 
         //if (topicMap == null)
           //  topicMap = new HashMap<>();
@@ -47,46 +42,43 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
     }
 
     public void subscribe() {
-        Log.d(TAG, "Subcribing to firebase topic '" + topic + "'");
-        FirebaseMessaging.getInstance().subscribeToTopic(topic);
+        Log.d(TAG, "Subscribing to mqtt topic '" + topic + "'");
+        try {
+            mqttClient.subscribe(topic, 0, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    Log.d(TAG, "Received push notification from topic: " + topic);
+
+                    listener.onPushUpdate(message);
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
 
         //int subscriptions = topicMap.getOrDefault(topic, 0);
 
         //topicMap.put(topic, subscriptions + 1);
-
-        subscribed = true;
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.packageName + "." + topic);
-        ctx.registerReceiver(this, intentFilter);
     }
 
     public void unsubscribe() {
-        Log.d(TAG, "Unsubscribing from firebase topic '" + topic + "'");
+        Log.d(TAG, "Unsubscribing from mqtt topic '" + topic + "'");
 
        // int subscriptions = topicMap.get(topic);
 
         //topicMap.put(topic, subscriptions - 1);
 
         //if (topicMap.get(topic) == 0) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
+        try {
+            mqttClient.unsubscribe(topic);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
         //}
-
-        if (subscribed)
-            ctx.unregisterReceiver(this);
-
-        subscribed = false;
-
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onRecieve called");
-        listener.onPushUpdate((RemoteMessage) intent.getParcelableExtra("remoteMessage"));
-    }
-
-    @Override
-    public void onPushUpdate(RemoteMessage remoteMessage) {
+    public void onPushUpdate(MqttMessage message) {
         Log.w(TAG, "Default listener called. Set your custom listener.");
     }
 }
