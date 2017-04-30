@@ -3,6 +3,7 @@ package com.example.admin.e_torn;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -37,6 +38,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
     // Subscripció al topic d'aquesta store
     TopicSubscription storeSubscription;
+
+    TopicSubscription userSubscription;
 
     // Id de store rebuda per Intent
     String storeId;
@@ -100,17 +103,48 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
             Log.d(TAG, "push recieved");
+                Log.d(TAG, "Data: " + remoteMessage.getData().toString());
 
             if (remoteMessage.getData().get("storeTurn") != null)
                 store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
             if (remoteMessage.getData().get("storeQueue") != null)
                 store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
             if (remoteMessage.getData().get("aproxTime") != null)
-                store.setAproxTime(Integer.parseInt(remoteMessage.getData().get("aproxTime")));
+                store.setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
             // Si ja te un torn demanat, no actualitzarem usersTurn (que es el disponible quan no ha demanat torn i es el torn del usuari quan l'ha demanat)
             if (remoteMessage.getData().get("usersTurn") != null && !inTurn())
                 store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
             updateUI();
+            }
+        });
+
+        userSubscription = new TopicSubscription(this, "store." + store.getId() + ".user." + app.getUser().get_id());
+        userSubscription.setListener(new PushUpdateListener() {
+            @Override
+            public void onPushUpdate(RemoteMessage remoteMessage) {
+                Log.d(TAG, "push recieved");
+
+                if (remoteMessage.getData().get("storeTurn") != null) {
+                    store.setStoreTurn(store.getStoreTurn() + 1);
+                if (remoteMessage.getData().get("queue") != null)
+                    store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
+                }
+
+                if (remoteMessage.getData().get("notification") != null) {
+                    if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
+
+                        /*NotificationCompat.Builder mBuilder =
+                                (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
+                                        .setSmallIcon(R.drawable.capraboicon)
+                                        .setContentTitle("Caprabo diu")
+                                        .setContentText("Ets el/la següent en la cua!");
+                        mBuilder.notify();*/
+                    }
+                }
+
+                if (remoteMessage.getData().get("aproxTime") != null)
+                    store.setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                updateUI();
             }
         });
     }
@@ -127,8 +161,16 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
 
+        Log.d(TAG, "UserSubscription active? " + userSubscription.isSubscribed());
+
         // Subscribim al topic de la store per rebre updates s'estat
-        storeSubscription.subscribe();
+        if (!inTurn() && !storeSubscription.isSubscribed())
+            storeSubscription.subscribe();
+
+        if (!userSubscription.isSubscribed()) {
+            userSubscription.subscribe();
+        }
+
 
         // Crida inicial a retrofit per omplir la variable store
         final StoreService storeService = RetrofitManager.getInstance(Constants.serverURL).create(StoreService.class);
@@ -141,19 +183,19 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                 store = response.body();
 
                 StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
-                Call<Integer> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
-                caesarCall.enqueue(new Callback<Integer>() {
+                Call<Float> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
+                caesarCall.enqueue(new Callback<Float>() {
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    public void onResponse(Call<Float> call, Response<Float> response) {
                         if (response.body() != null) {
                             Log.d(TAG, "CaesarResponse: " + response.body());
-                            store.setAproxTime(response.body());
+                            store.setAproxTime(Math.round(response.body()));
                         }
                         updateUI();
                     }
 
                     @Override
-                    public void onFailure(Call<Integer> call, Throwable t) {
+                    public void onFailure(Call<Float> call, Throwable t) {
                         Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
                     }
                 });
@@ -173,7 +215,8 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         super.onPause();
 
         // Ja no estem a l'activitat, ens desubscribim
-        storeSubscription.unsubscribe();
+        if (!inTurn() && storeSubscription.isSubscribed())
+            storeSubscription.unsubscribe();
     }
 
     @Override
@@ -187,6 +230,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void onResponse(Call<PostUserAddResponse> call, Response<PostUserAddResponse> response) {
                     Log.d(TAG, "ResponseTurn: " + response.body().getTurn());
+                    storeSubscription.unsubscribe(); // Ens desubscribim de la store per escoltar al topic del usuari
+                    userSubscription.subscribe(); // Escoltem al topic del usuari
+
                     userTurn = response.body().getTurn();
 
                     //putUserTurnInPref(userTurn);

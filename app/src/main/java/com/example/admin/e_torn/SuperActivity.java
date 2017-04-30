@@ -239,14 +239,14 @@ public class SuperActivity extends AppCompatActivity {
         final List<Store> stores = supers.get(position).getStores();
         StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
         for (final Store store: stores) {
-            Call<Integer> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
-            caesarCall.enqueue(new Callback<Integer>() {
+            Call<Float> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
+            caesarCall.enqueue(new Callback<Float>() {
                 @Override
-                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                public void onResponse(Call<Float> call, Response<Float> response) {
                     requests[0]++;
                     if (response.body() != null) {
                         Log.d(TAG, "CaesarResponse: " + response.body());
-                        store.setAproxTime(response.body());
+                        store.setAproxTime(Math.round(response.body()));
                     }
                     if (requests[0] == stores.size()) {
                         Log.d(TAG, "SUCCESS");
@@ -259,7 +259,7 @@ public class SuperActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<Integer> call, Throwable t) {
+                public void onFailure(Call<Float> call, Throwable t) {
                     Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
                 }
             });
