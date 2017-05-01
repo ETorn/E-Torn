@@ -2,6 +2,7 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,10 +16,18 @@ import com.example.admin.e_torn.adapters.StoreAdapter;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
+import com.example.admin.e_torn.models.Super;
+import com.example.admin.e_torn.services.RetrofitManager;
+import com.example.admin.e_torn.services.StoreService;
+import com.example.admin.e_torn.services.SuperService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class StoreActivity extends AppCompatActivity {
 
@@ -31,6 +40,8 @@ public class StoreActivity extends AppCompatActivity {
     private List<Store> stores;
     private RecyclerView recyclerView;
     private Context context;
+
+    private Super superMrkt;
 
     // Subscripció al topic de les store disponibles
     List<TopicSubscription> storeSubscriptions;
@@ -48,6 +59,7 @@ public class StoreActivity extends AppCompatActivity {
         storeSubscriptions = new ArrayList<>();
         this.context = this;
         this.stores = getIntent().getParcelableArrayListExtra("stores");
+        this.superMrkt = getIntent().getParcelableExtra("super");
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         updateUI();
@@ -145,6 +157,27 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        final SuperService superService = RetrofitManager.getInstance(Constants.serverURL).create(SuperService.class);
+        final Call<Super> call = superService.getSuperById(this.superMrkt.get_id());
+        call.enqueue(new Callback<Super>() {
+            @Override
+            public void onResponse(Call<Super> call, Response<Super> response) {
+                Log.d(TAG, "Retrofit 'GetSuperById' response: " + response.body().toString());
+                //Actualitzem les dades de les paradas, si no te torn, actualitza el torn disponible
+                for (int i = 0; i < stores.size(); i++) {
+                    stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
+                    if (!storeInTurn(i))
+                        stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<Super> call, Throwable t) {
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+            }
+        });
 
         storeSubscriptions.clear();
         for (int i = 0; i < stores.size(); i++) {

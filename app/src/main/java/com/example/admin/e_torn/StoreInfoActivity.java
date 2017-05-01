@@ -128,6 +128,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
                     store.setStoreTurn(store.getStoreTurn() + 1);
                 if (remoteMessage.getData().get("queue") != null)
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
+                    app.getUserInfo().get(store.get_id()).setTurnQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                 }
 
                 if (remoteMessage.getData().get("notification") != null) {
@@ -167,10 +168,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
         if (!inTurn() && !storeSubscription.isSubscribed())
             storeSubscription.subscribe();
 
-        if (!userSubscription.isSubscribed()) {
+        if (inTurn() && !userSubscription.isSubscribed()) {
             userSubscription.subscribe();
         }
-
 
         // Crida inicial a retrofit per omplir la variable store
         final StoreService storeService = RetrofitManager.getInstance(Constants.serverURL).create(StoreService.class);
@@ -180,7 +180,14 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
             public void onResponse(Call<Store> call, Response<Store> response) {
                 Log.d("Response", response.body().toString());
 
-                store = response.body();
+                if (!inTurn())
+                    store = response.body();
+                else {
+                    store.setStoreTurn(response.body().getStoreTurn());
+                    store.setQueue(app.getUserInfo().get(store.get_id()).getTurnQueue());
+                }
+
+                updateUI();
 
                 StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
                 Call<Float> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
@@ -237,7 +244,7 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
                     //putUserTurnInPref(userTurn);
                     if(userTurn != null) {
-                        app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurn));
+                        app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurn, store.getQueue()));
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
 
                         turnText.startAnimation(out);
@@ -284,8 +291,9 @@ public class StoreInfoActivity extends AppCompatActivity implements View.OnClick
 
     private void updateUI() {
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
-        if (inTurn())
+        if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.getId()).getTurn()));
+        }
         else
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");

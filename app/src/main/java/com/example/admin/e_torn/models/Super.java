@@ -1,12 +1,15 @@
 package com.example.admin.e_torn.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
  * Created by ausias on 01/03/17.
  */
 
-public class Super {
+public class Super implements Parcelable{
 
     private String _id;
     private String city;
@@ -25,6 +28,28 @@ public class Super {
         this.stores = stores;
         this.distance = distance;
     }
+
+    protected Super(Parcel in) {
+        _id = in.readString();
+        city = in.readString();
+        address = in.readString();
+        distance = in.readLong();
+        phone = in.readString();
+        fax = in.readString();
+        stores = in.createTypedArrayList(Store.CREATOR);
+    }
+
+    public static final Creator<Super> CREATOR = new Creator<Super>() {
+        @Override
+        public Super createFromParcel(Parcel in) {
+            return new Super(in);
+        }
+
+        @Override
+        public Super[] newArray(int size) {
+            return new Super[size];
+        }
+    };
 
     public long getDistance() {
         return distance;
@@ -82,14 +107,6 @@ public class Super {
         return stores;
     }
 
-    public String getId() {
-        return _id;
-    }
-
-    public void setId(String id) {
-        this._id = id;
-    }
-
     @Override
     public String toString() {
         return "Super{" +
@@ -101,5 +118,19 @@ public class Super {
                 ", fax='" + fax + '\'' +
                 ", stores=" + stores +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this._id);
+        dest.writeString(this.address);
+        dest.writeString(this.city);
+        dest.writeLong(this.distance);
+        dest.writeString(this.fax);
     }
 }

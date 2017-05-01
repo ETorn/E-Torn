@@ -33,6 +33,7 @@ import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;
 import com.example.admin.e_torn.services.SuperService;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,7 +196,7 @@ public class SuperActivity extends AppCompatActivity {
 
                 if (response.body().size() != 0) {
                     for (Super superM : response.body()) {
-                        supers.add(new Super(superM.getId(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
+                        supers.add(new Super(superM.get_id(), superM.getCity(), superM.getAddress(), superM.getPhone(), superM.getFax(), superM.getStores(), superM.getDistance()));
                         /*supers.add(new Super("Caprabo3", "Caprabo2 address", "111111", "22222", R.drawable.capraboicon));
                         supers.add(new Super("Caprabo4", "Caprabo3 address", "111111", "22222", R.drawable.capraboicon));
                         supers.add(new Super("Caprabo5", "Caprabo4 address", "111111", "22222", R.drawable.capraboicon));*/
@@ -233,7 +234,7 @@ public class SuperActivity extends AppCompatActivity {
 
     }
 
-    public void startStoreIntent (int position){
+    public void startStoreIntent (final int position){
 
         final int[] requests = {0};
         final List<Store> stores = supers.get(position).getStores();
@@ -252,6 +253,7 @@ public class SuperActivity extends AppCompatActivity {
                         Log.d(TAG, "SUCCESS");
                         Intent intent = new Intent(context, StoreActivity.class);
                         intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+                        intent.putExtra("super",  supers.get(position));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
                         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
                         context.startActivity(intent);
