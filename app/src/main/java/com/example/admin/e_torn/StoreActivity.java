@@ -2,9 +2,7 @@ package com.example.admin.e_torn;
 
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +16,6 @@ import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
 import com.example.admin.e_torn.services.RetrofitManager;
-import com.example.admin.e_torn.services.StoreService;
 import com.example.admin.e_torn.services.SuperService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -29,7 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StoreActivity extends AppCompatActivity {
+public class StoreActivity extends BaseActivity {
 
     // Referencia a la classe global Application
     ETornApplication app;

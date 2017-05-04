@@ -3,7 +3,6 @@ package com.example.admin.e_torn;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -23,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StoreInfoActivity extends AppCompatActivity implements View.OnClickListener{
+public class StoreInfoActivity extends BaseActivity implements View.OnClickListener{
 
     private static final String TAG = "StoreInfoActivity";
 
