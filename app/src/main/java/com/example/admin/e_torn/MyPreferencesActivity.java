@@ -52,20 +52,22 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
 
         app.getUser().setNotificationTurns(Integer.valueOf(sharedPreferences.getString(key, "5")));
 
-        /*UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
-        Call<JSONObject> call = userService.updateUserPref(app.getUser().get_id(), app.getUser());
+        if (app.getUserInfo().size() > 0) {
+            UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
+            Call<JSONObject> call = userService.updateUserPref(app.getUser().get_id(), app.getUser());
 
-        call.enqueue(new Callback<JSONObject>() {
-            @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                Log.d(TAG, "UserResponse: " + response.body().toString());
-            }
+            call.enqueue(new Callback<JSONObject>() {
+                @Override
+                public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                    Log.d(TAG, "UserResponse: " + response.body().toString());
+                }
 
-            @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
-                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
-            }
-        });*/
+                @Override
+                public void onFailure(Call<JSONObject> call, Throwable t) {
+                    Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+                }
+            });
+        }
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment {
