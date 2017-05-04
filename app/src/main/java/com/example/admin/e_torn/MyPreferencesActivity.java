@@ -52,7 +52,7 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
 
         app.getUser().setNotificationTurns(Integer.valueOf(sharedPreferences.getString(key, "5")));
 
-        UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
+        /*UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
         Call<JSONObject> call = userService.updateUserPref(app.getUser().get_id(), app.getUser());
 
         call.enqueue(new Callback<JSONObject>() {
@@ -65,7 +65,7 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
             public void onFailure(Call<JSONObject> call, Throwable t) {
                 Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
             }
-        });
+        });*/
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment {

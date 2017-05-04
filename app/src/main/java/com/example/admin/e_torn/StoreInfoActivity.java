@@ -16,7 +16,10 @@ import com.example.admin.e_torn.models.Turn;
 import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.StoreService;
+import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -264,6 +267,22 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             @Override
                             public void onAnimationRepeat(Animation animation) {
 
+                            }
+                        });
+
+                        //Modifiquem les preferencies del usuari de la BDD
+                        UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
+                        Call<JSONObject> userCall = userService.updateUserPref(app.getUser().get_id(), app.getUser());
+
+                        userCall.enqueue(new Callback<JSONObject>() {
+                            @Override
+                            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                                Log.d(TAG, "UserResponse: " + response.body().toString());
+                            }
+
+                            @Override
+                            public void onFailure(Call<JSONObject> call, Throwable t) {
+                                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
                             }
                         });
 
