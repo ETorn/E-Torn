@@ -55,6 +55,7 @@ public class Turn {
                 "userId='" + userId + '\'' +
                 ", storeId='" + storeId + '\'' +
                 ", turn=" + turn +
+                ", turnQueue=" + turnQueue +
                 '}';
     }
 }

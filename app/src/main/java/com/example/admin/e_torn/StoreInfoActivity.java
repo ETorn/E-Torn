@@ -128,7 +128,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                 if (remoteMessage.getData().get("storeTurn") != null) {
                     store.setStoreTurn(store.getStoreTurn() + 1);
-                if (remoteMessage.getData().get("queue") != null)
+                }
+                if (remoteMessage.getData().get("queue") != null){
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                     app.getUserInfo().get(store.get_id()).setTurnQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                 }
@@ -145,8 +146,10 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
 
-                if (remoteMessage.getData().get("aproxTime") != null)
+                if (remoteMessage.getData().get("aproxTime") != null) {
                     store.setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                    Log.d(TAG, "User aproxTime received: " + store.getAproxTime());
+                }
                 updateUI();
             }
         });
@@ -311,11 +314,15 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.getId()).getTurn()));
+            queueText.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getTurnQueue()), getString(R.string.turns)));
+            Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getTurnQueue());
         }
-        else
+        else {
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
+            queueText.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
+        }
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
-        queueText.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
+
         if (store.getAproxTime() == 0) {
             timeIcon.setVisibility(View.GONE);
             aproxTime.setVisibility(View.GONE);
