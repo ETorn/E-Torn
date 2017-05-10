@@ -8,21 +8,30 @@ public class Turn {
     private String userId;
     private String storeId;
     private int turn;
-    private int turnQueue;
+    private int queue;
+    private float aproxTime;
 
     public Turn(String userId, String storeId, int turn, int turnQueue) {
         this.userId = userId;
         this.storeId = storeId;
         this.turn = turn;
-        this.turnQueue = turnQueue;
+        this.queue = turnQueue;
     }
 
-    public int getTurnQueue() {
-        return turnQueue;
+    public float getAproxTime() {
+        return aproxTime;
     }
 
-    public void setTurnQueue(int turnQueue) {
-        this.turnQueue = turnQueue;
+    public void setAproxTime(float aproxTime) {
+        this.aproxTime = aproxTime;
+    }
+
+    public int getQueue() {
+        return queue;
+    }
+
+    public void setQueue(int queue) {
+        this.queue = queue;
     }
 
     public String getUserId() {
@@ -55,7 +64,8 @@ public class Turn {
                 "userId='" + userId + '\'' +
                 ", storeId='" + storeId + '\'' +
                 ", turn=" + turn +
-                ", turnQueue=" + turnQueue +
+                ", queue=" + queue +
+                ", aproxTime=" + aproxTime +
                 '}';
     }
 }

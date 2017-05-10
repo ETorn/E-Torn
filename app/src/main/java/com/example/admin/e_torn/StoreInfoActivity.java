@@ -131,7 +131,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 }
                 if (remoteMessage.getData().get("queue") != null){
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
-                    app.getUserInfo().get(store.get_id()).setTurnQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
+                    app.getUserInfo().get(store.get_id()).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                 }
 
                 if (remoteMessage.getData().get("notification") != null) {
@@ -189,7 +189,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     store = response.body();
                 else {
                     store.setStoreTurn(response.body().getStoreTurn());
-                    store.setQueue(app.getUserInfo().get(store.get_id()).getTurnQueue());
+                    store.setQueue(app.getUserInfo().get(store.get_id()).getQueue());
                 }
 
                 updateUI();
@@ -314,8 +314,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.getId()).getTurn()));
-            queueText.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getTurnQueue()), getString(R.string.turns)));
-            Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getTurnQueue());
+            queueText.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getQueue()), getString(R.string.turns)));
+            Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getQueue());
         }
         else {
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
@@ -323,7 +323,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         }
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
 
-        if (store.getAproxTime() == 0) {
+        if ((store.getAproxTime() == 0 && !inTurn()) || (inTurn() && app.getUserInfo().get(store.get_id()).getAproxTime() == 0)) {
             timeIcon.setVisibility(View.GONE);
             aproxTime.setVisibility(View.GONE);
         }
@@ -331,7 +331,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         else {
             timeIcon.setVisibility(View.VISIBLE);
             aproxTime.setVisibility(View.VISIBLE);
-            aproxTime.setText(String.valueOf(store.getAproxTime()) + " " + getString(R.string.minutes));
+            float aproxTimeAux = inTurn() ? app.getUserInfo().get(store.get_id()).getAproxTime() : store.getAproxTime();
+            aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
         }
     }
 
