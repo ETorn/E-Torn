@@ -50,7 +50,9 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     String userId;
 
     //Torn que ha agafat l'usuari
-    Integer userTurn;
+    Integer userTurnNumber;
+
+    Turn userTurn;
 
     // UI
     TextView actualTurn;
@@ -86,6 +88,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         storeId = getIntent().getStringExtra("id");
 
         store.setId(getIntent().getStringExtra("id"));
+
+        userTurn = app.getUserInfo().get(store.getId());
 
         turnText = (TextView) findViewById(R.id.disponibleTurnText);
         actualTurn = (TextView) findViewById(R.id.actualTurn);
@@ -156,8 +160,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     }
 
     public boolean inTurn () {
-        if (app.getUserInfo().get(store.getId()) != null){
-            Log.d(TAG, "inTurn " + app.getUserInfo().get(store.getId()).toString());
+        if (userTurn != null){
+            Log.d(TAG, "inTurn " + userTurn.toString());
             return true;
         }
         return false;
@@ -245,11 +249,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     storeSubscription.unsubscribe(); // Ens desubscribim de la store per escoltar al topic del usuari
                     userSubscription.subscribe(); // Escoltem al topic del usuari
 
-                    userTurn = response.body().getTurn();
+                    userTurnNumber = response.body().getTurn();
 
-                    //putUserTurnInPref(userTurn);
-                    if(userTurn != null) {
-                        app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurn, store.getQueue()));
+                    //putUserTurnInPref(userTurnNumber);
+                    if(userTurnNumber != null) {
+                        app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue()));
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
 
                         turnText.startAnimation(out);
@@ -313,7 +317,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     private void updateUI() {
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
         if (inTurn()) {
-            disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.getId()).getTurn()));
+            disponibleTurn.setText(String.valueOf(userTurn.getTurn()));
             queueText.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getQueue()), getString(R.string.turns)));
             Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getQueue());
         }
@@ -338,7 +342,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
     /*public void putUserTurnInPref(Integer turn) {
         SharedPreferences.Editor editor = ((ETornApplication) getApplication()).getSharedPreferences().edit();
-        editor.putInt("userTurn", turn);
+        editor.putInt("userTurnNumber", turn);
         editor.commit();
     }*/
 }
