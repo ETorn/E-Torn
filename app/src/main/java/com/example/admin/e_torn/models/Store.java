@@ -13,7 +13,7 @@ public class Store implements Parcelable{
     private int storeTurn;
     private int usersTurn;
     private int queue;
-    private int aproxTime;
+    private float aproxTime;
     private boolean inTurn;
 
     public Store(String _id, String name, int usersTurn, int storeTurn, int photo) {
@@ -49,11 +49,11 @@ public class Store implements Parcelable{
         this.queue = queue;
     }
 
-    public int getAproxTime() {
+    public float getAproxTime() {
         return aproxTime;
     }
 
-    public void setAproxTime(int aproxTime) {
+    public void setAproxTime(float aproxTime) {
         this.aproxTime = aproxTime;
     }
 
@@ -113,7 +113,7 @@ public class Store implements Parcelable{
         dest.writeInt(this.storeTurn);
         dest.writeInt(this.usersTurn);
         dest.writeInt(this.queue);
-        dest.writeInt(this.aproxTime);
+        dest.writeFloat(this.aproxTime);
     }
 
     public static final Creator<Store> CREATOR = new Creator<Store>() {

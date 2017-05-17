@@ -236,38 +236,15 @@ public class SuperActivity extends AppCompatActivity {
 
     public void startStoreIntent (final int position){
 
-        final int[] requests = {0};
         final List<Store> stores = supers.get(position).getStores();
-        StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
-        for (final Store store: stores) {
-            Call<Float> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
-            caesarCall.enqueue(new Callback<Float>() {
-                @Override
-                public void onResponse(Call<Float> call, Response<Float> response) {
-                    requests[0]++;
-                    if (response.body() != null) {
-                        Log.d(TAG, "CaesarResponse: " + response.body());
-                        store.setAproxTime(Math.round(response.body()));
-                    }
-                    if (requests[0] == stores.size()) {
-                        Log.d(TAG, "SUCCESS");
-                        Intent intent = new Intent(context, StoreActivity.class);
-                        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
-                        intent.putExtra("super",  supers.get(position));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
-                        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
-                        context.startActivity(intent);
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<Float> call, Throwable t) {
-                    Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
-                }
-            });
-
-        }
-
+        Log.d(TAG, "SUCCESS");
+        Intent intent = new Intent(context, StoreActivity.class);
+        intent.putParcelableArrayListExtra("stores", (ArrayList<? extends Parcelable>) stores); // Pasem a StoreActivity la array de Stores a carregar
+        intent.putExtra("super",  supers.get(position));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Peta si no es pasa aquesta flag
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Impedeix el retorn a aquesta activitat amb back button
+        context.startActivity(intent);
 
     }
 

@@ -198,14 +198,14 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                 updateUI();
 
-                StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
+                /*StoreService caesarStoreService = RetrofitManager.getInstance(Constants.caesarURL).create(StoreService.class);
                 Call<Float> caesarCall = caesarStoreService.getStoreAverageTime(store.getId());
                 caesarCall.enqueue(new Callback<Float>() {
                     @Override
                     public void onResponse(Call<Float> call, Response<Float> response) {
                         if (response.body() != null) {
                             Log.d(TAG, "CaesarResponse: " + response.body());
-                            store.setAproxTime(Math.round(response.body()));
+                            store.setAproxTime(response.body());
                         }
                         updateUI();
                     }
@@ -214,7 +214,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     public void onFailure(Call<Float> call, Throwable t) {
                         Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
                     }
-                });
+                });*/
             }
 
             @Override

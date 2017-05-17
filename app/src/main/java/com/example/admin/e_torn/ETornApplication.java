@@ -1,6 +1,7 @@
 package com.example.admin.e_torn;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.util.Log;
@@ -28,6 +29,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     SharedPreferences sharedPreferences;
 
+    private static Context context;
+
     //Map per a identificar en quina store ha demanat torn el usuari
     HashMap<String, Turn> userInfo;
 
@@ -38,6 +41,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
         super.onCreate();
 
         Log.d(TAG, "APP STARTED");
+
+        context = this;
 
         user = new User();
 
@@ -99,6 +104,9 @@ public class ETornApplication extends Application implements PushUpdateListener 
     }
 
 
+    public static Context getContext () {
+        return context;
+    }
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
