@@ -2,6 +2,7 @@ package com.example.admin.e_torn.adapters;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +62,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     @Override
     public void onBindViewHolder(StoreViewHolder storeViewHolder, int position) {
         storeViewHolder.storeName.setText(stores.get(position).getName());
-        //storeViewHolder.itemTime.setText(stores.get(position).getTime());
-        if (stores.get(position).getAproxTime() == 0) {
+        if (stores.get(position).getAproxTime() < 1) {
             storeViewHolder.itemTime.setVisibility(View.GONE);
             storeViewHolder.timeIcon.setVisibility(View.GONE);
         }
@@ -70,7 +70,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             storeViewHolder.itemTime.setVisibility(View.VISIBLE);
             storeViewHolder.timeIcon.setVisibility(View.VISIBLE);
         }
-        storeViewHolder.itemTime.setText(String.valueOf(stores.get(position).getAproxTime()) + " " + R.string.minutes);
+        storeViewHolder.itemTime.setText(String.valueOf(stores.get(position).getAproxTime()));
+        Log.d(TAG, "timeAproxAdapter: " + String.valueOf(stores.get(position).getAproxTime()));
         storeViewHolder.actualNumber.setText(String.valueOf(stores.get(position).getStoreTurn()));
         storeViewHolder.disponibleNumber.setText(String.valueOf(stores.get(position).getUsersTurn()));
         if (stores.get(position).isInTurn()) {

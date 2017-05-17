@@ -131,6 +131,10 @@ public class StoreActivity extends BaseActivity {
                         stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
                     if (remoteMessage.getData().get("storeQueue") != null)
                         stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                    if (remoteMessage.getData().get("aproxTime") != null) {
+                        Log.d(TAG, "aproxTimeStoreActivity: " + Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                        stores.get(storeIndex).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                    }
                     if (!storeInTurn(storeIndex)) {
                         if (remoteMessage.getData().get("usersTurn") != null)
                             stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
@@ -163,6 +167,7 @@ public class StoreActivity extends BaseActivity {
                 Log.d(TAG, "Retrofit 'GetSuperById' response: " + response.body().toString());
                 //Actualitzem les dades de les paradas, si no te torn, actualitza el torn disponible
                 for (int i = 0; i < stores.size(); i++) {
+                    //Actualitzar aqui el aproxTime quan estigui persistit al server
                     stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
                     if (!storeInTurn(i))
                         stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
@@ -219,6 +224,6 @@ public class StoreActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         //finish();
-        moveTaskToBack(true);
+        moveTaskToBack(true); // impedim que l'usuari accedeixi a SuperActivity
     }
 }
