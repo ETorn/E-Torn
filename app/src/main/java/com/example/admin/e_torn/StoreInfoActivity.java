@@ -104,7 +104,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             getTurnBtn.setVisibility(View.GONE);
             turnText.setText(R.string.your_turn);
         }
-        storeSubscription = new TopicSubscription(this, "store." + store.getId());
+        storeSubscription = app.getTopicSubscriptionFor("store." + store.getId());
         storeSubscription.setListener(new PushUpdateListener() {
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
@@ -124,7 +124,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        userSubscription = new TopicSubscription(this, "store." + store.getId() + ".user." + app.getUser().get_id());
+        userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
         userSubscription.setListener(new PushUpdateListener() {
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {

@@ -184,7 +184,7 @@ public class StoreActivity extends BaseActivity {
         storeSubscriptions.clear();
         for (int i = 0; i < stores.size(); i++) {
             Log.d("store", stores.get(i).toString());
-            storeSubscriptions.add(new TopicSubscription(this, "store." + stores.get(i).getId()));
+            storeSubscriptions.add(app.getTopicSubscriptionFor("store." + stores.get(i).getId()));
             if (storeInTurn(i)){
                 stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
                 stores.get(i).setInTurn(true);

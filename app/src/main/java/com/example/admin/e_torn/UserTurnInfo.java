@@ -20,7 +20,7 @@ public class UserTurnInfo extends AppCompatActivity {
         //setContentView(R.layout.activity_user_turn_info);
 
         storeId = getIntent().getStringExtra("id");
-        storeSubscription = new TopicSubscription(this, "store." + storeId);
+        storeSubscription = ((ETornApplication) getApplication()).getTopicSubscriptionFor("store." + storeId);
         storeSubscription.setListener(new PushUpdateListener() {
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
