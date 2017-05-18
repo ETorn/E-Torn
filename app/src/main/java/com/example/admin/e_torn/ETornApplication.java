@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.util.Log;
-import com.example.admin.e_torn.models.*;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
+import com.example.admin.e_torn.models.Turn;
 import com.example.admin.e_torn.models.User;
 import com.example.admin.e_torn.response.PostUserResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
@@ -103,6 +103,9 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     }
 
+    public TopicSubscription getTopicSubscriptionFor(String subscription) {
+        return new TopicSubscription(this, subscription);
+    }
 
     public static Context getContext () {
         return context;
