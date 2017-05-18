@@ -53,6 +53,12 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
 
     public void subscribe() {
         Log.d(TAG, "Subcribing to firebase topic '" + topic + "'");
+
+        if (subscribed) {
+            Log.d(TAG, "Already Subscribed");
+            return;
+        }
+
         FirebaseMessaging.getInstance().subscribeToTopic(topic);
 
         int subscriptions = topicMap.getOrDefault(topic, 0);
