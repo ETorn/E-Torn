@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.ETornApplication;
 import com.example.admin.e_torn.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -15,7 +16,10 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCM Service";
 
+    ETornApplication app;
+
     public MyFirebaseMessagingService() {
+        app = (ETornApplication) getApplication();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -50,6 +54,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("remoteMessage", remoteMessage);
         intent.setAction(Constants.packageName + "." + remoteMessage.getFrom().replace("/topics/", ""));
         sendBroadcast(intent); //envia el missatge de la notificacio als topicSubscription que estan escoltant en el metode onPushUpdate
+
+        if (!app.DEBUG)
+            return;
 
         Notification n = new Notification.Builder(this)
                 .setContentTitle("New FCM push notification")

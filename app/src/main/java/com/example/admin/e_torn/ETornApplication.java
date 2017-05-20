@@ -25,6 +25,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     private static final String TAG = "ETornApplication";
 
+    public final boolean DEBUG = true;
+
     TopicSubscription allSubscription;
 
     SharedPreferences sharedPreferences;
