@@ -1,6 +1,10 @@
 package com.example.admin.e_torn;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -65,6 +69,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     FloatingActionButton getTurnBtn;
     Animation in;
     Animation out;
+    private NotificationManager nm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +85,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         Log.d(TAG, "onCreate()");
 
         app = (ETornApplication) getApplication();
+
+        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         store = new Store();
 
@@ -126,6 +134,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
         userSubscription.setListener(new PushUpdateListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
                 Log.d(TAG, "push recieved");
@@ -141,12 +150,19 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 if (remoteMessage.getData().get("notification") != null) {
                     if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
 
-                        /*NotificationCompat.Builder mBuilder =
-                                (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
-                                        .setSmallIcon(R.drawable.capraboicon)
-                                        .setContentTitle("Caprabo diu")
-                                        .setContentText("Ets el/la següent en la cua!");
-                        mBuilder.notify();*/
+                        int userQueue = Integer.parseInt(remoteMessage.getData().get("queue"));
+
+                        int turnsBefore = app.getUser().getNotificationTurns();
+
+                        if (userQueue <= turnsBefore) {
+                            Notification n = new Notification.Builder(app)
+                                    .setContentTitle("TOrn Caprabo")
+                                    .setContentText("Hi ha " + userQueue + " persones davant teu.")
+                                    .setSmallIcon(R.drawable.capraboicon)
+                                    .build();
+
+                            nm.notify(0, n);
+                        }
                     }
                 }
 
