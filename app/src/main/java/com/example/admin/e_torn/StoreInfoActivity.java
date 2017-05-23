@@ -9,6 +9,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.models.Store;
@@ -132,6 +133,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                 if (remoteMessage.getData().get("storeTurn") != null) {
                     store.setStoreTurn(store.getStoreTurn() + 1);
+                    //Es el torn del usuari
+                    if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
+                        Toast.makeText(self, "Es el teu torn!", Toast.LENGTH_SHORT).show();
+                        StoreInfoActivity.super.onBackPressed();
+                    }
                 }
                 if (remoteMessage.getData().get("queue") != null){
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
@@ -254,7 +260,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     //putUserTurnInPref(userTurnNumber);
                     if(userTurnNumber != null) {
                         app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue()));
+                        userTurn = app.getUserInfo().get(store.get_id());
+
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
+
+                        updateUI();
 
                         turnText.startAnimation(out);
                         getTurnBtn.startAnimation(out);
