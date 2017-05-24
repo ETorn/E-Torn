@@ -171,6 +171,12 @@ public class StoreActivity extends BaseActivity {
                     stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
                     if (!storeInTurn(i))
                         stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
+                    else {
+                        Log.d(TAG, "Usuari te torn en la store: " + stores.get(i).get_id() + " amb temps aproximat: "
+                                + app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
+
+                        stores.get(i).setAproxTime(app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
