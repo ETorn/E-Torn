@@ -61,7 +61,10 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
 
         FirebaseMessaging.getInstance().subscribeToTopic(topic);
 
-        int subscriptions = topicMap.getOrDefault(topic, 0);
+        Integer subscriptions = topicMap.get(topic);
+
+        if (subscriptions == null)
+            subscriptions = 0;
 
         topicMap.put(topic, subscriptions + 1);
 
