@@ -11,4 +11,7 @@
     <string name="info_no_close_super">No hemos encontrado ningun supermercado cercano</string>
     <string name="no_location_permission">No tenemos permisos de localización</string>
     <string name="minutes">minutos</string>
+    <string name="nextInQueue">Eres el siguiente en la cola</string>
+    <string name="notificationTitle">Turno Caprabo</string>
+    <string name="is_your_turn">Es tu turno</string>
 </resources>

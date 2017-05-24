@@ -11,4 +11,7 @@
     <string name="info_no_close_super">No hem trobat cap super proper</string>
     <string name="no_location_permission">No tenim permisos de localització</string>
     <string name="minutes">minuts</string>
+    <string name="nextInQueue">Ets el següent a la cua</string>
+    <string name="notificationTitle">Torn Caprabo</string>
+    <string name="is_your_turn">Es el teu torn</string>
 </resources>
