@@ -136,7 +136,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     //Es el torn del usuari
                     if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
                         Toast.makeText(self, "Es el teu torn!", Toast.LENGTH_SHORT).show();
-                        StoreInfoActivity.super.onBackPressed();
                     }
                 }
                 if (remoteMessage.getData().get("queue") != null){
