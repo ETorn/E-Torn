@@ -13,6 +13,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.models.Store;
@@ -141,6 +142,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                 if (remoteMessage.getData().get("storeTurn") != null) {
                     store.setStoreTurn(store.getStoreTurn() + 1);
+                    //Es el torn del usuari
+                    if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
+                        Toast.makeText(self, "Es el teu torn!", Toast.LENGTH_SHORT).show();
+                        StoreInfoActivity.super.onBackPressed();
+                    }
                 }
                 if (remoteMessage.getData().get("queue") != null){
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
@@ -167,8 +173,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 }
 
                 if (remoteMessage.getData().get("aproxTime") != null) {
-                    store.setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                    Log.d(TAG, "User aproxTime received: " + store.getAproxTime());
+                   app.getUserInfo().get(store.get_id()).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                    Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
                 }
                 updateUI();
             }
@@ -270,7 +276,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     //putUserTurnInPref(userTurnNumber);
                     if(userTurnNumber != null) {
                         app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue()));
+                        userTurn = app.getUserInfo().get(store.get_id());
+
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
+
+                        updateUI();
 
                         turnText.startAnimation(out);
                         getTurnBtn.startAnimation(out);
@@ -343,16 +353,54 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         }
         //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
 
-        if ((store.getAproxTime() == 0 && !inTurn()) || (inTurn() && app.getUserInfo().get(store.get_id()).getAproxTime() == 0)) {
+
+        if (!inTurn()) {
+            if (Math.round(store.getAproxTime()) < 1)
+               setTimeLabelsVisibility(false);
+
+            else {
+                setTimeLabelsVisibility(true);
+                float aproxTimeAux = store.getAproxTime();
+                aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
+            }
+        }
+
+        else {
+            if (Math.round(app.getUserInfo().get(store.get_id()).getAproxTime()) < 1)
+                setTimeLabelsVisibility(false);
+            else {
+                setTimeLabelsVisibility(true);
+                float aproxTimeAux = app.getUserInfo().get(store.get_id()).getAproxTime();
+                aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
+            }
+        }
+
+        /*if ((store.getAproxTime() == 0 && !inTurn()) || (inTurn() && Math.round(app.getUserInfo().get(store.get_id()).getAproxTime()) < 1)) {
             timeIcon.setVisibility(View.GONE);
             aproxTime.setVisibility(View.GONE);
+            Log.d(TAG, "StoreAproxTime: " + String.valueOf(Math.round(store.getAproxTime())));
+            Log.d(TAG, "UserAproxTimeRound: " + String.valueOf(Math.round(app.getUserInfo().get(store.get_id()).getAproxTime())));
         }
 
         else {
             timeIcon.setVisibility(View.VISIBLE);
             aproxTime.setVisibility(View.VISIBLE);
             float aproxTimeAux = inTurn() ? app.getUserInfo().get(store.get_id()).getAproxTime() : store.getAproxTime();
+            Log.d(TAG, "StoreAproxTime: " + String.valueOf(Math.round(store.getAproxTime())));
+            Log.d(TAG, "UserAproxTimeRound: " + String.valueOf(Math.round(app.getUserInfo().get(store.get_id()).getAproxTime())));
+            Log.d(TAG, "UserAproxTime: " + String.valueOf(app.getUserInfo().get(store.get_id()).getAproxTime()));
             aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
+        }*/
+    }
+
+    public void setTimeLabelsVisibility (boolean state) {
+        if (state) {
+            timeIcon.setVisibility(View.VISIBLE);
+            aproxTime.setVisibility(View.VISIBLE);
+        }
+        else {
+            timeIcon.setVisibility(View.GONE);
+            aproxTime.setVisibility(View.GONE);
         }
     }
 
