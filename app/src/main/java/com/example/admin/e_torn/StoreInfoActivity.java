@@ -126,8 +126,10 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
             if (remoteMessage.getData().get("storeQueue") != null)
                 store.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
-            if (remoteMessage.getData().get("aproxTime") != null)
+            if (remoteMessage.getData().get("aproxTime") != null) {
                 store.setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+            }
+
             // Si ja te un torn demanat, no actualitzarem usersTurn (que es el disponible quan no ha demanat torn i es el torn del usuari quan l'ha demanat)
             if (remoteMessage.getData().get("usersTurn") != null && !inTurn())
                 store.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
@@ -150,13 +152,16 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                         app.getUserInfo().remove(store.get_id());
                         queueText.setText(getString(R.string.is_your_turn));
                         queueTextNumber.setVisibility(View.GONE);
+                        aproxTime.setVisibility(View.GONE);
+                        timeIcon.setVisibility(View.GONE);
+
                         //updateUI();
                         //StoreInfoActivity.super.onBackPressed();
                     }
                 }
                 if (remoteMessage.getData().get("queue") != null){
                     if (Integer.parseInt(remoteMessage.getData().get("queue")) == 1) {
-                        sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue));
+                        sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " a la " + store.getName());
                     }
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                     app.getUserInfo().get(store.get_id()).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
@@ -170,7 +175,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                         int turnsBefore = app.getUser().getNotificationTurns();
 
                         if (userQueue <= turnsBefore) {
-                            sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu.");
+                            sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu a la " + store.getName());
                         }
                    // }
                 }
@@ -288,7 +293,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                     //putUserTurnInPref(userTurnNumber);
                     if(userTurnNumber != null) {
-                        app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue()));
+                        //El temps aproximat en el moment de demanar torn es el mateix que el de la store
+                        Turn turn = new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue());
+                        turn.setAproxTime(store.getAproxTime());
+
+                        app.getUserInfo().put(store.getId(), turn);
                         //userTurn = app.getUserInfo().get(store.get_id());
 
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());

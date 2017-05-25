@@ -55,7 +55,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.setAction(Constants.packageName + "." + remoteMessage.getFrom().replace("/topics/", ""));
         sendBroadcast(intent); //envia el missatge de la notificacio als topicSubscription que estan escoltant en el metode onPushUpdate
 
-        if(!app.DEBUG)
+        if(!((ETornApplication) getApplication()).DEBUG)
             return;
 
         Notification n = new Notification.Builder(this)
