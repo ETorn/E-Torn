@@ -18,14 +18,15 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
 
     private static final String TAG = "TopicSubscription";
 
-   // private static Map<String, Integer> topicMap;
+    private static Map<String, Integer> topicMap;
 
-    String topic;
-    PushUpdateListener listener;
+    private String topic;
 
-    Context ctx;
+    private PushUpdateListener listener;
 
-    boolean subscribed;
+    private Context ctx;
+
+    private boolean subscribed;
 
     public TopicSubscription(Context ctx, String topic) {
         this.topic = topic;
@@ -34,8 +35,8 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
 
         subscribed = false;
 
-        //if (topicMap == null)
-          //  topicMap = new HashMap<>();
+        if (topicMap == null)
+            topicMap = new HashMap<>();
     }
 
     public void setListener(PushUpdateListener listener) {
@@ -50,17 +51,24 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
         return subscribed;
     }
 
-    public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
-    }
-
     public void subscribe() {
         Log.d(TAG, "Subcribing to firebase topic '" + topic + "'");
+
+        if (subscribed) {
+            Log.d(TAG, "Already Subscribed");
+            return;
+        }
+
         FirebaseMessaging.getInstance().subscribeToTopic(topic);
 
-        //int subscriptions = topicMap.getOrDefault(topic, 0);
+        Integer subscriptions = topicMap.get(topic);
 
-        //topicMap.put(topic, subscriptions + 1);
+        if (subscriptions == null)
+            subscriptions = 0;
+
+        topicMap.put(topic, subscriptions + 1);
+
+        Log.d(TAG, "Current subscriptions to topic '" + topic + "' is " + topicMap.get(topic));
 
         subscribed = true;
 
@@ -72,19 +80,21 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
     public void unsubscribe() {
         Log.d(TAG, "Unsubscribing from firebase topic '" + topic + "'");
 
-       // int subscriptions = topicMap.get(topic);
+        int subscriptions = topicMap.get(topic);
 
-        //topicMap.put(topic, subscriptions - 1);
+        topicMap.put(topic, subscriptions - 1);
 
-        //if (topicMap.get(topic) == 0) {
+        Log.d(TAG, "Current subscriptions to topic '" + topic + "' is " + topicMap.get(topic));
+
+        if (topicMap.get(topic) == 0) {
+            Log.d(TAG, "Unsubscrubidubidu de veritat");
             FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
-        //}
+        }
 
         if (subscribed)
             ctx.unregisterReceiver(this);
 
         subscribed = false;
-
     }
 
     @Override

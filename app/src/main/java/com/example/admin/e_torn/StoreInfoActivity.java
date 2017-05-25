@@ -1,6 +1,10 @@
 package com.example.admin.e_torn;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -59,6 +63,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     TextView actualTurn;
     TextView disponibleTurn;
     TextView turnText;
+    TextView queueTextNumber;
     TextView queueText;
     TextView aproxTime;
     ImageView timeIcon;
@@ -66,6 +71,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     FloatingActionButton getTurnBtn;
     Animation in;
     Animation out;
+    private NotificationManager nm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +88,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         app = (ETornApplication) getApplication();
 
+        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         store = new Store();
 
         userId = app.user.get_id();
@@ -90,12 +99,13 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         store.setId(getIntent().getStringExtra("id"));
 
-        userTurn = app.getUserInfo().get(store.getId());
+        //userTurn = app.getUserInfo().get(store.getId());
 
         turnText = (TextView) findViewById(R.id.disponibleTurnText);
         actualTurn = (TextView) findViewById(R.id.actualTurn);
         disponibleTurn = (TextView) findViewById(R.id.disponibleTurn);
-        queueText = (TextView) findViewById(R.id.queue);
+        queueTextNumber = (TextView) findViewById(R.id.queue);
+        queueText = (TextView) findViewById(R.id.queueText);
         aproxTime = (TextView) findViewById(R.id.time);
         timeIcon = (ImageView) findViewById(R.id.timeIcon);
         getTurnBtn = (FloatingActionButton) findViewById(R.id.getTurnBtn);
@@ -105,7 +115,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             getTurnBtn.setVisibility(View.GONE);
             turnText.setText(R.string.your_turn);
         }
-        storeSubscription = new TopicSubscription(this, "store." + store.getId());
+        storeSubscription = app.getTopicSubscriptionFor("store." + store.getId());
         storeSubscription.setListener(new PushUpdateListener() {
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
@@ -125,8 +135,9 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        userSubscription = new TopicSubscription(this, "store." + store.getId() + ".user." + app.getUser().get_id());
+        userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
         userSubscription.setListener(new PushUpdateListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onPushUpdate(RemoteMessage remoteMessage) {
                 Log.d(TAG, "push recieved");
@@ -136,23 +147,32 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     //Es el torn del usuari
                     if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
                         Toast.makeText(self, "Es el teu torn!", Toast.LENGTH_SHORT).show();
+                        app.getUserInfo().remove(store.get_id());
+                        queueText.setText(getString(R.string.is_your_turn));
+                        queueTextNumber.setVisibility(View.GONE);
+                        //updateUI();
+                        //StoreInfoActivity.super.onBackPressed();
                     }
                 }
                 if (remoteMessage.getData().get("queue") != null){
+                    if (Integer.parseInt(remoteMessage.getData().get("queue")) == 1) {
+                        sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue));
+                    }
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                     app.getUserInfo().get(store.get_id()).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                 }
 
                 if (remoteMessage.getData().get("notification") != null) {
-                    if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
+                   // if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
 
-                        /*NotificationCompat.Builder mBuilder =
-                                (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
-                                        .setSmallIcon(R.drawable.capraboicon)
-                                        .setContentTitle("Caprabo diu")
-                                        .setContentText("Ets el/la següent en la cua!");
-                        mBuilder.notify();*/
-                    }
+                        int userQueue = Integer.parseInt(remoteMessage.getData().get("queue"));
+
+                        int turnsBefore = app.getUser().getNotificationTurns();
+
+                        if (userQueue <= turnsBefore) {
+                            sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu.");
+                        }
+                   // }
                 }
 
                 if (remoteMessage.getData().get("aproxTime") != null) {
@@ -164,9 +184,19 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
+    public void sendNotify (String title, String content) {
+        Notification n = new Notification.Builder(app)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setSmallIcon(R.drawable.capraboicon)
+                .build();
+
+        nm.notify(0, n);
+    }
+
     public boolean inTurn () {
-        if (userTurn != null){
-            Log.d(TAG, "inTurn " + userTurn.toString());
+        if (app.getUserInfo().get(store.get_id()) != null){
+            Log.d(TAG, "inTurn " + app.getUserInfo().get(store.get_id()).toString());
             return true;
         }
         return false;
@@ -259,7 +289,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     //putUserTurnInPref(userTurnNumber);
                     if(userTurnNumber != null) {
                         app.getUserInfo().put(store.getId(), new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue()));
-                        userTurn = app.getUserInfo().get(store.get_id());
+                        //userTurn = app.getUserInfo().get(store.get_id());
 
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
 
@@ -326,15 +356,15 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     private void updateUI() {
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
         if (inTurn()) {
-            disponibleTurn.setText(String.valueOf(userTurn.getTurn()));
-            queueText.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getQueue()), getString(R.string.turns)));
+            disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.get_id()).getTurn()));
+            queueTextNumber.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getQueue()), getString(R.string.turns)));
             Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getQueue());
         }
         else {
             disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
-            queueText.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
+            queueTextNumber.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
         }
-        //queueText.setText(String.valueOf(store.getReloadedQueue()) + " torns");
+        //queueTextNumber.setText(String.valueOf(store.getReloadedQueue()) + " torns");
 
 
         if (!inTurn()) {

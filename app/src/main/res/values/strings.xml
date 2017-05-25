@@ -11,9 +11,12 @@
     <string name="info_no_close_super">We didn\'t find any close supermarkets</string>
     <string name="no_location_permission">We don\'t have location permission</string>
     <string name="minutes">minutes</string>
+    <string name="nextInQueue">You are the next</string>
+    <string name="notificationTitle">Caprabo Turn</string>
     <string name="settings">Settings</string>
     <string name="notification_mode">Notification mode</string>
     <string name="turn_notification">Turn notification</string>
+    <string name="is_your_turn">Is your turn</string>
     <string name="time_notification">Time notification</string>
     <string name="turn_notification_summary">From how many turns you want to be notified?</string>
     <string name="time_notification_summary">From how much time you want to be notified?</string>
