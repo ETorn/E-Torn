@@ -145,10 +145,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 Log.d(TAG, "push recieved");
 
                 if (remoteMessage.getData().get("storeTurn") != null) {
-                    store.setStoreTurn(store.getStoreTurn() + 1);
+                    Log.d(TAG, "StoreTurn: " + remoteMessage.getData().get("storeTurn"));
+                    store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
                     //Es el torn del usuari
                     if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
-                        Toast.makeText(self, "Es el teu torn!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
                         app.getUserInfo().remove(store.get_id());
                         queueText.setText(getString(R.string.is_your_turn));
                         queueTextNumber.setVisibility(View.GONE);
