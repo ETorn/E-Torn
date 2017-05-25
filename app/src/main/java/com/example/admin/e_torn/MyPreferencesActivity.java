@@ -27,7 +27,7 @@ import retrofit2.Response;
  * Created by Patango on 27/04/2017.
  */
 
-public class MyPreferencesActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MyPreferencesActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     final static String TAG = "MyPreferencesActivity";
 
@@ -42,7 +42,11 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
 
         app = (ETornApplication) getApplication();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+
+        MyPreferenceFragment myPreferenceFragment = new MyPreferenceFragment();
+        myPreferenceFragment.setApp(app);
+
+        getFragmentManager().beginTransaction().replace(android.R.id.content, myPreferenceFragment).commit();
     }
 
     @Override
@@ -70,11 +74,48 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
         }
     }
 
-    public static class MyPreferenceFragment extends PreferenceFragment {
+    public static class MyPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+
+        ETornApplication app;
+
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
+            Preference preference = findPreference("turn_pref_editText");
+            preference.setOnPreferenceClickListener(this);
+            preference.setOnPreferenceClickListener(this);
+        }
+
+        public void setApp (ETornApplication app) {
+            this.app = app;
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            SharedPreferences sharedPreferences = preference.getSharedPreferences();
+            String key = "turn_pref_editText";
+
+            app.getUser().setNotificationTurns(Integer.valueOf(sharedPreferences.getString(key, "5")));
+
+            if (app.getUserInfo().size() > 0) {
+                UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
+                Call<JSONObject> call = userService.updateUserPref(app.getUser().get_id(), app.getUser());
+
+                call.enqueue(new Callback<JSONObject>() {
+                    @Override
+                    public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                        Log.d(TAG, "UserResponse: " + response.body().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<JSONObject> call, Throwable t) {
+                        Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+                    }
+                });
+            }
+
+            return true;
         }
     }
 
