@@ -155,14 +155,14 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                         queueTextNumber.setVisibility(View.GONE);
                         aproxTime.setVisibility(View.GONE);
                         timeIcon.setVisibility(View.GONE);
-
+                        sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
                         //updateUI();
                         //StoreInfoActivity.super.onBackPressed();
                     }
                 }
                 if (remoteMessage.getData().get("queue") != null){
                     if (Integer.parseInt(remoteMessage.getData().get("queue")) == 1) {
-                        sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " a la " + store.getName());
+                        sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " en la " + store.getName());
                     }
                     store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                     app.getUserInfo().get(store.get_id()).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
@@ -234,6 +234,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     store = response.body();
                 else {
                     store.setStoreTurn(response.body().getStoreTurn());
+                    store.setName(response.body().getName());
                     store.setQueue(app.getUserInfo().get(store.get_id()).getQueue());
                 }
 
