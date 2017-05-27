@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="turn_notifications">
-        <item>1 torn</item>
-        <item>3 torns</item>
-        <item>5 torns</item>
+        <item>1 turn</item>
+        <item>3 turns</item>
+        <item>5 turns</item>
     </string-array>
 
     <string-array name="turn_notifications_values">
