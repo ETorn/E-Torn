@@ -16,8 +16,4 @@ public class RetrofitManager {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
-    /*public static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Constants.serverURL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();*/
 }

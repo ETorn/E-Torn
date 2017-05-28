@@ -169,8 +169,11 @@ public class StoreActivity extends BaseActivity {
                 for (int i = 0; i < stores.size(); i++) {
                     stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime());
                     stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
-                    if (!storeInTurn(i))
+                    if (!storeInTurn(i)) {
                         stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
+                        stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime() * response.body().getStores().get(i).getQueue());
+                        Log.d(TAG, "aproxTime: " + String.valueOf(stores.get(i).getAproxTime()));
+                    }
                     else {
                         Log.d(TAG, "Usuari te torn en la store: " + stores.get(i).get_id() + " amb temps aproximat: "
                                 + app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
