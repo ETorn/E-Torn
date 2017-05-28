@@ -25,8 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.e_torn.Constants;
-import com.example.admin.e_torn.PermissionManager;
-import com.example.admin.e_torn.PermissionRequestResultListerner;
+import com.example.admin.e_torn.permissionmanager.PermissionManager;
+import com.example.admin.e_torn.permissionmanager.PermissionRequestResultListerner;
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.adapters.SuperAdapter;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;

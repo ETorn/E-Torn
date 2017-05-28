@@ -96,7 +96,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         store = new Store();
 
-        userId = app.user.get_id();
+        userId = app.getUser().get_id();
         self = this;
 
         storeId = getIntent().getStringExtra("id");
