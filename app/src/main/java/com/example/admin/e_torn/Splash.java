@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.admin.e_torn.activities.SuperActivity;
+
 public class Splash extends AppCompatActivity {
 
     String userId;

@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.ETornApplication;
+import com.example.admin.e_torn.R;
+import com.example.admin.e_torn.TopicSubscription;
 import com.example.admin.e_torn.adapters.StoreAdapter;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
