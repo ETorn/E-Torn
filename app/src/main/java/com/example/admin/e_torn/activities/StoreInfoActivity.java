@@ -168,6 +168,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             timeIcon.setVisibility(View.GONE);
                             sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
                             Log.d("YIEBOY", "MEC");
+                            userSubscription.unsubscribe();
                             return;
                             //updateUI();
                             //StoreInfoActivity.super.onBackPressed();
