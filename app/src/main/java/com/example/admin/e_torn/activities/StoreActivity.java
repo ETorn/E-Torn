@@ -219,8 +219,8 @@ public class StoreActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
 
         unsuscribeAllStores();
     }
