@@ -15,6 +15,7 @@ import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +37,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
     //Map per a identificar en quina store ha demanat torn el usuari
     HashMap<String, Turn> userInfo;
 
+    Map<String, TopicSubscription> topicSubscriptionMap;
+
     User user;
 
     @Override
@@ -49,6 +52,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
         user = new User();
 
         userInfo = new HashMap<>();
+
+        topicSubscriptionMap = new HashMap<>();
 
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
 
@@ -106,7 +111,16 @@ public class ETornApplication extends Application implements PushUpdateListener 
     }
 
     public TopicSubscription getTopicSubscriptionFor(String subscription) {
-        return new TopicSubscription(this, subscription);
+        Log.d(TAG, "getTopicSubscriptionFor( " + subscription + " )");
+
+        Log.v(TAG, "  Current topicSubscription instances:");
+        for (TopicSubscription t : topicSubscriptionMap.values())
+            Log.v(TAG, "    " + t);
+
+        if (topicSubscriptionMap.get(subscription) == null)
+            topicSubscriptionMap.put(subscription, new TopicSubscription(this, subscription));
+
+        return topicSubscriptionMap.get(subscription);
     }
 
     public static Context getContext () {
