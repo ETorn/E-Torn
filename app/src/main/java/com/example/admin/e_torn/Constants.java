@@ -1,5 +1,8 @@
 package com.example.admin.e_torn;
 
+/**
+ * Created by Admin on 06/02/2017.
+ */
 
 public class Constants {
 
@@ -13,9 +16,15 @@ public class Constants {
      */
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
-    public static final String serverURL = "http://192.168.1.128:8080";
+    /**
+     * Adreça del servidor principal
+     */
+    public static final String serverURL = "http://192.168.137.1:8080";
 
-    public static final String caesarURL = "http://192.168.1.128:8081";
+    /**
+     * Adreça del servidor d'estadístiques
+     */
+    public static final String caesarURL = "http://192.168.137.1:8081";
 
     /**
      * Nom del paquet. Ha de concordar amb el de veritat
