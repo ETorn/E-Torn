@@ -14,6 +14,8 @@ import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.UserService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -31,6 +33,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
     SharedPreferences sharedPreferences;
 
+    UserService userService;
+
     private static Context context;
 
     //Map per a identificar en quina store ha demanat torn el usuari
@@ -44,6 +48,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
 
         Log.d(TAG, "APP STARTED");
 
+        userService  = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
+
         context = this;
 
         user = new User();
@@ -53,7 +59,6 @@ public class ETornApplication extends Application implements PushUpdateListener 
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_NAME, MODE_PRIVATE);
 
         //Efectuem crida a post /users per a obtenir una ID per a l'usuari
-        final UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
         final Call<User> findCall = userService.getExistingUser(getFCMToken());
         findCall.enqueue(new Callback<User>() {
             @Override
@@ -90,6 +95,8 @@ public class ETornApplication extends Application implements PushUpdateListener 
                         }
                     });
                 }
+
+               setMongoUserPreferences(sharedPreferences);
           }
 
             @Override
@@ -102,7 +109,24 @@ public class ETornApplication extends Application implements PushUpdateListener 
         allSubscription.setListener(this);
         allSubscription.subscribe();
 
+    }
 
+    public void setMongoUserPreferences (SharedPreferences sharedPreferences) {
+        getUser().setNotificationTurns(Integer.valueOf(sharedPreferences.getString(Constants.notificationPreferencesKey, "5")));
+        Log.d(TAG, "NotificationTurns: " + Integer.valueOf(sharedPreferences.getString(Constants.notificationPreferencesKey, "5")));
+        Call<JSONObject> innerCall = userService.updateUserPref(getUser().get_id(), getUser());
+
+        innerCall.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                Log.d(TAG, "UserResponse: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+            }
+        });
     }
 
     public TopicSubscription getTopicSubscriptionFor(String subscription) {

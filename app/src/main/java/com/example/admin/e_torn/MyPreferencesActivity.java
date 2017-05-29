@@ -54,24 +54,7 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
         Log.d(TAG, "Key: " + key);
         Log.d(TAG, "Value: " + sharedPreferences.getString(key, "5"));
 
-        app.getUser().setNotificationTurns(Integer.valueOf(sharedPreferences.getString(key, "5")));
-
-        if (app.getUserInfo().size() > 0) {
-            UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
-            Call<JSONObject> call = userService.updateUserPref(app.getUser().get_id(), app.getUser());
-
-            call.enqueue(new Callback<JSONObject>() {
-                @Override
-                public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                    Log.d(TAG, "UserResponse: " + response.body().toString());
-                }
-
-                @Override
-                public void onFailure(Call<JSONObject> call, Throwable t) {
-                    Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
-                }
-            });
-        }
+        app.setMongoUserPreferences(sharedPreferences);
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -96,24 +79,7 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
             SharedPreferences sharedPreferences = preference.getSharedPreferences();
             String key = "turn_pref_editText";
 
-            app.getUser().setNotificationTurns(Integer.valueOf(sharedPreferences.getString(key, "5")));
-
-            if (app.getUserInfo().size() > 0) {
-                UserService userService = RetrofitManager.getInstance(Constants.serverURL).create(UserService.class);
-                Call<JSONObject> call = userService.updateUserPref(app.getUser().get_id(), app.getUser());
-
-                call.enqueue(new Callback<JSONObject>() {
-                    @Override
-                    public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                        Log.d(TAG, "UserResponse: " + response.body().toString());
-                    }
-
-                    @Override
-                    public void onFailure(Call<JSONObject> call, Throwable t) {
-                        Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
-                    }
-                });
-            }
+           app.setMongoUserPreferences(sharedPreferences);
 
             return true;
         }

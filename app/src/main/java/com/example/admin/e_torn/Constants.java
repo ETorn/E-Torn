@@ -24,4 +24,6 @@ public class Constants {
     public static final String USER_ID = "userId";
 
     public static int DEFAULT_DISTANCE = 1000;
+
+    public static final String notificationPreferencesKey = "turn_pref_editText";
 }
