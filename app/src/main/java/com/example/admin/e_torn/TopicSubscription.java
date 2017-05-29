@@ -55,7 +55,7 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
         Log.d(TAG, "Subcribing to firebase topic '" + topic + "'");
 
         if (subscribed) {
-            Log.d(TAG, "Already Subscribed");
+            Log.d(TAG, "Already Subscribed. Returning.");
             return;
         }
 
@@ -80,6 +80,11 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
     public void unsubscribe() {
         Log.d(TAG, "Unsubscribing from firebase topic '" + topic + "'");
 
+        if (!subscribed) {
+            Log.d(TAG, "Not subscribed. Returning.");
+            return;
+        }
+
         int subscriptions = topicMap.get(topic);
 
         topicMap.put(topic, subscriptions - 1);
@@ -91,8 +96,7 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
             FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
         }
 
-        if (subscribed)
-            ctx.unregisterReceiver(this);
+        ctx.unregisterReceiver(this);
 
         subscribed = false;
     }
