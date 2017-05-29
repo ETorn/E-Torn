@@ -50,7 +50,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     // Subscripció al topic d'aquesta store
     TopicSubscription storeSubscription;
 
-    TopicSubscription userSubscription;
+    static TopicSubscription userSubscription;
 
     // Id de store rebuda per Intent
     String storeId;
@@ -143,72 +143,74 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
-        userSubscription.setListener(new PushUpdateListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public void onPushUpdate(RemoteMessage remoteMessage) {
-                Log.d(TAG, "push recieved");
-                Log.d(TAG, "FROM: " + remoteMessage.getFrom());
-                String storeID = remoteMessage.getFrom().split("\\.")[1];
+        if (userSubscription == null) {
+            userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
+            userSubscription.setListener(new PushUpdateListener() {
+                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                @Override
+                public void onPushUpdate(RemoteMessage remoteMessage) {
+                    Log.d(TAG, "push recieved");
+                    Log.d(TAG, "FROM: " + remoteMessage.getFrom());
+                    String storeID = remoteMessage.getFrom().split("\\.")[1];
 
-                if (remoteMessage.getData().get("storeTurn") != null) {
-                    Log.d(TAG, "StoreTurn: " + remoteMessage.getData().get("storeTurn"));
-                    store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
-                    //Es el torn del usuari
+                    if (remoteMessage.getData().get("storeTurn") != null) {
+                        Log.d(TAG, "StoreTurn: " + remoteMessage.getData().get("storeTurn"));
+                        store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+                        //Es el torn del usuari
 
-                    if (app.getUserInfo().get(storeID) != null) { //Sembla que una vegada borrat el torn al tocarli al usuari, torna a cridarse aquest listener
-                        if (store.getStoreTurn() == app.getUserInfo().get(storeID).getTurn()) {
-                            Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
-                            app.getUserInfo().remove(store.get_id());
-                            Log.d(TAG, "OMGGGGGGG APPUSERINFO: " + app.getUserInfo().toString());
-                            queueText.setText(getString(R.string.is_your_turn));
-                            queueTextNumber.setVisibility(View.GONE);
-                            aproxTime.setVisibility(View.GONE);
-                            timeIcon.setVisibility(View.GONE);
-                            sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
-                            Log.d("YIEBOY", "MEC");
-                            userSubscription.unsubscribe();
-                            //updateUI();
-                            //StoreInfoActivity.super.onBackPressed();
+                        if (app.getUserInfo().get(storeID) != null) { //Sembla que una vegada borrat el torn al tocarli al usuari, torna a cridarse aquest listener
+                            if (store.getStoreTurn() == app.getUserInfo().get(storeID).getTurn()) {
+                                Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
+                                app.getUserInfo().remove(store.get_id());
+                                Log.d(TAG, "OMGGGGGGG APPUSERINFO: " + app.getUserInfo().toString());
+                                queueText.setText(getString(R.string.is_your_turn));
+                                queueTextNumber.setVisibility(View.GONE);
+                                aproxTime.setVisibility(View.GONE);
+                                timeIcon.setVisibility(View.GONE);
+                                sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
+                                Log.d("YIEBOY", "MEC");
+                                userSubscription.unsubscribe();
+                                //updateUI();
+                                //StoreInfoActivity.super.onBackPressed();
+                            }
                         }
                     }
-                }
-                if (remoteMessage.getData().get("queue") != null) {
-                    if (Integer.parseInt(remoteMessage.getData().get("queue")) == 1) {
-                        sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " en la " + store.getName());
+                    if (remoteMessage.getData().get("queue") != null) {
+                        if (Integer.parseInt(remoteMessage.getData().get("queue")) == 1) {
+                            sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " en la " + store.getName());
+                        }
+                        store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
+                        if (app.getUserInfo().get(storeID) != null)
+                            app.getUserInfo().get(storeID).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                     }
-                    store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
-                    if (app.getUserInfo().get(storeID) != null)
-                        app.getUserInfo().get(storeID).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
-                }
 
-                if (remoteMessage.getData().get("notification") != null) {
-                    // if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
+                    if (remoteMessage.getData().get("notification") != null) {
+                        // if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
 
-                    int userQueue = Integer.parseInt(remoteMessage.getData().get("queue"));
+                        int userQueue = Integer.parseInt(remoteMessage.getData().get("queue"));
 
-                    int turnsBefore = app.getUser().getNotificationTurns();
+                        int turnsBefore = app.getUser().getNotificationTurns();
 
-                    if (userQueue == turnsBefore) {
-                        sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu a la " + store.getName());
+                        if (userQueue == turnsBefore) {
+                            sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu a la " + store.getName());
+                        }
+                        // }
                     }
-                    // }
-                }
 
-                if (app.getUserInfo().get(storeID) != null) {
-                    if (remoteMessage.getData().get("aproxTime") != null) {
-                        app.getUserInfo().get(storeID).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                        Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                    if (app.getUserInfo().get(storeID) != null) {
+                        if (remoteMessage.getData().get("aproxTime") != null) {
+                            app.getUserInfo().get(storeID).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                            Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                        }
+                    }
+
+                    if (app.getUserInfo().get(storeID) != null) {
+                        Log.d("TDADADA", "AWDOPJAWODPJAWPOD");
+                        updateUI();
                     }
                 }
-
-                if (app.getUserInfo().get(storeID) != null) {
-                    Log.d("TDADADA", "AWDOPJAWODPJAWPOD");
-                    updateUI();
-                }
-            }
-        });
+            });
+        }
     }
 
     public void sendNotify (String title, String content) {
