@@ -50,7 +50,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     // Subscripció al topic d'aquesta store
     TopicSubscription storeSubscription;
 
-    static TopicSubscription userSubscription;
+    TopicSubscription userSubscription;
 
     // Id de store rebuda per Intent
     String storeId;
@@ -143,7 +143,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        if (userSubscription == null) {
+        if (app.getUserInfo().get(store.get_id()) == null) {
             userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
             userSubscription.setListener(new PushUpdateListener() {
                 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -202,16 +202,17 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                                 sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
                                 Log.d("YIEBOY", "MEC");
                                 userSubscription.unsubscribe();
-                                userSubscription = null;
+                                storeSubscription.subscribe();
+                                // userSubscription = null;
                                 //updateUI();
                                 //StoreInfoActivity.super.onBackPressed();
                             }
                         }
                     }
-
                 }
             });
         }
+
     }
 
     public void sendNotify (String title, String content) {
