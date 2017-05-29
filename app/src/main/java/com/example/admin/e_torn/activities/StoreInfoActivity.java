@@ -119,6 +119,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             getTurnBtn.setVisibility(View.GONE);
             turnText.setText(R.string.your_turn);
         }
+
         storeSubscription = app.getTopicSubscriptionFor("store." + store.getId());
         storeSubscription.setListener(new PushUpdateListener() {
             @Override
@@ -143,7 +144,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        if (app.getUserInfo().get(store.get_id()) == null) {
+        if (!inTurn()) {
             userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
             userSubscription.setListener(new PushUpdateListener() {
                 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -180,7 +181,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                         // }
                     }
 
-                    if (app.getUserInfo().get(storeID) != null) {
+                    if (inTurn()) {
                         if (remoteMessage.getData().get("aproxTime") != null) {
                             app.getUserInfo().get(storeID).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
                             Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
@@ -194,13 +195,10 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             if (store.getStoreTurn() == app.getUserInfo().get(storeID).getTurn()) {
                                 Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
                                 app.getUserInfo().remove(store.get_id());
-                                Log.d(TAG, "OMGGGGGGG APPUSERINFO: " + app.getUserInfo().toString());
                                 queueText.setText(getString(R.string.is_your_turn));
                                 queueTextNumber.setVisibility(View.GONE);
-                                aproxTime.setVisibility(View.GONE);
-                                timeIcon.setVisibility(View.GONE);
+                                setTimeLabelsVisibility(false);
                                 sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
-                                Log.d("YIEBOY", "MEC");
                                 userSubscription.unsubscribe();
                                 storeSubscription.subscribe();
                                 // userSubscription = null;
@@ -226,24 +224,20 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     }
 
     public boolean inTurn () {
-        if (app.getUserInfo().get(store.get_id()) != null){
-            Log.d(TAG, "inTurn " + app.getUserInfo().get(store.get_id()).toString());
-            return true;
-        }
-        return false;
+        return app.getUserInfo().get(store.get_id()) != null;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        Log.d(TAG, "UserSubscription active? " + userSubscription.isSubscribed());
+        Log.d(TAG, "onResume");
 
         // Subscribim al topic de la store per rebre updates s'estat
-        if (!inTurn() && !storeSubscription.isSubscribed())
+        if (!inTurn())
             storeSubscription.subscribe();
 
-        if (inTurn() && !userSubscription.isSubscribed()) {
+        if (inTurn()) {
             userSubscription.subscribe();
         }
 
@@ -299,8 +293,9 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
 
-        // Ja no estem a l'activitat, ens desubscribim
-        if (!inTurn() && storeSubscription.isSubscribed())
+        Log.d(TAG, "onPause");
+
+        if (!inTurn())
             storeSubscription.unsubscribe();
     }
 
@@ -392,32 +387,15 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void updateUI() {
+        Log.d(TAG, "updateUI");
+
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
+
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.get_id()).getTurn()));
             queueTextNumber.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getQueue()), getString(R.string.turns)));
             Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getQueue());
-        }
-        else {
-            Log.d("YYYYYYYYYYYYYYYYYYS", "ALEHOOOOP");
-            disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
-            queueTextNumber.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
-        }
-        //queueTextNumber.setText(String.valueOf(store.getReloadedQueue()) + " torns");
 
-
-        if (!inTurn()) {
-            if (Math.round(store.getAproxTime()) < 1)
-               setTimeLabelsVisibility(false);
-
-            else {
-                setTimeLabelsVisibility(true);
-                float aproxTimeAux = store.getAproxTime();
-                aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
-            }
-        }
-
-        else {
             if (Math.round(app.getUserInfo().get(store.get_id()).getAproxTime()) < 1)
                 setTimeLabelsVisibility(false);
             else {
@@ -426,6 +404,20 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
             }
         }
+        else {
+            disponibleTurn.setText(String.valueOf(store.getUsersTurn()));
+            queueTextNumber.setText(String.format("%s%s", String.valueOf(store.getQueue()), getString(R.string.turns)));
+
+            if (Math.round(store.getAproxTime()) < 1)
+                setTimeLabelsVisibility(false);
+
+            else {
+                setTimeLabelsVisibility(true);
+                float aproxTimeAux = store.getAproxTime();
+                aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
+            }
+        }
+        //queueTextNumber.setText(String.valueOf(store.getReloadedQueue()) + " torns");
 
         /*if ((store.getAproxTime() == 0 && !inTurn()) || (inTurn() && Math.round(app.getUserInfo().get(store.get_id()).getAproxTime()) < 1)) {
             timeIcon.setVisibility(View.GONE);
