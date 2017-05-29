@@ -161,12 +161,26 @@ public class StoreActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        Log.d(TAG, "onPause");
+
         activityRestarted = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Log.d(TAG, "onStop");
+
+        unsuscribeAllStores();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        Log.d(TAG, "onResume");
 
         final SuperService superService = RetrofitManager.getInstance(Constants.serverURL).create(SuperService.class);
         final Call<Super> call = superService.getSuperById(this.superMrkt.get_id());
@@ -218,13 +232,6 @@ public class StoreActivity extends BaseActivity {
                 return i;
         }
         return -1;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unsuscribeAllStores();
     }
 
     public void unsuscribeAllStores () {
