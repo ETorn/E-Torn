@@ -157,19 +157,30 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     String storeID = remoteMessage.getFrom().split("\\.")[1];
 
 
-                    if (app.getUserInfo().get(storeID) != null) {
-                        if (remoteMessage.getData().get("storeTurn") != null) {
-                            Log.d(TAG, "StoreTurn: " + remoteMessage.getData().get("storeTurn"));
-                            store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
-                            //Es el torn del usuari
-                            if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
+
+                    if (inTurn()) {
+                        if (remoteMessage.getData().get("aproxTime") != null) {
+                            app.getUserInfo().get(storeID).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                            Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                        }
+                    }
+
+                    updateUI();
+
+                    if (remoteMessage.getData().get("storeTurn") != null) {
+                        if (app.getUserInfo().get(storeID) != null) { //Sembla que una vegada borrat el torn al tocarli al usuari, torna a cridarse aquest listener
+                            if (store.getStoreTurn() == app.getUserInfo().get(storeID).getTurn()) {
                                 Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
                                 app.getUserInfo().remove(store.get_id());
                                 queueText.setText(getString(R.string.is_your_turn));
                                 queueTextNumber.setVisibility(View.GONE);
-                                aproxTime.setVisibility(View.GONE);
-                                timeIcon.setVisibility(View.GONE);
+                                setTimeLabelsVisibility(false);
                                 sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
+
+                                userSubscription.unsubscribe();
+                                storeSubscription.subscribe();
+                                // userSubscription = null;
+
                                 //updateUI();
                                 //StoreInfoActivity.super.onBackPressed();
                             }
