@@ -124,25 +124,30 @@ public class StoreActivity extends BaseActivity {
             storeSubscription.setListener(new PushUpdateListener() {
                 @Override
                 public void onPushUpdate(RemoteMessage remoteMessage) {
-
                     Log.d(TAG + " From ",remoteMessage.getFrom());
                     int storeIndex = getTopicStoreIndex(remoteMessage.getFrom());
-                    if (remoteMessage.getData().get("storeTurn") != null)
-                        stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
-                    if (remoteMessage.getData().get("storeQueue") != null)
-                        stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
-                    if (remoteMessage.getData().get("aproxTime") != null) {
-                        Log.d(TAG, "aproxTimeStoreActivity: " + Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                        stores.get(storeIndex).setAproxTime(Float.parseFloat(remoteMessage.getData().get("aproxTime")));
-                    }
                     if (!storeInTurn(storeIndex)) {
+                        if (remoteMessage.getData().get("storeQueue") != null)
+                            stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                        if (remoteMessage.getData().get("aproxTime") != null) {
+                            Log.d(TAG, "aproxTimeStoreActivity: " + Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
+                            stores.get(storeIndex).setAproxTime(Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                        }
                         if (remoteMessage.getData().get("usersTurn") != null)
                             stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
-                    }
                     /*else {
                         stores.get(storeIndex).setUsersTurn(app.getUserInfo().get(stores.get(storeIndex).getId()).getTurn());
                     }*/
-                    //updateUI();
+                        //updateUI();
+                    }
+                    else {
+                        stores.get(storeIndex).setAproxTime(app.getUserInfo().get(stores.get(storeIndex).get_id()).getAproxTime());
+                        Log.d(TAG, "usuari ja te torn en la botiga " + stores.get(storeIndex).getName() + " amb temps aprox: " + app.getUserInfo().get(stores.get(storeIndex).get_id()).getAproxTime());
+                    }
+
+                    if (remoteMessage.getData().get("storeTurn") != null)
+                        stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+
                     adapter.notifyDataSetChanged();
                 }
             });
