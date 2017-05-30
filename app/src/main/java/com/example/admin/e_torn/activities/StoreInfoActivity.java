@@ -21,6 +21,7 @@ import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.TopicSubscription;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.models.Store;
+import com.example.admin.e_torn.models.StoreManager;
 import com.example.admin.e_torn.models.Turn;
 import com.example.admin.e_torn.response.PostUserAddResponse;
 import com.example.admin.e_torn.services.RetrofitManager;
@@ -44,7 +45,9 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     // Referencia a la classe global Application
     ETornApplication app;
 
-    // Model de dades de store
+    // Store manager
+    StoreManager storeManager;
+
     Store store;
 
     // Subscripció al topic d'aquesta store
@@ -88,19 +91,18 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         Log.d(TAG, "onCreate()");
 
+        storeManager = StoreManager.getInstance();
+
         app = (ETornApplication) getApplication();
 
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        store = new Store();
 
         userId = app.getUser().get_id();
         self = this;
 
         storeId = getIntent().getStringExtra("id");
 
-        store.setId(getIntent().getStringExtra("id"));
-
+        store = storeManager.getStoreWithId(storeId);
 
         turnText = (TextView) findViewById(R.id.disponibleTurnText);
         actualTurn = (TextView) findViewById(R.id.actualTurn);
