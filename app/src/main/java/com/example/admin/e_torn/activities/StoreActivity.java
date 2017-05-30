@@ -239,6 +239,8 @@ public class StoreActivity extends BaseActivity {
             if (storeInTurn(i)){
                 stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
                 stores.get(i).setInTurn(true);
+            } else {
+                stores.get(i).setInTurn(false);
             }
         }
 
