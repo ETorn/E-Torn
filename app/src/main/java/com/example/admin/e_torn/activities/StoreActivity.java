@@ -257,7 +257,9 @@ public class StoreActivity extends BaseActivity {
     }
 
     public void unsuscribeAllStores () {
-        Log.d(TAG, storeSubscriptions.toString());
+        Log.d(TAG, "unsuscribeAllStores");
+        Log.d(TAG, "storeSubscriptions: " + storeSubscriptions.toString());
+
         for( TopicSubscription storeSubscription: storeSubscriptions) {
             Log.d(TAG, "storeSubscription" + storeSubscription.getTopic());
             storeSubscription.unsubscribe();
