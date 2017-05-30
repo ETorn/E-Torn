@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.models.StoreManager;
 import com.example.admin.e_torn.permissionmanager.PermissionManager;
 import com.example.admin.e_torn.permissionmanager.PermissionRequestResultListener;
 import com.example.admin.e_torn.R;
@@ -48,6 +49,7 @@ public class SuperActivity extends AppCompatActivity {
     double userLatitude;
     double userLongitude;
     PermissionManager permissionManager;
+    StoreManager storeManager;
     private AppCompatActivity self;
     private List<Super> supers;
     private RecyclerView recyclerView;
@@ -65,6 +67,8 @@ public class SuperActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
 
         self = this;
+
+        storeManager = StoreManager.getInstance();
 
         //(findViewById(R.id.loading_layout)).setVisibility(View.VISIBLE);
         this.context = getApplicationContext();
@@ -237,7 +241,14 @@ public class SuperActivity extends AppCompatActivity {
 
     public void startStoreIntent (final int position){
 
-        final List<Store> stores = supers.get(position).getStores();
+        //TODO: Array de ids no de stores
+        final List<Store> stores = new ArrayList<>();
+
+        //Registrem les stores amb l'store manager
+        for (Store s : supers.get(position).getStores()) {
+            storeManager.putStore(s);
+            stores.add(s);
+        }
 
         Log.d(TAG, "SUCCESS");
         Intent intent = new Intent(context, StoreActivity.class);

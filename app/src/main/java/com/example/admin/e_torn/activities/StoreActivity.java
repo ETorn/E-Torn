@@ -3,6 +3,7 @@ package com.example.admin.e_torn.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.example.admin.e_torn.adapters.StoreAdapter;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
+import com.example.admin.e_torn.models.StoreManager;
 import com.example.admin.e_torn.models.Super;
 import com.example.admin.e_torn.services.CaesarService;
 import com.example.admin.e_torn.services.RetrofitManager;
@@ -36,10 +38,12 @@ public class StoreActivity extends BaseActivity {
     // Referencia a la classe global Application
     ETornApplication app;
 
+    StoreManager storeManager;
+
     boolean activityRestarted;
 
     private static final String TAG = "StoreActivity";
-    private List<Store> stores;
+    private List<String> storeIds;
     private RecyclerView recyclerView;
     private Context context;
 
@@ -58,9 +62,16 @@ public class StoreActivity extends BaseActivity {
 
         app = (ETornApplication) getApplication();
 
+        storeManager = StoreManager.getInstance();
+
         storeSubscriptions = new ArrayList<>();
         this.context = this;
-        this.stores = getIntent().getParcelableArrayListExtra("stores");
+        this.storeIds = new ArrayList<>();
+
+        //Extraiem ids de store per fer servir amb storeManager
+        for (Parcelable s : getIntent().getParcelableArrayListExtra("stores"))
+            storeIds.add(((Store)s).get_id());
+
         this.superMrkt = getIntent().getParcelableExtra("super");
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -90,9 +101,9 @@ public class StoreActivity extends BaseActivity {
         }
     }
 
-    public boolean storeInTurn (int index) {
-        if (app.getUserInfo().get(stores.get(index).getId()) != null){
-            Log.d(TAG, "inTurn " + app.getUserInfo().get(stores.get(index).getId()).toString());
+    public boolean storeInTurn (Store s) {
+        if (app.getUserInfo().get(s.getId()) != null){
+            Log.d(TAG, "inTurn " + app.getUserInfo().get(s).toString());
             return true;
         }
         return false;
@@ -100,14 +111,14 @@ public class StoreActivity extends BaseActivity {
 
     public void updateUI (){
 
-        adapter = new StoreAdapter(stores, app);
+        adapter = new StoreAdapter(storeManager.getStores(), app);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
                         unsuscribeAllStores();
-                        Store store = stores.get(position);
+                        Store store = storeManager.getStores().get(position);
                         Intent intent = new Intent(context, StoreInfoActivity.class);
                         // Pasem a StoreInfoActivity la id necessaria per fer la peticio al servidor
                         intent.putExtra("id", store.getId());
@@ -125,28 +136,29 @@ public class StoreActivity extends BaseActivity {
                 @Override
                 public void onPushUpdate(RemoteMessage remoteMessage) {
                     Log.d(TAG + " From ",remoteMessage.getFrom());
-                    int storeIndex = getTopicStoreIndex(remoteMessage.getFrom());
-                    if (!storeInTurn(storeIndex)) {
+                    Store s = getStoreFromTopic(remoteMessage.getFrom());
+
+                    if (!storeInTurn(s)) {
                         if (remoteMessage.getData().get("storeQueue") != null)
-                            stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                            s.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
                         if (remoteMessage.getData().get("aproxTime") != null) {
                             Log.d(TAG, "aproxTimeStoreActivity: " + Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                            stores.get(storeIndex).setAproxTime(Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                            s.setAproxTime(Float.parseFloat(remoteMessage.getData().get("aproxTime")));
                         }
                         if (remoteMessage.getData().get("usersTurn") != null)
-                            stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+                            s.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
                     /*else {
                         stores.get(storeIndex).setUsersTurn(app.getUserInfo().get(stores.get(storeIndex).getId()).getTurn());
                     }*/
                         //updateUI();
                     }
                     else {
-                        stores.get(storeIndex).setAproxTime(app.getUserInfo().get(stores.get(storeIndex).get_id()).getAproxTime());
-                        Log.d(TAG, "UUUUUUUUUUUUUUUUUUUUUUsuari ja te torn en la botiga " + stores.get(storeIndex).getName() + " amb temps aprox: " + stores.get(storeIndex).getAproxTime() * app.getUserInfo().get(stores.get(storeIndex).get_id()).getQueue());
+                        s.setAproxTime(app.getUserInfo().get(s.get_id()).getAproxTime());
+                        Log.d(TAG, "UUUUUUUUUUUUUUUUUUUUUUsuari ja te torn en la botiga " + s.getName() + " amb temps aprox: " + s.getAproxTime() * app.getUserInfo().get(s.get_id()).getQueue());
                     }
 
                     if (remoteMessage.getData().get("storeTurn") != null)
-                        stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+                        s.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
 
                     adapter.notifyDataSetChanged();
                 }
@@ -185,14 +197,14 @@ public class StoreActivity extends BaseActivity {
             public void onResponse(Call<Super> call, Response<Super> response) {
                 Log.d(TAG, "Retrofit 'GetSuperById' response: " + response.body().toString());
                 //Actualitzem les dades de les paradas, si no te torn, actualitza el torn disponible
-                for (int i = 0; i < stores.size(); i++) {
-                    stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
-                    stores.get(i).setQueue(response.body().getStores().get(i).getQueue());
+                for (Store ns : response.body().getStores()) {
+                    storeManager.getStoreWithId(ns.getId()).setStoreTurn(ns.getStoreTurn());
+                    storeManager.getStoreWithId(ns.getId()).setQueue(ns.getQueue());
 
-                    if (!storeInTurn(i)) {
-                        stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
+                    if (!storeInTurn(storeManager.getStoreWithId(ns.getId()))) {
+                        storeManager.getStoreWithId(ns.getId()).setUsersTurn(ns.getUsersTurn());
 
-                        final Store store = stores.get(i);
+                        final Store store = storeManager.getStoreWithId(ns.getId());
 
                         Log.d(TAG, "Demanant temps aproximat a caesar per store" + store);
 
@@ -214,14 +226,16 @@ public class StoreActivity extends BaseActivity {
                         });
 
                     } else {
-                        Log.d(TAG, "Usuari te torn en la store: " + stores.get(i).get_id() + " amb temps aproximat: "
-                                + app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
+                        Log.d(TAG, "Usuari te torn en la store: " + ns.get_id() + " amb temps aproximat: "
+                                + app.getUserInfo().get(ns.get_id()).getAproxTime());
 
-                        stores.get(i).setAproxTime(app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
+                        storeManager.getStoreWithId(ns.getId()).setAproxTime(app.getUserInfo().get(ns.get_id()).getAproxTime());
                     }
                 }
 
-                adapter.notifyDataSetChanged();
+                //HACK: Mes hack no pot ser o explota
+                adapter = new StoreAdapter(storeManager.getStores(), app);
+                recyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -231,14 +245,14 @@ public class StoreActivity extends BaseActivity {
         });
 
         storeSubscriptions.clear();
-        for (int i = 0; i < stores.size(); i++) {
-            Log.d("store", stores.get(i).toString());
-            storeSubscriptions.add(app.getTopicSubscriptionFor("store." + stores.get(i).getId()));
-            if (storeInTurn(i)){
-                stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
-                stores.get(i).setInTurn(true);
+        for (Store s : storeManager.getStores()) {
+            Log.d("store", s.toString());
+            storeSubscriptions.add(app.getTopicSubscriptionFor("store." + s.getId()));
+            if (storeInTurn(s)){
+                s.setUsersTurn(app.getUserInfo().get(s.getId()).getTurn());
+                s.setInTurn(true);
             } else {
-                stores.get(i).setInTurn(false);
+                s.setInTurn(false);
             }
         }
 
@@ -246,13 +260,14 @@ public class StoreActivity extends BaseActivity {
         Log.d(TAG, "userInfo: " + app.getUserInfo().toString());
     }
 
-    public int getTopicStoreIndex (String topic) {
+    public Store getStoreFromTopic (String topic) {
         String storeId = topic.split("\\.")[1];
-        for (int i = 0; i < stores.size(); i++) {
-            if (stores.get(i).getId().equals(storeId))
-                return i;
+        for (Store s : storeManager.getStores()) {
+            if (s.getId().equals(storeId))
+                return s;
         }
-        return -1;
+
+        return null;
     }
 
     public void unsuscribeAllStores () {
