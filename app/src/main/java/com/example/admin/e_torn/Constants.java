@@ -14,14 +14,14 @@ public class Constants {
     static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
     /**
-     * Adreça del servidor principal
+     * Adreça del servidor
      */
-    public static final String serverURL = "http://192.168.137.1:8080";
+    public static final String serverURL = "http://192.168.204.227:8080";
 
     /**
      * Adreça del servidor d'estadístiques
      */
-    public static final String caesarURL = "http://192.168.137.1:8081";
+    public static final String caesarURL = "http://192.168.204.227:8081";
 
     /**
      * Nom del paquet. Ha de concordar amb el de veritat
