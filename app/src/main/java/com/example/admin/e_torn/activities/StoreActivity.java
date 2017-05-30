@@ -19,6 +19,7 @@ import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
+import com.example.admin.e_torn.services.CaesarService;
 import com.example.admin.e_torn.services.RetrofitManager;
 import com.example.admin.e_torn.services.SuperService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -185,18 +186,43 @@ public class StoreActivity extends BaseActivity {
                 Log.d(TAG, "Retrofit 'GetSuperById' response: " + response.body().toString());
                 //Actualitzem les dades de les paradas, si no te torn, actualitza el torn disponible
                 for (int i = 0; i < stores.size(); i++) {
-                    stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime() * stores.get(i).getQueue());
                     stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
                     stores.get(i).setQueue(response.body().getStores().get(i).getQueue());
-                    if (!storeInTurn(i))
+
+                    if (!storeInTurn(i)) {
                         stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
-                    else {
+
+                        final Store store = stores.get(i);
+
+                        Log.d(TAG, "Demanant temps aproximat a caesar per store" + store);
+
+                        final CaesarService caesarService = RetrofitManager.getInstance(Constants.caesarURL).create(CaesarService.class);
+                        final Call<Float> call1 = caesarService.getStoreAverageTime(store.getId());
+                        call1.enqueue(new Callback<Float>() {
+                            @Override
+                            public void onResponse(Call<Float> call, Response<Float> response) {
+                                Log.d(TAG, "Resposta temps aproximat per store " + store + ": " + response.body());
+                                store.setAproxTime(response.body() * store.getQueue());
+
+                                adapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Float> call, Throwable t) {
+                                Log.d(Constants.RETROFIT_FAILURE_TAG, t.getMessage());
+                            }
+                        });
+
+                        stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime() * stores.get(i).getQueue());
+
+                    } else {
                         Log.d(TAG, "Usuari te torn en la store: " + stores.get(i).get_id() + " amb temps aproximat: "
                                 + app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
 
                         stores.get(i).setAproxTime(app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
                     }
                 }
+
                 adapter.notifyDataSetChanged();
             }
 
