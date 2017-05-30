@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -25,15 +24,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.permissionmanager.PermissionManager;
+import com.example.admin.e_torn.permissionmanager.PermissionRequestResultListerner;
+import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.adapters.SuperAdapter;
 import com.example.admin.e_torn.listeners.RecyclerItemClickListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;
 import com.example.admin.e_torn.services.RetrofitManager;
-import com.example.admin.e_torn.services.StoreService;
 import com.example.admin.e_torn.services.SuperService;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

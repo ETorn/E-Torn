@@ -1,17 +1,13 @@
 package com.example.admin.e_torn.adapters;
 
-import android.content.res.Resources;
-import android.opengl.ETC1;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.admin.e_torn.BaseActivity;
 import com.example.admin.e_torn.ETornApplication;
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.models.Store;

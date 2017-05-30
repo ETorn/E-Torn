@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.permissionmanager;
 
 
 import android.app.AlertDialog;
@@ -14,25 +14,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-class ResultListenerNotSpecified extends RuntimeException {
-    ResultListenerNotSpecified(String reason) {
-        super(reason);
-    }
-}
-
-interface PermissionRequestResultListerner {
-    void onPermissionRequestDone(boolean successAll, ArrayList<String> grantedPermissions);
-}
-
-interface CallBack {
-    void call();
-}
-
-interface PermissionRationale {
-    void onShowPermissionRationale(CallBack cb);
-}
-
-class PermissionManager {
+public class PermissionManager {
 
     private static final String TAG = "Permission Manager";
 
@@ -47,7 +29,7 @@ class PermissionManager {
 
     private int requestCode;
 
-    PermissionManager(AppCompatActivity activity) {
+    public PermissionManager(AppCompatActivity activity) {
         ctx = activity;
 
         requestCode = 1;
@@ -55,11 +37,11 @@ class PermissionManager {
         rationales = new ArrayList<>();
     }
 
-    void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
+    public void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
         listener = l;
     }
 
-    void addPermission(String permission, String rationale) {
+    public void addPermission(String permission, String rationale) {
         permissions.add(permission);
         rationales.add(rationale);
     }
@@ -116,7 +98,7 @@ class PermissionManager {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    void requestPermissions() {
+    public void requestPermissions() {
         Log.d(TAG, ".requestPermissions() cridat");
 
         if (listener == null)
@@ -127,7 +109,7 @@ class PermissionManager {
         showNextRationale();
     }
 
-    void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult cridat");
 
         ArrayList<String> result = new ArrayList<>();

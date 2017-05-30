@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.admin.e_torn.R;
-import com.example.admin.e_torn.StoreActivity;
+import com.example.admin.e_torn.activities.StoreActivity;
 import com.example.admin.e_torn.Utils;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Super;

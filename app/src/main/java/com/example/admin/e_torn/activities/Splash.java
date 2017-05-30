@@ -1,9 +1,12 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.activities;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.R;
 
 public class Splash extends AppCompatActivity {
 

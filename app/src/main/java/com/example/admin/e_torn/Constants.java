@@ -6,12 +6,12 @@ public class Constants {
     /**
      * Duració de la splash screen
      */
-    static final int SPLASH_DISPLAY_LENGTH = 3000;
+    public static final int SPLASH_DISPLAY_LENGTH = 3000;
 
     /**
      * Etiqueta de failure de retrofit
      */
-    static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
+    public static final String RETROFIT_FAILURE_TAG = "RETROFIT_FAILURE";
 
     /**
      * Adreça del servidor principal

@@ -1,4 +1,4 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.activities;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,6 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.ETornApplication;
+import com.example.admin.e_torn.R;
+import com.example.admin.e_torn.TopicSubscription;
 import com.example.admin.e_torn.listeners.PushUpdateListener;
 import com.example.admin.e_torn.models.Store;
 import com.example.admin.e_torn.models.Turn;
@@ -92,7 +96,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         store = new Store();
 
-        userId = app.user.get_id();
+        userId = app.getUser().get_id();
         self = this;
 
         storeId = getIntent().getStringExtra("id");
