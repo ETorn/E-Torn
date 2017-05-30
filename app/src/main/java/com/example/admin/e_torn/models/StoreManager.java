@@ -2,6 +2,7 @@ package com.example.admin.e_torn.models;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,6 @@ public class StoreManager {
     }
 
     public List<Store> getStores() {
-        return (List<Store>) storeMap.values();
+        return new ArrayList<>(storeMap.values());
     }
 }
