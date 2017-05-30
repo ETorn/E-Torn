@@ -1,5 +1,6 @@
 package com.example.admin.e_torn.adapters;
 
+import android.app.Application;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -45,9 +46,11 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     }
 
     List<Store> stores;
+    ETornApplication app;
 
-    public StoreAdapter(List<Store> stores) {
+    public StoreAdapter(List<Store> stores, Application app) {
         this.stores = stores;
+        this.app = (ETornApplication) app;
     }
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -86,6 +89,15 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         if (stores.size() == 0) {
             storeViewHolder.storeName.setText(R.string.info_no_stores);
         }
+
+        if (app.getUserInfo().get(stores.get(position).get_id()) != null) {
+            if (app.getUserInfo().get(stores.get(position).get_id()).isUserNextTurn()) {
+                storeViewHolder.itemTime.setVisibility(View.VISIBLE);
+                storeViewHolder.timeIcon.setVisibility(View.GONE);
+                storeViewHolder.itemTime.setText(app.getString(R.string.is_your_turn));
+            }
+        }
+
     }
 
     @Override

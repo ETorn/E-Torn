@@ -100,7 +100,7 @@ public class StoreActivity extends BaseActivity {
 
     public void updateUI (){
 
-        adapter = new StoreAdapter(stores);
+        adapter = new StoreAdapter(stores, app);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
