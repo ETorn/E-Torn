@@ -147,4 +147,12 @@ public class TopicSubscription extends BroadcastReceiver implements PushUpdateLi
     public void onPushUpdate(RemoteMessage remoteMessage) {
         Log.w(TAG, "Default listener called. Set your custom listener.");
     }
+
+    @Override
+    public String toString() {
+        return "TopicSubscription{" +
+                "topic='" + topic + '\'' +
+                ", subscribed=" + subscribed +
+                '}';
+    }
 }
