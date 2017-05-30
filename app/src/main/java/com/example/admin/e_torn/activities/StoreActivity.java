@@ -213,8 +213,6 @@ public class StoreActivity extends BaseActivity {
                             }
                         });
 
-                        stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime() * stores.get(i).getQueue());
-
                     } else {
                         Log.d(TAG, "Usuari te torn en la store: " + stores.get(i).get_id() + " amb temps aproximat: "
                                 + app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
