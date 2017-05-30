@@ -61,7 +61,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     //Torn que ha agafat l'usuari
     Integer userTurnNumber;
 
-    Turn userTurn;
+    boolean userNextTurn;
 
     // UI
     TextView actualTurn;
@@ -146,7 +146,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        if (!inTurn()) {
+        if (userSubscription == null) {
             userSubscription = app.getTopicSubscriptionFor("store." + store.getId() + ".user." + app.getUser().get_id());
             userSubscription.setListener(new PushUpdateListener() {
                 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -156,20 +156,18 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                     Log.d(TAG, "FROM: " + remoteMessage.getFrom());
                     String storeID = remoteMessage.getFrom().split("\\.")[1];
 
-                    if (app.getUserInfo().get(storeID) != null) {
+                    if (inTurn()) {
                         if (remoteMessage.getData().get("storeTurn") != null) {
                             Log.d(TAG, "StoreTurn: " + remoteMessage.getData().get("storeTurn"));
                             store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
                             //Es el torn del usuari
                             if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
                                 Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
-                                app.getUserInfo().remove(store.get_id());
-                                queueText.setText(getString(R.string.is_your_turn));
-                                queueTextNumber.setVisibility(View.GONE);
-                                aproxTime.setVisibility(View.GONE);
-                                timeIcon.setVisibility(View.GONE);
+                                //app.getUserInfo().remove(store.get_id());
+
                                 sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
-                                return;
+                                userNextTurn = true;
+                                //return;
                                 //updateUI();
                                 //StoreInfoActivity.super.onBackPressed();
                             }
@@ -283,7 +281,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        app.getUserInfo().remove(store.get_id());
+    }
 
     @Override
     protected void onPause() {
@@ -385,6 +387,16 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     private void updateUI() {
         Log.d(TAG, "updateUI");
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
+
+        if (userNextTurn) {
+            queueText.setText(getString(R.string.is_your_turn));
+            queueTextNumber.setVisibility(View.GONE);
+            aproxTime.setVisibility(View.GONE);
+            timeIcon.setVisibility(View.GONE);
+            userNextTurn = false;
+            return;
+        }
+
 
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.get_id()).getTurn()));
