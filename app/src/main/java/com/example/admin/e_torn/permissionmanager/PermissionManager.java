@@ -23,7 +23,7 @@ public class PermissionManager {
     private List<String> permissions;
     private List<String> rationales;
 
-    private PermissionRequestResultListerner listener;
+    private PermissionRequestResultListener listener;
 
     private int currentRationaleIndex;
 
@@ -37,7 +37,7 @@ public class PermissionManager {
         rationales = new ArrayList<>();
     }
 
-    public void setPermissionRequestResultListener(PermissionRequestResultListerner l) {
+    public void setPermissionRequestResultListener(PermissionRequestResultListener l) {
         listener = l;
     }
 
