@@ -61,8 +61,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     //Torn que ha agafat l'usuari
     Integer userTurnNumber;
 
-    boolean userNextTurn;
-
     // UI
     TextView actualTurn;
     TextView disponibleTurn;
@@ -103,7 +101,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         store.setId(getIntent().getStringExtra("id"));
 
-        //userTurn = app.getUserInfo().get(store.getId());
 
         turnText = (TextView) findViewById(R.id.disponibleTurnText);
         actualTurn = (TextView) findViewById(R.id.actualTurn);
@@ -154,7 +151,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 public void onPushUpdate(RemoteMessage remoteMessage) {
                     Log.d(TAG, "push recieved");
                     Log.d(TAG, "FROM: " + remoteMessage.getFrom());
-                    String storeID = remoteMessage.getFrom().split("\\.")[1];
 
                     if (inTurn()) {
                         if (remoteMessage.getData().get("storeTurn") != null) {
@@ -164,12 +160,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
                                 Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
                                 //app.getUserInfo().remove(store.get_id());
-
+                                app.getUserInfo().get(store.get_id()).setUserNextTurn(true);
                                 sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
-                                userNextTurn = true;
-                                //return;
-                                //updateUI();
-                                //StoreInfoActivity.super.onBackPressed();
                             }
                         }
                         if (remoteMessage.getData().get("queue") != null) {
@@ -181,8 +173,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                         }
 
                         if (remoteMessage.getData().get("notification") != null) {
-                            // if (Integer.parseInt(remoteMessage.getData().get("notification")) == 0) {
-
                             int userQueue = Integer.parseInt(remoteMessage.getData().get("queue"));
 
                             int turnsBefore = app.getUser().getNotificationTurns();
@@ -190,13 +180,11 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             if (userQueue <= turnsBefore) {
                                 sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu a la " + store.getName());
                             }
-                            // }
                         }
 
                         if (remoteMessage.getData().get("aproxTime") != null) {
                             app.getUserInfo().get(store.get_id()).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                            //Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
-                            Log.d(TAG, "User aproxTimeEEEEEEEEEEEEEEEEEEEEE: " + app.getUserInfo().get(store.get_id()).getAproxTime());
+                            Log.d(TAG, "User aproxTime: " + app.getUserInfo().get(store.get_id()).getAproxTime());
 
                         }
                         updateUI();
@@ -225,6 +213,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         super.onResume();
 
         Log.d(TAG, "onResume");
+
+        Log.d(TAG, "userInfo: " + app.getUserInfo().toString());
 
         // Subscribim al topic de la store per rebre updates s'estat
         if (!inTurn())
@@ -280,13 +270,12 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    /*
+
     @Override
     protected void onStop() {
         super.onStop();
-        if (userNextTurn)
-            app.getUserInfo().remove(store.get_id());
-    }*/
+        Log.d(TAG, "onStop");
+    }
 
     @Override
     protected void onPause() {
@@ -296,6 +285,14 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
         if (!inTurn())
             storeSubscription.unsubscribe();
+
+        if (inTurn()) {
+            if (app.getUserInfo().get(store.get_id()).isUserNextTurn()) {
+                app.getUserInfo().remove(store.get_id());
+                Log.d(TAG, "TORN ESBORRAT");
+            }
+        }
+        Log.d(TAG, "userInfo: " + app.getUserInfo().toString());
     }
 
     @Override
@@ -314,14 +311,12 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                     userTurnNumber = response.body().getTurn();
 
-                    //putUserTurnInPref(userTurnNumber);
                     if(userTurnNumber != null) {
                         //El temps aproximat en el moment de demanar torn es el mateix que el de la store
                         Turn turn = new Turn(app.getUser().get_id(), store.getId(), userTurnNumber, store.getQueue());
                         turn.setAproxTime(store.getAproxTime());
 
                         app.getUserInfo().put(store.getId(), turn);
-                        //userTurn = app.getUserInfo().get(store.get_id());
 
                         Log.d(TAG, "UsersTurns  " + app.getUserInfo().toString());
 
@@ -364,12 +359,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             }
                         });
 
-                        /*Context context = getApplicationContext();
-                        Intent intent = new Intent(context, UserTurnInfo.class);
-                        intent.putExtra("id", storeId);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                        finish();*/
                     }
                     else {
                         //L'usuari ja ha demanat torn
@@ -385,24 +374,25 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    private boolean isUsersTurn() {
+        return app.getUserInfo().get(store.get_id()).getTurn() == store.getStoreTurn();
+    }
+
     private void updateUI() {
         Log.d(TAG, "updateUI");
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
 
-        if (userNextTurn) {
-            queueText.setText(getString(R.string.is_your_turn));
-            queueTextNumber.setVisibility(View.GONE);
-            aproxTime.setVisibility(View.GONE);
-            timeIcon.setVisibility(View.GONE);
-            app.getUserInfo().remove(store.get_id());
-            Log.d(TAG, "TORN ESBORRAT");
-            userNextTurn = false;
-            return;
-        }
-
-
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.get_id()).getTurn()));
+
+            if (app.getUserInfo().get(store.get_id()).isUserNextTurn() || isUsersTurn()) {
+                queueText.setText(getString(R.string.is_your_turn));
+                queueTextNumber.setVisibility(View.GONE);
+                setTimeLabelsVisibility(false);
+                return;
+            }
+
+
             queueTextNumber.setText(String.format("%s%s", String.valueOf(app.getUserInfo().get(store.get_id()).getQueue()), getString(R.string.turns)));
             Log.d(TAG, "UserTurnQueue: " + app.getUserInfo().get(store.get_id()).getQueue());
 
@@ -458,9 +448,4 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    /*public void putUserTurnInPref(Integer turn) {
-        SharedPreferences.Editor editor = ((ETornApplication) getApplication()).getSharedPreferences().edit();
-        editor.putInt("userTurnNumber", turn);
-        editor.commit();
-    }*/
 }

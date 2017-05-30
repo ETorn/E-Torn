@@ -243,6 +243,7 @@ public class StoreActivity extends BaseActivity {
         }
 
         storeSubscriptionsListener();
+        Log.d(TAG, "userInfo: " + app.getUserInfo().toString());
     }
 
     public int getTopicStoreIndex (String topic) {
