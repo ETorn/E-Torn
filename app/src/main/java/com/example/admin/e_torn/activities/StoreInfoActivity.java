@@ -201,7 +201,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                         }
                         updateUI();
                     }
-
                 }
             });
         }
@@ -281,11 +280,13 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
+    /*
     @Override
     protected void onStop() {
         super.onStop();
-        app.getUserInfo().remove(store.get_id());
-    }
+        if (userNextTurn)
+            app.getUserInfo().remove(store.get_id());
+    }*/
 
     @Override
     protected void onPause() {
@@ -393,6 +394,8 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             queueTextNumber.setVisibility(View.GONE);
             aproxTime.setVisibility(View.GONE);
             timeIcon.setVisibility(View.GONE);
+            app.getUserInfo().remove(store.get_id());
+            Log.d(TAG, "TORN ESBORRAT");
             userNextTurn = false;
             return;
         }
