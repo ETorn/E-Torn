@@ -17,6 +17,9 @@
     <string name="notification_mode">Notification mode</string>
     <string name="turn_notification">Turn notification</string>
     <string name="is_your_turn">Is your turn</string>
+    <string name="at_store">at the</string>
+    <string name="there_are">there are</string>
+    <string name="people_in_front">people in front of you</string>
     <string name="time_notification">Time notification</string>
     <string name="turn_notification_summary">From how many turns you want to be notified?</string>
     <string name="time_notification_summary">From how much time you want to be notified?</string>

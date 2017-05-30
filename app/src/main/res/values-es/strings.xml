@@ -13,5 +13,8 @@
     <string name="minutes">minutos</string>
     <string name="nextInQueue">Eres el siguiente en la cola</string>
     <string name="notificationTitle">Turno Caprabo</string>
+    <string name="at_store">en la</string>
+    <string name="there_are">hay</string>
+    <string name="people_in_front">personas delante tuyo</string>
     <string name="is_your_turn">Es tu turno</string>
 </resources>

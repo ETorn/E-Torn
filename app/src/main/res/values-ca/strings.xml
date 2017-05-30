@@ -13,5 +13,8 @@
     <string name="minutes">minuts</string>
     <string name="nextInQueue">Ets el següent a la cua</string>
     <string name="notificationTitle">Torn Caprabo</string>
+    <string name="at_store">en la</string>
+    <string name="there_are">hi han</string>
+    <string name="people_in_front">persones davant teu</string>
     <string name="is_your_turn">Es el teu torn</string>
 </resources>

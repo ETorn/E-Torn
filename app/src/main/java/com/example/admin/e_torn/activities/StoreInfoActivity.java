@@ -158,15 +158,14 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             store.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
                             //Es el torn del usuari
                             if (store.getStoreTurn() == app.getUserInfo().get(store.get_id()).getTurn()) {
-                                Toast.makeText(self, getString(R.string.is_your_turn), Toast.LENGTH_SHORT).show();
-                                //app.getUserInfo().remove(store.get_id());
+                                Toast.makeText(self, getString(R.string.is_your_turn) + " " + getString(R.string.at_store) + " " + store.getName(), Toast.LENGTH_SHORT).show();
                                 app.getUserInfo().get(store.get_id()).setUserNextTurn(true);
-                                sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
+                                sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " " + getString(R.string.at_store) + " " + store.getName());
                             }
                         }
                         if (remoteMessage.getData().get("queue") != null) {
                             if (Integer.parseInt(remoteMessage.getData().get("queue")) == 1) {
-                                sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " en la " + store.getName());
+                                sendNotify(getString(R.string.notificationTitle), getString(R.string.nextInQueue) + " " + getString(R.string.at_store) + " " + store.getName());
                             }
                             store.setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
                             app.getUserInfo().get(store.get_id()).setQueue(Integer.parseInt(remoteMessage.getData().get("queue")));
@@ -178,7 +177,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             int turnsBefore = app.getUser().getNotificationTurns();
 
                             if (userQueue <= turnsBefore) {
-                                sendNotify(getString(R.string.notificationTitle), "Hi ha " + userQueue + " persones davant teu a la " + store.getName());
+                                sendNotify(getString(R.string.notificationTitle), getString(R.string.there_are) + userQueue + " " + getString(R.string.people_in_front) + " " + store.getName());
                             }
                         }
 
