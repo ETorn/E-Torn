@@ -94,11 +94,6 @@ public class StoreActivity extends BaseActivity {
     }
 
     public void updateUI (){
-        /*stores = new ArrayList<>();
-        stores.add(new Store("Carniceria01", 1, 1, R.drawable.capraboicon));
-        stores.add(new Store("Carniceria02", 1, 1, R.drawable.capraboicon));
-        stores.add(new Store("Peixateria01", 1, 1, R.drawable.capraboicon));
-        stores.add(new Store("Peixateria02", 1, 1, R.drawable.capraboicon));*/
 
         adapter = new StoreAdapter(stores);
         recyclerView.setAdapter(adapter);
@@ -142,7 +137,7 @@ public class StoreActivity extends BaseActivity {
                     }
                     else {
                         stores.get(storeIndex).setAproxTime(app.getUserInfo().get(stores.get(storeIndex).get_id()).getAproxTime());
-                        Log.d(TAG, "usuari ja te torn en la botiga " + stores.get(storeIndex).getName() + " amb temps aprox: " + app.getUserInfo().get(stores.get(storeIndex).get_id()).getAproxTime());
+                        Log.d(TAG, "UUUUUUUUUUUUUUUUUUUUUUsuari ja te torn en la botiga " + stores.get(storeIndex).getName() + " amb temps aprox: " + stores.get(storeIndex).getAproxTime() * app.getUserInfo().get(stores.get(storeIndex).get_id()).getQueue());
                     }
 
                     if (remoteMessage.getData().get("storeTurn") != null)
@@ -172,8 +167,9 @@ public class StoreActivity extends BaseActivity {
                 Log.d(TAG, "Retrofit 'GetSuperById' response: " + response.body().toString());
                 //Actualitzem les dades de les paradas, si no te torn, actualitza el torn disponible
                 for (int i = 0; i < stores.size(); i++) {
-                    stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime());
+                    stores.get(i).setAproxTime(response.body().getStores().get(i).getAproxTime() * stores.get(i).getQueue());
                     stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
+                    stores.get(i).setQueue(response.body().getStores().get(i).getQueue());
                     if (!storeInTurn(i))
                         stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
                     else {
@@ -201,8 +197,6 @@ public class StoreActivity extends BaseActivity {
                 stores.get(i).setInTurn(true);
             }
         }
-
-        adapter.notifyDataSetChanged();
 
         storeSubscriptionsListener();
     }

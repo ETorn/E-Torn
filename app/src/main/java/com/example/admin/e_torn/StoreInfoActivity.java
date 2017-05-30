@@ -163,6 +163,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                             aproxTime.setVisibility(View.GONE);
                             timeIcon.setVisibility(View.GONE);
                             sendNotify(getString(R.string.notificationTitle), getString(R.string.is_your_turn) + " en la " + store.getName());
+                            return;
                             //updateUI();
                             //StoreInfoActivity.super.onBackPressed();
                         }
@@ -190,10 +191,13 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
 
                     if (remoteMessage.getData().get("aproxTime") != null) {
                         app.getUserInfo().get(store.get_id()).setAproxTime(Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                        Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                        //Log.d(TAG, "User aproxTime received: " + Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                        Log.d(TAG, "User aproxTimeEEEEEEEEEEEEEEEEEEEEE: " + app.getUserInfo().get(store.get_id()).getAproxTime());
+
                     }
+                    updateUI();
                 }
-                updateUI();
+
             }
         });
     }
@@ -238,8 +242,10 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
             public void onResponse(Call<Store> call, Response<Store> response) {
                 Log.d("Response", response.body().toString());
 
-                if (!inTurn())
+                if (!inTurn()) {
                     store = response.body();
+                    store.setAproxTime(store.getAproxTime() * store.getQueue());
+                }
                 else {
                     store.setStoreTurn(response.body().getStoreTurn());
                     store.setName(response.body().getName());
@@ -373,6 +379,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void updateUI() {
+        Log.d(TAG, "UpdateUI executed");
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.get_id()).getTurn()));
