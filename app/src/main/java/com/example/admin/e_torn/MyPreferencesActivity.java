@@ -1,8 +1,7 @@
-package com.example.admin.e_torn;
+package com.example.admin.e_torn.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -10,18 +9,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.admin.e_torn.models.User;
-import com.example.admin.e_torn.services.RetrofitManager;
-import com.example.admin.e_torn.services.UserService;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.admin.e_torn.Constants;
+import com.example.admin.e_torn.ETornApplication;
+import com.example.admin.e_torn.R;
 
 /**
  * Created by Patango on 27/04/2017.
@@ -77,7 +67,7 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
         @Override
         public boolean onPreferenceClick(Preference preference) {
             SharedPreferences sharedPreferences = preference.getSharedPreferences();
-            String key = "turn_pref_editText";
+            String key = Constants.notificationPreferencesKey;
 
            app.setMongoUserPreferences(sharedPreferences);
 

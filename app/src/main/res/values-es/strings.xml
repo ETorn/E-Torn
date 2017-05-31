@@ -14,4 +14,12 @@
     <string name="nextInQueue">Eres el siguiente en la cola</string>
     <string name="notificationTitle">Turno Caprabo</string>
     <string name="is_your_turn">Es tu turno</string>
+    <string name="settings">Ajustes</string>
+    <string name="notification_mode">Modo de notificación</string>
+    <string name="time_notification">Notificación de tiempo</string>
+    <string name="time_notification_summary">Con cuánto tiempo de antelación quieres ser notificado?</string>
+    <string name="turn_notification">Notificación de turno</string>
+    <string name="turn_notification_summary">Con cuantos turnos de antelación quieres ser notificado?</string>
+    <string name="your_turn_lowercase">tu turno</string>
+    <string name="available">Disponible</string>
 </resources>

@@ -13,5 +13,16 @@
     <string name="minutes">minuts</string>
     <string name="nextInQueue">Ets el següent a la cua</string>
     <string name="notificationTitle">Torn Caprabo</string>
+    <string name="at_store">a la</string>
+    <string name="there_are">hi han</string>
+    <string name="people_in_front">persones davant teu</string>
     <string name="is_your_turn">Es el teu torn</string>
+    <string name="settings">Configuració</string>
+    <string name="time_notification">Notificació de temps</string>
+    <string name="notification_mode">Mode de notificació</string>
+    <string name="time_notification_summary">Amb quan temps d\'antelació vols ser notificat?</string>
+    <string name="turn_notification">Notificació de torn</string>
+    <string name="turn_notification_summary">Amb quants torns d\'antelació vols ser notificat?</string>
+    <string name="your_turn_lowercase">el teu torn</string>
+    <string name="available">Disponible</string>
 </resources>

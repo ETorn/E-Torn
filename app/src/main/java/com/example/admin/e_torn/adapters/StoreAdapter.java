@@ -78,10 +78,10 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
         storeViewHolder.actualNumber.setText(String.valueOf(stores.get(position).getStoreTurn()) );
         storeViewHolder.disponibleNumber.setText(String.valueOf(stores.get(position).getUsersTurn()));
         if (stores.get(position).isInTurn()) {
-            storeViewHolder.userTurn.setText("El teu torn");
+            storeViewHolder.userTurn.setText(R.string.your_turn_lowercase);
         }
         else {
-            storeViewHolder.userTurn.setText("Disponible");
+            storeViewHolder.userTurn.setText(R.string.available);
         }
 
         if (stores.size() == 0) {
