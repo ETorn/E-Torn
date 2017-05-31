@@ -90,9 +90,9 @@ public class StoreActivity extends BaseActivity {
         }
     }
 
-    public boolean storeInTurn (int index) {
-        if (app.getUserInfo().get(stores.get(index).getId()) != null){
-            Log.d(TAG, "inTurn " + app.getUserInfo().get(stores.get(index).getId()).toString());
+    public boolean storeInTurn (Store s) {
+        if (app.getUserInfo().get(s.getId()) != null){
+            Log.d(TAG, "inTurn " + app.getUserInfo().get(s.getId()).toString());
             return true;
         }
         return false;
@@ -125,28 +125,28 @@ public class StoreActivity extends BaseActivity {
                 @Override
                 public void onPushUpdate(RemoteMessage remoteMessage) {
                     Log.d(TAG + " From ",remoteMessage.getFrom());
-                    int storeIndex = getTopicStoreIndex(remoteMessage.getFrom());
-                    if (!storeInTurn(storeIndex)) {
+                    Store s = getStoreFromTopic(remoteMessage.getFrom());
+                    if (!storeInTurn(s)) {
                         if (remoteMessage.getData().get("storeQueue") != null)
-                            stores.get(storeIndex).setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
+                            s.setQueue(Integer.parseInt(remoteMessage.getData().get("storeQueue")));
                         if (remoteMessage.getData().get("aproxTime") != null) {
                             Log.d(TAG, "aproxTimeStoreActivity: " + Math.round(Float.parseFloat(remoteMessage.getData().get("aproxTime"))));
-                            stores.get(storeIndex).setAproxTime(Float.parseFloat(remoteMessage.getData().get("aproxTime")));
+                            s.setAproxTime(Float.parseFloat(remoteMessage.getData().get("aproxTime")));
                         }
                         if (remoteMessage.getData().get("usersTurn") != null)
-                            stores.get(storeIndex).setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
+                            s.setUsersTurn(Integer.parseInt(remoteMessage.getData().get("usersTurn")));
                     /*else {
                         stores.get(storeIndex).setUsersTurn(app.getUserInfo().get(stores.get(storeIndex).getId()).getTurn());
                     }*/
                         //updateUI();
                     }
                     else {
-                        stores.get(storeIndex).setAproxTime(app.getUserInfo().get(stores.get(storeIndex).get_id()).getAproxTime());
-                        Log.d(TAG, "UUUUUUUUUUUUUUUUUUUUUUsuari ja te torn en la botiga " + stores.get(storeIndex).getName() + " amb temps aprox: " + stores.get(storeIndex).getAproxTime() * app.getUserInfo().get(stores.get(storeIndex).get_id()).getQueue());
+                        s.setAproxTime(app.getUserInfo().get(s.get_id()).getAproxTime());
+                        Log.d(TAG, "usuari ja te torn en la botiga " + s.getName() + " amb temps aprox: " + s.getAproxTime() * app.getUserInfo().get(s.get_id()).getQueue());
                     }
 
                     if (remoteMessage.getData().get("storeTurn") != null)
-                        stores.get(storeIndex).setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
+                        s.setStoreTurn(Integer.parseInt(remoteMessage.getData().get("storeTurn")));
 
                     adapter.notifyDataSetChanged();
                 }
@@ -185,24 +185,37 @@ public class StoreActivity extends BaseActivity {
             public void onResponse(Call<Super> call, Response<Super> response) {
                 Log.d(TAG, "Retrofit 'GetSuperById' response: " + response.body().toString());
                 //Actualitzem les dades de les paradas, si no te torn, actualitza el torn disponible
-                for (int i = 0; i < stores.size(); i++) {
-                    stores.get(i).setStoreTurn(response.body().getStores().get(i).getStoreTurn());
-                    stores.get(i).setQueue(response.body().getStores().get(i).getQueue());
+                for (Store s : response.body().getStores()) {
 
-                    if (!storeInTurn(i)) {
-                        stores.get(i).setUsersTurn(response.body().getStores().get(i).getUsersTurn());
+                    Store oldStore = null;
+                    for (Store os : stores) {
+                        if (os.get_id().equals(s.get_id()))
+                            oldStore = os;
+                    }
 
-                        final Store store = stores.get(i);
+                    if (oldStore == null) {
+                        Log.d(TAG, "OLDSTORE IS NULL");
+                        return;
+                    }
 
-                        Log.d(TAG, "Demanant temps aproximat a caesar per store" + store);
+
+                    oldStore.setStoreTurn(s.getStoreTurn());
+                    oldStore.setQueue(s.getQueue());
+
+                    if (!storeInTurn(oldStore)) {
+                        oldStore.setUsersTurn(s.getUsersTurn());
+
+                        final Store finalOldStore = oldStore;
+
+                        Log.d(TAG, "Demanant temps aproximat a caesar per store" + oldStore);
 
                         final CaesarService caesarService = RetrofitManager.getInstance(Constants.caesarURL).create(CaesarService.class);
-                        final Call<Float> call1 = caesarService.getStoreAverageTime(store.getId());
+                        final Call<Float> call1 = caesarService.getStoreAverageTime(oldStore.getId());
                         call1.enqueue(new Callback<Float>() {
                             @Override
                             public void onResponse(Call<Float> call, Response<Float> response) {
-                                Log.d(TAG, "Resposta temps aproximat per store " + store + ": " + response.body());
-                                store.setAproxTime(response.body() * store.getQueue());
+                                Log.d(TAG, "Resposta temps aproximat per store " + finalOldStore + ": " + response.body());
+                                finalOldStore.setAproxTime(response.body() * finalOldStore.getQueue());
 
                                 adapter.notifyDataSetChanged();
                             }
@@ -214,10 +227,10 @@ public class StoreActivity extends BaseActivity {
                         });
 
                     } else {
-                        Log.d(TAG, "Usuari te torn en la store: " + stores.get(i).get_id() + " amb temps aproximat: "
-                                + app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
+                        Log.d(TAG, "Usuari te torn en la store: " + oldStore.get_id() + " amb temps aproximat: "
+                                + app.getUserInfo().get(oldStore.get_id()).getAproxTime());
 
-                        stores.get(i).setAproxTime(app.getUserInfo().get(stores.get(i).get_id()).getAproxTime());
+                        oldStore.setAproxTime(app.getUserInfo().get(oldStore.get_id()).getAproxTime());
                     }
                 }
 
@@ -231,14 +244,14 @@ public class StoreActivity extends BaseActivity {
         });
 
         storeSubscriptions.clear();
-        for (int i = 0; i < stores.size(); i++) {
-            Log.d("store", stores.get(i).toString());
-            storeSubscriptions.add(app.getTopicSubscriptionFor("store." + stores.get(i).getId()));
-            if (storeInTurn(i)){
-                stores.get(i).setUsersTurn(app.getUserInfo().get(stores.get(i).getId()).getTurn());
-                stores.get(i).setInTurn(true);
+        for (Store s : stores) {
+            Log.d("store", s.toString());
+            storeSubscriptions.add(app.getTopicSubscriptionFor("store." + s.getId()));
+            if (storeInTurn(s)){
+                s.setUsersTurn(app.getUserInfo().get(s.getId()).getTurn());
+                s.setInTurn(true);
             } else {
-                stores.get(i).setInTurn(false);
+                s.setInTurn(false);
             }
         }
 
@@ -246,13 +259,13 @@ public class StoreActivity extends BaseActivity {
         Log.d(TAG, "userInfo: " + app.getUserInfo().toString());
     }
 
-    public int getTopicStoreIndex (String topic) {
+    public Store getStoreFromTopic(String topic) {
         String storeId = topic.split("\\.")[1];
-        for (int i = 0; i < stores.size(); i++) {
-            if (stores.get(i).getId().equals(storeId))
-                return i;
+        for (Store s : stores) {
+            if (s.getId().equals(storeId))
+                return s;
         }
-        return -1;
+        return null;
     }
 
     public void unsuscribeAllStores () {
