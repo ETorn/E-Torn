@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -100,7 +101,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
         storeId = getIntent().getStringExtra("id");
 
         store.setId(getIntent().getStringExtra("id"));
-
 
         turnText = (TextView) findViewById(R.id.disponibleTurnText);
         actualTurn = (TextView) findViewById(R.id.actualTurn);
@@ -380,6 +380,7 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
     private void updateUI() {
         Log.d(TAG, "updateUI");
         actualTurn.setText(String.valueOf(store.getStoreTurn()));
+        getSupportActionBar().setTitle(store.getName().toUpperCase());
 
         if (inTurn()) {
             disponibleTurn.setText(String.valueOf(app.getUserInfo().get(store.get_id()).getTurn()));
@@ -416,24 +417,6 @@ public class StoreInfoActivity extends BaseActivity implements View.OnClickListe
                 aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
             }
         }
-        //queueTextNumber.setText(String.valueOf(store.getReloadedQueue()) + " torns");
-
-        /*if ((store.getAproxTime() == 0 && !inTurn()) || (inTurn() && Math.round(app.getUserInfo().get(store.get_id()).getAproxTime()) < 1)) {
-            timeIcon.setVisibility(View.GONE);
-            aproxTime.setVisibility(View.GONE);
-            Log.d(TAG, "StoreAproxTime: " + String.valueOf(Math.round(store.getAproxTime())));
-            Log.d(TAG, "UserAproxTimeRound: " + String.valueOf(Math.round(app.getUserInfo().get(store.get_id()).getAproxTime())));
-        }
-
-        else {
-            timeIcon.setVisibility(View.VISIBLE);
-            aproxTime.setVisibility(View.VISIBLE);
-            float aproxTimeAux = inTurn() ? app.getUserInfo().get(store.get_id()).getAproxTime() : store.getAproxTime();
-            Log.d(TAG, "StoreAproxTime: " + String.valueOf(Math.round(store.getAproxTime())));
-            Log.d(TAG, "UserAproxTimeRound: " + String.valueOf(Math.round(app.getUserInfo().get(store.get_id()).getAproxTime())));
-            Log.d(TAG, "UserAproxTime: " + String.valueOf(app.getUserInfo().get(store.get_id()).getAproxTime()));
-            aproxTime.setText(String.valueOf(Math.round(aproxTimeAux)) + " " + getString(R.string.minutes)); // arrodonim al int mes proper al numero decimal que rebem del servidor
-        }*/
     }
 
     public void setTimeLabelsVisibility (boolean state) {
