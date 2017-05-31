@@ -1,7 +1,5 @@
 package com.example.admin.e_torn.adapters;
 
-import android.content.res.Resources;
-import android.opengl.ETC1;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.admin.e_torn.BaseActivity;
 import com.example.admin.e_torn.ETornApplication;
 import com.example.admin.e_torn.R;
 import com.example.admin.e_torn.models.Store;
@@ -66,7 +63,9 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
     @Override
     public void onBindViewHolder(StoreViewHolder storeViewHolder, int position) {
         storeViewHolder.storeName.setText(stores.get(position).getName());
-        if (Math.round(stores.get(position).getAproxTime()) < 1) {
+        int aproxTime = Math.round(stores.get(position).getAproxTime());
+        Log.d(TAG, "Time Store Adapter: " + aproxTime);
+        if (aproxTime < 1) {
             storeViewHolder.itemTime.setVisibility(View.GONE);
             storeViewHolder.timeIcon.setVisibility(View.GONE);
         }
@@ -74,7 +73,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             storeViewHolder.itemTime.setVisibility(View.VISIBLE);
             storeViewHolder.timeIcon.setVisibility(View.VISIBLE);
         }
-        storeViewHolder.itemTime.setText(String.valueOf(Math.round(stores.get(position).getAproxTime())) + " " + ETornApplication.getContext().getString(R.string.minutes));
+        storeViewHolder.itemTime.setText(String.valueOf(aproxTime) + " " + ETornApplication.getContext().getString(R.string.minutes));
         storeViewHolder.actualNumber.setText(String.valueOf(stores.get(position).getStoreTurn()) );
         storeViewHolder.disponibleNumber.setText(String.valueOf(stores.get(position).getUsersTurn()));
         if (stores.get(position).isInTurn()) {

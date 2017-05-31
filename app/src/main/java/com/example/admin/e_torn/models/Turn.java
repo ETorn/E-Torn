@@ -10,6 +10,7 @@ public class Turn {
     private String storeId;
     private int turn;
     private int queue;
+    private boolean userNextTurn;
     private float aproxTime;
 
     /**
@@ -115,6 +116,22 @@ public class Turn {
      */
     public void setTurn(int turn) {
         this.turn = turn;
+    }
+
+    /**
+     * Retorna true si el torn es el següent a la cua
+     * @return true or false
+     */
+    public boolean isUserNextTurn() {
+        return userNextTurn;
+    }
+
+    /**
+     * Estableix si el torn es el següent a la cua
+     * @param userNextTurn
+     */
+    public void setUserNextTurn(boolean userNextTurn) {
+        this.userNextTurn = userNextTurn;
     }
 
     @Override
